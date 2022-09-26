@@ -1,0 +1,9 @@
+// Convert pixels to ems
+@function em( $size ) {
+  @return ( $size * 1em );
+}
+
+// Convert pixels to rems
+@function rem( $size ) {
+  @return ( $size / $base-size * 1rem );
+}

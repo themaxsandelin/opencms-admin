@@ -1,0 +1,38 @@
+.v-application .v-snack--text {
+  .v-snack__wrapper{
+    color: var(--v-info-darken1)!important;
+    caret-color: var(--v-info-darken1)!important;
+
+    &:before {
+      opacity: 1;
+      background-color: var(--v-info-base);
+    }
+  }
+
+  .success--text {
+    color: var(--v-success-darken1)!important;
+    caret-color: var(--v-success-darken1)!important;
+
+    &:before {
+      background-color: var(--v-success-lighten2);
+    }
+  }
+
+  .warning--text {
+    color: var(--v-warning-darken1)!important;
+    caret-color: var(--v-warning-darken1)!important;
+
+    &:before {
+      background-color: var(--v-warning-lighten1);
+    }
+  }
+
+  .error--text {
+    color: var(--v-error-darken1)!important;
+    caret-color: var(--v-error-darken1)!important;
+
+    &:before {
+      background-color: var(--v-error-lighten1);
+    }
+  }
+}

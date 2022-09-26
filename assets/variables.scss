@@ -1,0 +1,17 @@
+$color-pack: false;
+
+$base-size: 15;
+
+$font-size-root: ($base-size* 1px);
+
+$btn-border-radius: 2px;
+$btn-text-transform: none;
+$btn-letter-spacing: normal;
+
+$btn-sizes: ('small': 32, 'default': 40, 'large': 48);
+$btn-font-sizes: ('small': (13rem / $base-size), 'default': (15rem / $base-size), 'large': (15rem / $base-size));
+
+$text-field-border-radius: 0px;
+$text-field-outlined-fieldset-border-width: 2px;
+
+$chip-padding: 0 (16rem / $base-size);
