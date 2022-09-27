@@ -47,8 +47,14 @@ export default {
   },
   async fetch() {
     this.fetching = true;
-    this.pages = await this.$api(`/sites/${this.$route.params.siteKey}/pages?search=${this.searchTerm}`);
+    const pages = await this.$api(`/sites/${this.$route.params.siteKey}/pages?search=${this.searchTerm}`);
     this.fetching = false;
+    if (pages.statusCode) {
+      console.error(pages);
+      return this.$store.commit('alert/set', { message: pages.error || `Request failed. Status code ${pages.statusCode}.`, type: 'error' });
+    }
+
+    this.pages = pages;
   },
   fetchKey() {
     return `pages-${this.searchTerm}`;

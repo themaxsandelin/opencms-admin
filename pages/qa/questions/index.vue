@@ -70,7 +70,9 @@
       questionCreated() {
         this.$fetch();
       },
-      questionRowClick() {}
+      questionRowClick(question) {
+        this.$router.push(`${this.$route.path}/${question.id}`);
+      }
     }
   };
 </script>
