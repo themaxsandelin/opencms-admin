@@ -1,0 +1,76 @@
+<template>
+  <div>
+    <h1>Categories</h1>
+    <v-btn color="primary" dark @click="showCategoryForm">
+      Create new
+    </v-btn>
+    <question-category-form :visible="categoryFormVisible" @hide="hideCategoryForm" @created="questionCategoryCreated" />
+    <v-data-table
+      :loading="$fetchState.pending"
+      loading-text="Loading categories... Please wait"
+      :headers="headers"
+      :items="categories"
+      @click:row="categoryRowClick"
+    >
+      <template v-slot:item.updatedAt="{ item }">
+        <span>{{ new Date(item.updatedAt).toLocaleString() }}</span>
+      </template>
+      <template v-slot:item.createdAt="{ item }">
+        <span>{{ new Date(item.createdAt).toLocaleString() }}</span>
+      </template>
+    </v-data-table>
+  </div>
+</template>
+
+<script>
+  // Components
+  import QuestionCategoryForm from '@/components/organisms/question-category-form';
+
+  export default {
+    name: 'QuestionCategories',
+    components: {
+      QuestionCategoryForm
+    },
+    data() {
+      return {
+        categoryFormVisible: false,
+        categories: [],
+        headers: [
+          {
+            text: 'Name',
+            value: 'name',
+            align: 'start'
+          },
+          {
+            text: 'Last updated',
+            value: 'updatedAt'
+          },
+          {
+            text: 'Created',
+            value: 'createdAt'
+          }
+        ]
+      };
+    },
+    async fetch() {
+      const categories = await this.$api('/content-blocks?type=question-category');
+      if (categories.statusCode) {
+        return console.error(categories);
+      }
+
+      this.categories = categories;
+    },
+    methods: {
+      showCategoryForm() {
+        this.categoryFormVisible = true;
+      },
+      hideCategoryForm() {
+        this.categoryFormVisible = false;
+      },
+      questionCategoryCreated() {
+        this.$fetch();
+      },
+      categoryRowClick() {}
+    }
+  };
+</script>

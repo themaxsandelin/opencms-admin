@@ -65,7 +65,12 @@ export default {
     };
   },
   async fetch() {
-    this.pages = await this.$api(`/sites/${this.$route.params.siteKey}/pages`);
+    const pages = await this.$api(`/sites/${this.$route.params.siteKey}/pages`);
+    if (pages.statusCode) {
+      return console.error(pages);
+    }
+
+    this.pages = pages;
   },
   methods: {
     showPageForm() {

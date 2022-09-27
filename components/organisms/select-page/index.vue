@@ -18,10 +18,6 @@
 export default {
   name: 'SelectPage',
   props: {
-    show: {
-      type: Boolean,
-      default: false
-    },
     selected: {
       type: Array,
       default: () => []

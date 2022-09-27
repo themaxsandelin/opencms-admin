@@ -24,12 +24,21 @@
     </v-list>
 
     <v-list>
-      <v-subheader>Content</v-subheader>
+      <v-subheader>Content blocks</v-subheader>
 
-      <v-list-item
-        value="contnet-blocks"
-        title="Content blocks"
-      ></v-list-item>
+      <v-list-group :value="$route.path.includes('/qa')">
+        <template v-slot:activator>
+          <v-list-item-title>Questions and answers</v-list-item-title>
+        </template>
+
+        <v-list-item :link="true" to="/qa/categories">
+          <v-list-item-title>Categories</v-list-item-title>
+        </v-list-item>
+
+        <v-list-item :link="true" to="/qa/questions">
+          <v-list-item-title>Questions</v-list-item-title>
+        </v-list-item>
+      </v-list-group>
     </v-list>
   </v-navigation-drawer>
 </template>
