@@ -9,8 +9,8 @@ const router = Router({ mergeParams: true });
 
 router.post('/', async (req: Request, res: Response) => {
   try {
-    const { contentBlock } = req.body;
-    const request = await fetch(`${process.env.ADMIN_API_URL}/content-blocks/${contentBlock.id}/variants`, {
+    const { blockId } = req.params;
+    const request = await fetch(`${process.env.ADMIN_API_URL}/content-blocks/${blockId}/variants`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

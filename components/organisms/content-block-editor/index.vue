@@ -31,7 +31,8 @@
 <script>
   // Components
   const components = {
-    'question': () => import('@/components/organisms/question-editor')
+    'question': () => import('@/components/organisms/question-editor'),
+    'question-category': () => import('@/components/organisms/question-category-editor')
   };
 
   export default {
@@ -97,7 +98,7 @@
         }))
       },
       selectedEnvironments() {
-        return this.selectedVersion ? this.selectedVersion.publications.map(publication => publication.environment.key) : [];
+        return this.selectedVersion && this.selectedVersion.publications ? this.selectedVersion.publications.map(publication => publication.environment.key) : [];
       }
     },
     methods: {
@@ -169,6 +170,7 @@
           return this.$store.commit('alert/set', { type: 'error', message: 'Failed to publish content block variant version.' });
         }
 
+        this.$store.commit('alert/set', { type: 'success', message: 'Content block version published!' });
         this.updateVersions();
       },
       async save() {
@@ -197,6 +199,7 @@
           return this.$store.commit('alert/set', { type: 'error', message: 'Failed to update content block variant version.' });
         }
 
+        this.$store.commit('alert/set', { type: 'success', message: 'Content block version saved!' });
         this.updateVersions();
       }
     }

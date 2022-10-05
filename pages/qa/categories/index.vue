@@ -57,8 +57,7 @@
       if (categories.statusCode) {
         return console.error(categories);
       }
-
-      this.categories = categories;
+      this.$set(this.$data, 'categories', categories);
     },
     methods: {
       showCategoryForm() {
@@ -70,7 +69,9 @@
       questionCategoryCreated() {
         this.$fetch();
       },
-      categoryRowClick() {}
+      categoryRowClick(category) {
+        this.$router.push({ path: `${this.$route.path}/${category.id}` });
+      }
     }
   };
 </script>
