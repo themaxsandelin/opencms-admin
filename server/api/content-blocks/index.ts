@@ -1,5 +1,5 @@
 // Dependencies
-import { Router, Request, Response, NextFunction } from 'express';
+import { Router, Request, Response } from 'express';
 import fetch from 'node-fetch';
 
 // Routers
@@ -23,13 +23,13 @@ router.get('/', async (req: Request, res: Response) => {
     });
 
     const request = await fetch(uri);
+    const response = await request.json();
     if (request.status !== 200) {
-      console.error('Request error', request.status, request.statusText);
-      return res.status(request.status).json({ error: request.statusText });
+      console.error('Request error', response);
+      return res.status(request.status).json(response);
     }
 
-    const sites = await request.json();
-    res.json(sites);
+    res.json(response);
   } catch (error) {
     console.error('Endpoint error', error);
     res.status(500).json({ error: (error as any).message });
@@ -45,33 +45,13 @@ router.post('/', async (req: Request, res: Response) => {
       },
       body: JSON.stringify(req.body)
     });
-    if (request.status !== 200) {
-      console.error('Request error', request.status, request.statusText);
-      return res.status(request.status).json({ error: request.statusText });
-    }
-
     const response = await request.json();
-    res.json(response);
-  } catch (error) {
-    console.error('Endpoint error', error);
-    res.status(500).json({ error: (error as any).message });
-  }
-});
-
-router.use('/:blockId', async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { blockId } = req.params;
-    const { type } = req.query;
-    const request = await fetch(`${process.env.ADMIN_API_URL}/content-blocks/${blockId}${type ? `?type=${type}` : ''}`);
-
     if (request.status !== 200) {
-      console.error('Request error', request.status, request.statusText, request.url);
-      return res.status(request.status).json({ error: request.statusText });
+      console.error('Request error', response);
+      return res.status(request.status).json(response);
     }
 
-    const contentBlock = await request.json();
-    req.body.contentBlock = contentBlock;
-    next();
+    res.json(response);
   } catch (error) {
     console.error('Endpoint error', error);
     res.status(500).json({ error: (error as any).message });
@@ -80,15 +60,24 @@ router.use('/:blockId', async (req: Request, res: Response, next: NextFunction) 
 
 router.get('/:blockId', async (req: Request, res: Response) => {
   try {
-    const { contentBlock } = req.body;
+    const { blockId } = req.params;
+    const { type } = req.query;
 
-    const request = await fetch(`${process.env.ADMIN_API_URL}/content-blocks/${contentBlock.id}/variants`);
-    if (request.status !== 200) {
-      console.error('Request error', request.status, request.statusText, request.url);
-      return res.status(request.status).json({ error: request.statusText });
+    const blockRequest = await fetch(`${process.env.ADMIN_API_URL}/content-blocks/${blockId}${type ? `?type=${type}` : ''}`);
+    if (blockRequest.status !== 200) {
+      console.error('Request error', blockRequest.status, blockRequest.statusText, blockRequest.url);
+      return res.status(blockRequest.status).json({ error: blockRequest.statusText });
     }
 
-    const variants = await request.json();
+    const contentBlock: any = await blockRequest.json();
+
+    const variantsRequest = await fetch(`${process.env.ADMIN_API_URL}/content-blocks/${blockId}/variants`);
+    if (variantsRequest.status !== 200) {
+      console.error('Request error', variantsRequest.status, variantsRequest.statusText, variantsRequest.url);
+      return res.status(variantsRequest.status).json({ error: variantsRequest.statusText });
+    }
+
+    const variants = await variantsRequest.json();
     res.json({
       ...contentBlock,
       variants
