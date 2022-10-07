@@ -4,7 +4,7 @@
     <v-data-table
       v-model="selected"
       :headers="headers"
-      :items="categories"
+      :items="items"
       :loading="fetching"
       item-key="id"
       show-select
@@ -13,9 +13,16 @@
 </template>
 
 <script>
+  const contentBlockTypes = ['question', 'question-category'];
+
   export default {
-    name: 'SelectQuestionCategory',
+    name: 'SelectContentBlocks',
     props: {
+      type: {
+        type: String,
+        validator: (value) => contentBlockTypes.includes(value),
+        required: true
+      },
       selectedIds: {
         type: Array,
         default: () => ([])
@@ -26,7 +33,7 @@
         fetching: false,
         searchTerm: '',
         searchTimeout: null,
-        categories: [],
+        items: [],
         selected: [],
         headers: [
           {
@@ -39,24 +46,21 @@
     },
     async fetch() {
       this.$set(this.$data, 'fetching', true);
-      const categories = await this.$api(`/content-blocks/?search=${this.searchTerm}&type=question-category`);
+      const response = await this.$api(`/content-blocks/?search=${this.searchTerm}&type=${this.type}`);
       this.$set(this.$data, 'fetching', false);
-      if (categories.statusCode) {
-        return console.error('Failed to find question categories', categories);
+      if (response.statusCode) {
+        return console.error(`Failed to find content block by type ${this.type}`, response);
       }
 
-      this.$set(this.$data, 'categories', categories);
-      this.setSelectedCategories();
-    },
-    fetchKey() {
-      return `question-categories-${this.searchTerm}`;
+      this.$set(this.$data, 'items', response);
+      this.setSelectedItems();
     },
     watch: {
       selected() {
         this.$emit('update', this.selected);
       },
       selectedIds() {
-        this.setSelectedCategories();
+        this.setSelectedItems();
       }
     },
     methods: {
@@ -71,16 +75,15 @@
       searchTimeoutCallback() {
         this.$fetch();
       },
-      searchInput(value) {
-        this.searchTerm = value;
+      searchInput() {
         if (this.searchTimeout) {
           clearTimeout(this.searchTimeout);
         }
         this.searchTimeout = setTimeout(this.searchTimeoutCallback, 500);
       },
-      setSelectedCategories() {
-        this.$set(this.$data, 'selected', this.selectedIds.length ? this.categories.filter(category => this.selectedIds.includes(category.id)) : []);
+      setSelectedItems() {
+        this.$set(this.$data, 'selected', this.selectedIds.length ? this.items.filter(item => this.selectedIds.includes(item.id)) : []);
       }
     }
   };
-  </script>
+</script>

@@ -4,7 +4,14 @@
     <v-btn color="primary" dark @click="showCategoryForm">
       Create new
     </v-btn>
-    <question-category-form :visible="categoryFormVisible" @hide="hideCategoryForm" @created="questionCategoryCreated" />
+
+    <question-category-form
+      :category="editingCategory"
+      :visible="categoryFormVisible"
+      @hide="hideCategoryForm"
+      @created="questionCategoryCreated"
+    />
+
     <v-data-table
       :loading="$fetchState.pending"
       loading-text="Loading categories... Please wait"
@@ -17,6 +24,11 @@
       </template>
       <template v-slot:item.createdAt="{ item }">
         <span>{{ new Date(item.createdAt).toLocaleString() }}</span>
+      </template>
+      <template v-slot:item.actions="{ item }">
+        <v-btn @click="editCategory($event, item)">
+          Edit
+        </v-btn>
       </template>
     </v-data-table>
   </div>
@@ -48,8 +60,13 @@
           {
             text: 'Created',
             value: 'createdAt'
+          },
+          {
+            text: '',
+            value: 'actions'
           }
-        ]
+        ],
+        editingCategory: null
       };
     },
     async fetch() {
@@ -71,6 +88,11 @@
       },
       categoryRowClick(category) {
         this.$router.push({ path: `${this.$route.path}/${category.id}` });
+      },
+      editCategory(event, category) {
+        event.stopPropagation();
+        this.$set(this.$data, 'editingCategory', category);
+        this.showCategoryForm();
       }
     }
   };

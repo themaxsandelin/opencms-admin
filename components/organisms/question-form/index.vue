@@ -29,7 +29,8 @@
                   </v-expansion-panel-header>
 
                   <v-expansion-panel-content>
-                    <select-question-category
+                    <select-content-blocks
+                      type="question-category"
                       :selected-ids="preSelectedIds"
                       @update="selectedCategoriesUpdated"
                     />
@@ -53,12 +54,12 @@
 
 <script>
   // Components
-  import SelectQuestionCategory from '@/components/organisms/select-question-category';
+  import SelectContentBlocks from '@/components/organisms/select-content-blocks';
 
   export default {
     name: 'QuestionForm',
     components: {
-      SelectQuestionCategory
+      SelectContentBlocks
     },
     props: {
       visible: {
@@ -87,10 +88,8 @@
         if (this.question) {
           const { name, parents } = this.question;
           this.$set(this.$data, 'name', name);
-          if (parents.length) {
-            this.$set(this.$data, 'preSelectedIds', parents.map(parent => parent.id));
-            this.$set(this.$data, 'selectedCategories', this.preSelectedIds);
-          }
+          this.$set(this.$data, 'preSelectedIds', parents.length ? parents.map(parent => parent.id) : []);
+          this.$set(this.$data, 'selectedCategories', this.preSelectedIds);
         } else {
           this.$set(this.$data, 'name', '');
           this.$set(this.$data, 'selectedCategories', []);
@@ -135,11 +134,11 @@
         this.requestLoading = false;
 
         if (response.statusCode) {
-          console.error(`Category ${this.question ? 'editing' : 'creation'} failed.`, response);
+          console.error(`Question ${this.question ? 'editing' : 'creation'} failed.`, response);
           return this.$store.commit('alert/set', { message: response.error || `Request failed. Status code ${response.statusCode}.`, type: 'error' });
         }
 
-        this.$store.commit('alert/set', { message: `Question category successfully ${this.question ? 'updated' : 'created'}!`, type: 'success' });
+        this.$store.commit('alert/set', { message: `Question successfully ${this.question ? 'updated' : 'created'}!`, type: 'success' });
         this.$set(this.$data, 'name', '');
         this.$set(this.$data, 'preSelectedIds', []);
         this.$set(this.$data, 'selectedCategories', []);
