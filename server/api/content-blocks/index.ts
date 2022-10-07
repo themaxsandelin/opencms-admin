@@ -88,6 +88,29 @@ router.get('/:blockId', async (req: Request, res: Response) => {
   }
 });
 
+router.patch('/:blockId', async (req: Request, res: Response) => {
+  try {
+    const { blockId } = req.params;
+    const request = await fetch(`${process.env.ADMIN_API_URL}/content-blocks/${blockId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(req.body)
+    });
+    const response = await request.json();
+    if (request.status !== 200) {
+      console.error('Request error', response);
+      return res.status(request.status).json(response);
+    }
+
+    res.json(response);
+  } catch (error) {
+    console.error('Endpoint error', error);
+    res.status(500).json({ error: (error as any).message });
+  }
+});
+
 router.use('/:blockId/variants', VariantsRouter);
 
 export default router;

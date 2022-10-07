@@ -1,10 +1,17 @@
 <template>
   <div>
     <h1>Questions</h1>
-    <v-btn color="primary" dark @click="showQuestionForm">
+    <v-btn color="primary" dark @click="createNew">
       Create new
     </v-btn>
-    <question-form :visible="questionFormVisible" @hide="hideQuestionForm" @created="questionCreated" />
+
+    <question-form
+      :question="editingQuestion"
+      :visible="questionFormVisible"
+      @hide="hideQuestionForm"
+      @created="questionCreated"
+    />
+
     <v-data-table
       :loading="$fetchState.pending"
       loading-text="Loading questions... Please wait"
@@ -17,6 +24,11 @@
       </template>
       <template v-slot:item.createdAt="{ item }">
         <span>{{ new Date(item.createdAt).toLocaleString() }}</span>
+      </template>
+      <template v-slot:item.actions="{ item }">
+        <v-btn @click="editQuestion($event, item)">
+          Edit
+        </v-btn>
       </template>
     </v-data-table>
   </div>
@@ -48,8 +60,14 @@
           {
             text: 'Created',
             value: 'createdAt'
+          },
+          {
+            text: '',
+            value: 'actions',
+            sortable: false
           }
-        ]
+        ],
+        editingQuestion: null
       };
     },
     async fetch() {
@@ -61,6 +79,10 @@
       this.questions = questions;
     },
     methods: {
+      createNew() {
+        this.$set(this.$data, 'editingQuestion', null);
+        this.showQuestionForm();
+      },
       showQuestionForm() {
         this.questionFormVisible = true;
       },
@@ -72,6 +94,11 @@
       },
       questionRowClick(question) {
         this.$router.push(`${this.$route.path}/${question.id}`);
+      },
+      editQuestion(event, question) {
+        event.stopPropagation();
+        this.$set(this.$data, 'editingQuestion', question);
+        this.showQuestionForm();
       }
     }
   };

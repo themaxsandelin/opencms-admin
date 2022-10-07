@@ -14,9 +14,16 @@
 
 <script>
   export default {
-    name: 'SelectPage',
+    name: 'SelectQuestionCategory',
+    props: {
+      selectedIds: {
+        type: Array,
+        default: () => ([])
+      }
+    },
     data() {
       return {
+        fetching: false,
         searchTerm: '',
         searchTimeout: null,
         categories: [],
@@ -31,14 +38,15 @@
       };
     },
     async fetch() {
-      this.fetching = true;
+      this.$set(this.$data, 'fetching', true);
       const categories = await this.$api(`/content-blocks/?search=${this.searchTerm}&type=question-category`);
-      this.fetching = false;
+      this.$set(this.$data, 'fetching', false);
       if (categories.statusCode) {
         return console.error('Failed to find question categories', categories);
       }
 
-      this.categories = categories;
+      this.$set(this.$data, 'categories', categories);
+      this.setSelectedCategories();
     },
     fetchKey() {
       return `question-categories-${this.searchTerm}`;
@@ -46,6 +54,9 @@
     watch: {
       selected() {
         this.$emit('update', this.selected);
+      },
+      selectedIds() {
+        this.setSelectedCategories();
       }
     },
     methods: {
@@ -66,6 +77,9 @@
           clearTimeout(this.searchTimeout);
         }
         this.searchTimeout = setTimeout(this.searchTimeoutCallback, 500);
+      },
+      setSelectedCategories() {
+        this.$set(this.$data, 'selected', this.selectedIds.length ? this.categories.filter(category => this.selectedIds.includes(category.id)) : []);
       }
     }
   };
