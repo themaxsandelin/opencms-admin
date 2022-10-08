@@ -79,20 +79,20 @@
     },
     methods: {
       async updateQuestion() {
-        const question = await this.$api(`/content-blocks/${this.$route.params.questionId}?type=question`);
-        if (question.statusCode) {
-          console.error('Failed to fetch question', question);
+        const { data, error } = await this.$api(`/content-blocks/${this.$route.params.questionId}?type=question`);
+        if (error) {
+          console.error('Failed to fetch question', error);
           return this.$store.commit('alert/set', { type: 'error', message: 'Failed to load question.' });
         }
-        this.$set(this.$data, 'question', question);
+        this.$set(this.$data, 'question', data);
       },
       async updateVariant() {
-        const variant = await this.$api(`/content-blocks/${this.$route.params.questionId}/variants/${this.selectedVariant}`);
-        if (variant.statusCode) {
-          console.error('Failed to fetch question variant', variant);
+        const { data, error } = await this.$api(`/content-blocks/${this.$route.params.questionId}/variants/${this.selectedVariant}`);
+        if (error) {
+          console.error('Failed to fetch question variant', error);
           return this.$store.commit('alert/set', { type: 'error', message: 'Failed to load variant.' });
         }
-        this.$set(this.$data, 'variant', variant);
+        this.$set(this.$data, 'variant', data);
       },
       showVariantForm() {
         this.variantFormVisible = true;

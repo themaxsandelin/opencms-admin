@@ -89,20 +89,20 @@
     },
     methods: {
       async updateCategory() {
-        const category = await this.$api(`/content-blocks/${this.$route.params.categoryId}?type=question-category`);
-        if (category.statusCode) {
-          console.error('Failed to fetch category', category);
+        const { data, error } = await this.$api(`/content-blocks/${this.$route.params.categoryId}?type=question-category`);
+        if (error) {
+          console.error('Failed to fetch category', error);
           return this.$store.commit('alert/set', { type: 'error', message: 'Failed to load category.' });
         }
-        this.$set(this.$data, 'category', category);
+        this.$set(this.$data, 'category', data);
       },
       async updateVariant() {
-        const variant = await this.$api(`/content-blocks/${this.$route.params.categoryId}/variants/${this.selectedVariant}`);
-        if (variant.statusCode) {
-          console.error('Failed to fetch question variant', variant);
+        const { data, error } = await this.$api(`/content-blocks/${this.$route.params.categoryId}/variants/${this.selectedVariant}`);
+        if (error) {
+          console.error('Failed to fetch question variant', error);
           return this.$store.commit('alert/set', { type: 'error', message: 'Failed to load variant.' });
         }
-        this.$set(this.$data, 'variant', variant);
+        this.$set(this.$data, 'variant', data);
       },
       variantSelectionChange(variantId) {
         this.$router.push({ query: { variant: variantId } });

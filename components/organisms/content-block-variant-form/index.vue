@@ -110,19 +110,19 @@
           sites: this.selectedSites.map(site => site.id)
         };
 
-        this.requestLoading = true;
-        const response = await this.$api(`/content-blocks/${this.blockId}/variants`, {
+        this.$set(this.$data, 'requestLoading', true);
+        const { error } = await this.$api(`/content-blocks/${this.blockId}/variants`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(body)
         });
-        this.requestLoading = false;
+        this.$set(this.$data, 'requestLoading', false);
 
-        if (response.statusCode) {
-          console.error('Variant creation failed.', response);
-          return this.$store.commit('alert/set', { message: response.error || `Request failed. Status code ${response.statusCode}.`, type: 'error' });
+        if (error) {
+          console.error('Variant creation failed.', error);
+          return this.$store.commit('alert/set', { message: 'Failed to create content block variant.', type: 'error' });
         }
 
         this.$store.commit('alert/set', { message: 'Content block variant successfully created!', type: 'success' });

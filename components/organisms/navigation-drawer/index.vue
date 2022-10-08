@@ -52,7 +52,12 @@
       };
     },
     async fetch() {
-      this.sites = await this.$api('/sites');
+      const { data, error } = await this.$api('/sites');
+      if (error) {
+        console.error(error);
+        return this.$store.commit('alert/set', { message: 'Failed to load sites.', type: 'error' });
+      }
+      this.$set(this.$data, 'sites', data);
     },
     methods: {
       clickSite(site) {

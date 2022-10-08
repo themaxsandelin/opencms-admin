@@ -71,12 +71,13 @@
       };
     },
     async fetch() {
-      const questions = await this.$api('/content-blocks?type=question');
-      if (questions.statusCode) {
-        return console.error(questions);
+      const { data, error } = await this.$api('/content-blocks?type=question');
+      if (error) {
+        console.error(error);
+        return this.$store.commit('alert/set', { type: 'error', message: 'Failed to fetch content blocks by type question.' });
       }
 
-      this.questions = questions;
+      this.$set(this.$data, 'questions', data);
     },
     methods: {
       createNew() {

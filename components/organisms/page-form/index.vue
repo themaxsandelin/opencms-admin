@@ -123,7 +123,7 @@ export default {
         if (this.parentPage) {
           body.parentId = this.parentPage.id;
         }
-        const response = await this.$api(`/sites/${this.$route.params.siteKey}/pages`, {
+        const { error } = await this.$api(`/sites/${this.$route.params.siteKey}/pages`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -131,9 +131,9 @@ export default {
           body: JSON.stringify(body)
         });
 
-        if (response.statusCode) {
-          console.error(response);
-          return this.$store.commit('alert/set', { message: response.error || `Request failed. Status code ${response.statusCode}.`, type: 'error' });
+        if (error) {
+          console.error(error);
+          return this.$store.commit('alert/set', { message: 'Failed to create the page.', type: 'error' });
         }
 
         this.$store.commit('alert/set', { message: 'Page successfully created!', type: 'success' });

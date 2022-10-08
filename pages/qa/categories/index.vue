@@ -70,11 +70,12 @@
       };
     },
     async fetch() {
-      const categories = await this.$api('/content-blocks?type=question-category');
-      if (categories.statusCode) {
-        return console.error(categories);
+      const { data, error } = await this.$api('/content-blocks?type=question-category');
+      if (error) {
+        console.error(error);
+        return this.$store.commit('alert/set', { type: 'error', message: 'Failed to load content blocks by type question-category.' });
       }
-      this.$set(this.$data, 'categories', categories);
+      this.$set(this.$data, 'categories', data);
     },
     methods: {
       showCategoryForm() {

@@ -122,33 +122,33 @@
         this.$set(this.$data, 'publishToEnvironments', data);
       },
       async updateLocales() {
-        const locales = await this.$api('/locales');
-        if (locales.statusCode) {
-          console.error('Failed to load locales', locales);
+        const { data, error } = await this.$api('/locales');
+        if (error) {
+          console.error('Failed to load locales', error);
           return this.$store.commit('alert/set', { type: 'error', message: 'Failed to load locales.' });
         }
-        this.$set(this.$data, 'locales', locales);
+        this.$set(this.$data, 'locales', data);
         if (this.$route.query.locale) {
           this.$set(this.$data, 'selectedLocale', this.$route.query.locale);
         }
       },
       async updatePublishingEnvironments() {
-        const publishingEnvironments = await this.$api('/publishing-environments');
-        if (publishingEnvironments.statusCode) {
-          console.error('Failed to load publishing environments', publishingEnvironments);
+        const { data, error } = await this.$api('/publishing-environments');
+        if (error) {
+          console.error('Failed to load publishing environments', error);
           return this.$store.commit('alert/set', { type: 'error', message: 'Failed to load publishing environments.' });
         }
-        this.$set(this.$data, 'publishingEnvironments', publishingEnvironments);
+        this.$set(this.$data, 'publishingEnvironments', data);
       },
       async updateVersions() {
-        this.fetchingVersions = true;
-        const versions = await this.$api(`/content-blocks/${this.block.id}/variants/${this.variant.id}/versions?locale=${this.selectedLocale}`);
-        this.fetchingVersions = false;
-        if (versions.statusCode) {
-          console.error('Failed to load versions', versions);
+        this.$set(this.$data, 'fetchingVersions', true);
+        const { data, error } = await this.$api(`/content-blocks/${this.block.id}/variants/${this.variant.id}/versions?locale=${this.selectedLocale}`);
+        this.$set(this.$data, 'fetchingVersions', false);
+        if (error) {
+          console.error('Failed to load versions', error);
           return this.$store.commit('alert/set', { type: 'error', message: 'Failed to load versions.' });
         }
-        this.$set(this.$data, 'versions', versions);
+        this.$set(this.$data, 'versions', data);
         this.selectLatestVersion();
       },
       async publish() {
@@ -156,7 +156,7 @@
           return;
         }
 
-        const response = await this.$api(`/content-blocks/${this.block.id}/variants/${this.variant.id}/versions/${this.selectedVersion.id}/publish`, {
+        const { error } = await this.$api(`/content-blocks/${this.block.id}/variants/${this.variant.id}/versions/${this.selectedVersion.id}/publish`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -165,8 +165,8 @@
             environments: this.publishToEnvironments
           })
         });
-        if (response.statusCode) {
-          console.error(response);
+        if (error) {
+          console.error('Publishing error', error);
           return this.$store.commit('alert/set', { type: 'error', message: 'Failed to publish content block variant version.' });
         }
 
@@ -184,7 +184,7 @@
           uri += `/${this.selectedVersion.id}`;
         }
 
-        const response = await this.$api(uri, {
+        const { error } = await this.$api(uri, {
           method,
           headers: {
             'Content-Type': 'application/json'
@@ -194,8 +194,8 @@
             locale
           })
         });
-        if (response.statusCode) {
-          console.error(response);
+        if (error) {
+          console.error('Content block save/update error', error);
           return this.$store.commit('alert/set', { type: 'error', message: 'Failed to update content block variant version.' });
         }
 

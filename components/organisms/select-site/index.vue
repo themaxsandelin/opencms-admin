@@ -38,15 +38,15 @@
       }
     },
     async fetch() {
-      this.fetching = true;
-      const sites = await this.$api('/sites');
-      this.fetching = false;
-      if (sites.statusCode) {
-        console.error(sites);
-        return this.$store.commit('alert/set', { message: sites.error || `Request failed. Status code ${sites.statusCode}.`, type: 'error' });
+      this.$set(this.$data, 'fetching', true);
+      const { data, error } = await this.$api('/sites');
+      this.$set(this.$data, 'fetching', false);
+      if (error) {
+        console.error(error);
+        return this.$store.commit('alert/set', { message: 'Failed to load sites.', type: 'error' });
       }
 
-      this.sites = sites;
+      this.$set(this.$data, 'sites', data);
     },
     methods: {
       siteSelected(data) {

@@ -123,19 +123,19 @@
           body.type = 'question';
         }
 
-        this.requestLoading = true;
-        const response = await this.$api(uri, {
+        this.$set(this.$data, 'requestLoading', true);
+        const { error } = await this.$api(uri, {
           method,
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(body)
         });
-        this.requestLoading = false;
+        this.$set(this.$data, 'requestLoading', false);
 
-        if (response.statusCode) {
-          console.error(`Question ${this.question ? 'editing' : 'creation'} failed.`, response);
-          return this.$store.commit('alert/set', { message: response.error || `Request failed. Status code ${response.statusCode}.`, type: 'error' });
+        if (error) {
+          console.error(`Question ${this.question ? 'editing' : 'creation'} failed.`, error);
+          return this.$store.commit('alert/set', { message: `Failed to ${this.question ? 'update' : 'create'} question.`, type: 'error' });
         }
 
         this.$store.commit('alert/set', { message: `Question successfully ${this.question ? 'updated' : 'created'}!`, type: 'success' });

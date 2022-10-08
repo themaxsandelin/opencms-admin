@@ -24,12 +24,7 @@ router.get('/', async (req: Request, res: Response) => {
 
     const request = await fetch(uri);
     const response = await request.json();
-    if (request.status !== 200) {
-      console.error('Request error', response);
-      return res.status(request.status).json(response);
-    }
-
-    res.json(response);
+    res.status(request.status).json(response);
   } catch (error) {
     console.error('Endpoint error', error);
     res.status(500).json({ error: (error as any).message });
@@ -46,12 +41,7 @@ router.post('/', async (req: Request, res: Response) => {
       body: JSON.stringify(req.body)
     });
     const response = await request.json();
-    if (request.status !== 200) {
-      console.error('Request error', response);
-      return res.status(request.status).json(response);
-    }
-
-    res.json(response);
+    res.status(request.status).json(response);
   } catch (error) {
     console.error('Endpoint error', error);
     res.status(500).json({ error: (error as any).message });
@@ -64,23 +54,22 @@ router.get('/:blockId', async (req: Request, res: Response) => {
     const { type } = req.query;
 
     const blockRequest = await fetch(`${process.env.ADMIN_API_URL}/content-blocks/${blockId}${type ? `?type=${type}` : ''}`);
-    if (blockRequest.status !== 200) {
-      console.error('Request error', blockRequest.status, blockRequest.statusText, blockRequest.url);
-      return res.status(blockRequest.status).json({ error: blockRequest.statusText });
-    }
-
     const contentBlock: any = await blockRequest.json();
+    if (contentBlock.error) {
+      return res.status(blockRequest.status).json(contentBlock);
+    }
 
     const variantsRequest = await fetch(`${process.env.ADMIN_API_URL}/content-blocks/${blockId}/variants`);
-    if (variantsRequest.status !== 200) {
-      console.error('Request error', variantsRequest.status, variantsRequest.statusText, variantsRequest.url);
-      return res.status(variantsRequest.status).json({ error: variantsRequest.statusText });
+    const variants: any = await variantsRequest.json();
+    if (variants.error) {
+      return res.status(variantsRequest.status).json(variants);
     }
 
-    const variants = await variantsRequest.json();
     res.json({
-      ...contentBlock,
-      variants
+      data: {
+        ...contentBlock.data,
+        variants: variants.data
+      }
     });
   } catch (error) {
     console.error('Endpoint error', error);
@@ -99,12 +88,8 @@ router.patch('/:blockId', async (req: Request, res: Response) => {
       body: JSON.stringify(req.body)
     });
     const response = await request.json();
-    if (request.status !== 200) {
-      console.error('Request error', response);
-      return res.status(request.status).json(response);
-    }
 
-    res.json(response);
+    res.status(request.status).json(response);
   } catch (error) {
     console.error('Endpoint error', error);
     res.status(500).json({ error: (error as any).message });

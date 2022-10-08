@@ -17,13 +17,9 @@ router.get('/', async (req: Request, res: Response) => {
     }
 
     const request = await fetch(uri);
-    const response = await request.json();
-    if (request.status !== 200) {
-      console.error('Request error', response);
-      return res.status(request.status).json(response);
-    }
+    const body = await request.json();
 
-    res.json(response);
+    res.status(request.status).json(body);
   } catch (error) {
     console.error('Endpoint error', error);
     res.status(500).json({ error: (error as any).message });
@@ -40,13 +36,9 @@ router.post('/', async (req: Request, res: Response) => {
       },
       body: JSON.stringify(req.body)
     });
-    const response = await request.json();
-    if (request.status !== 200) {
-      console.error('Request error', response);
-      return res.status(request.status).json(response);
-    }
+    const body = await request.json();
 
-    res.json(response);
+    res.status(request.status).json(body);
   } catch (error) {
     console.error('Endpoint error', error);
     res.status(500).json({ error: (error as any).message });
@@ -63,13 +55,9 @@ router.patch('/:versionId', async (req: Request, res: Response) => {
       },
       body: JSON.stringify(req.body)
     });
-    const response = await request.json();
-    if (request.status !== 200) {
-      console.error('Request error', response);
-      return res.status(request.status).json(response);
-    }
+    const body = await request.json();
 
-    res.json(response);
+    res.status(request.status).json(body);
   } catch (error) {
     console.error('Endpoint error', error);
     res.status(500).json({ error: (error as any).message });
@@ -123,7 +111,7 @@ router.post('/:versionId/publish', async (req: Request, res: Response) => {
       };
     }));
 
-    res.json(publications);
+    res.json({ data: publications });
   } catch (error) {
     console.error('Endpoint error', error);
     res.status(500).json({ error: (error as any).message });

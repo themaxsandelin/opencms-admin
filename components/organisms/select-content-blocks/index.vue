@@ -46,13 +46,14 @@
     },
     async fetch() {
       this.$set(this.$data, 'fetching', true);
-      const response = await this.$api(`/content-blocks/?search=${this.searchTerm}&type=${this.type}`);
+      const { data, error } = await this.$api(`/content-blocks/?search=${this.searchTerm}&type=${this.type}`);
       this.$set(this.$data, 'fetching', false);
-      if (response.statusCode) {
-        return console.error(`Failed to find content block by type ${this.type}`, response);
+      if (error) {
+        console.error(`Failed to find content block by type ${this.type}`, error);
+        return this.$store.commit('alert/set', { type: 'error', message: `Failed to fetch content blocks by type ${this.type}.` });
       }
 
-      this.$set(this.$data, 'items', response);
+      this.$set(this.$data, 'items', data);
       this.setSelectedItems();
     },
     watch: {

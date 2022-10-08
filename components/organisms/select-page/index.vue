@@ -46,15 +46,15 @@ export default {
     };
   },
   async fetch() {
-    this.fetching = true;
-    const pages = await this.$api(`/sites/${this.$route.params.siteKey}/pages?search=${this.searchTerm}`);
-    this.fetching = false;
-    if (pages.statusCode) {
-      console.error(pages);
-      return this.$store.commit('alert/set', { message: pages.error || `Request failed. Status code ${pages.statusCode}.`, type: 'error' });
+    this.$set(this.$data, 'fetching', true);
+    const { data, error } = await this.$api(`/sites/${this.$route.params.siteKey}/pages?search=${this.searchTerm}`);
+    this.$set(this.$data, 'fetching', false);
+    if (error) {
+      console.error(error);
+      return this.$store.commit('alert/set', { message: 'Failed to load pages.', type: 'error' });
     }
 
-    this.pages = pages;
+    this.$set(this.$data, 'pages', data);
   },
   fetchKey() {
     return `pages-${this.searchTerm}`;

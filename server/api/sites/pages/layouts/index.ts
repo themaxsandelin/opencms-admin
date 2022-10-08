@@ -6,17 +6,19 @@ const router = Router({ mergeParams: true });
 
 router.post('/', async (req: Request, res: Response) => {
   try {
-    const { name, site, page } = req.body;
-    const pageRequest = await fetch(`${process.env.ADMIN_API_URL}/sites/${site.id}/pages/${page.id}/layouts`, {
+    const { name, site } = req.body;
+    const { pageId } = req.params;
+
+    const request = await fetch(`${process.env.ADMIN_API_URL}/sites/${site.id}/pages/${pageId}/layouts`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ name })
     });
-    const response: any = await pageRequest.json();
+    const body = await request.json();
 
-    res.status(pageRequest.status).json(response);
+    res.status(request.status).json(body);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Server error' });

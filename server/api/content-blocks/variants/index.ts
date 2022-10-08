@@ -17,13 +17,8 @@ router.post('/', async (req: Request, res: Response) => {
       },
       body: JSON.stringify(req.body)
     });
-    if (request.status !== 200) {
-      console.error('Request error', request.status, request.statusText);
-      return res.status(request.status).json({ error: request.statusText });
-    }
-
-    const response = await request.json();
-    res.json(response);
+    const body = await request.json();
+    res.status(request.status).json(body);
   } catch (error) {
     console.error('Endpoint error', error);
     res.status(500).json({ error: (error as any).message });
@@ -33,14 +28,9 @@ router.post('/', async (req: Request, res: Response) => {
 router.get('/:variantId', async (req: Request, res: Response) => {
   try {
     const { variantId, blockId } = req.params;
-
     const request = await fetch(`${process.env.ADMIN_API_URL}/content-blocks/${blockId}/variants/${variantId}`);
-    if (request.status !== 200) {
-      console.error('Request error', request.status, request.statusText, request.url);
-      return res.status(request.status).json({ error: request.statusText });
-    }
-    const contentBlockVariant = await request.json();
-    res.json(contentBlockVariant);
+    const body = await request.json();
+    res.status(request.status).json(body);
   } catch (error) {
     console.error('Endpoint error', error);
     res.status(500).json({ error: (error as any).message });

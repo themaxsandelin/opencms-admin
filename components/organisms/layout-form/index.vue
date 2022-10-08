@@ -56,19 +56,19 @@
           name: this.name
         };
 
-        this.requestLoading = true;
-        const response = await this.$api(`/sites/${this.$route.params.siteKey}/pages/${this.$route.params.pageId}/layouts`, {
+        this.$set(this.$data, 'requestLoading', true);
+        const { error } = await this.$api(`/sites/${this.$route.params.siteKey}/pages/${this.$route.params.pageId}/layouts`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(body)
         });
-        this.requestLoading = false;
+        this.$set(this.$data, 'requestLoading', false);
 
-        if (response.statusCode) {
-          console.error(response);
-          return this.$store.commit('alert/set', { message: response.error || `Request failed. Status code ${response.statusCode}.`, type: 'error' });
+        if (error) {
+          console.error(error);
+          return this.$store.commit('alert/set', { message: 'Failed to create the page layout.', type: 'error' });
         }
 
         this.$store.commit('alert/set', { message: 'Page layout successfully created!', type: 'success' });
