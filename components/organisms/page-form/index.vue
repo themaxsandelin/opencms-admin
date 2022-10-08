@@ -82,7 +82,7 @@ export default {
       validation: {
         required: value => !!value || 'This field is required.',
         slug: value => {
-          const pattern = /^\/([a-z0-9]?)+(?:-[a-z0-9]+)*$/;
+          const pattern = /^\/((\*?)|([a-z0-9]*)|(([a-z0-9]?)+(?:-[a-z0-9]+))*){1}$/gm;
           return pattern.test(value) || 'Invalid slug.';
         }
       }
