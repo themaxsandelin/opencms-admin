@@ -28,6 +28,7 @@ export default {
       searchTerm: '',
       searchTimeout: null,
       pages: [],
+      fetching: false,
       headers: [
         {
           text: 'Title',
