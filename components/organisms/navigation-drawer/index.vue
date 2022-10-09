@@ -5,7 +5,7 @@
       <v-list-group
         v-for="(site, i) in sites"
         :key="i"
-        :value="$route.path.includes(`/s/${site.key}`)"
+        :value="$route.path.includes(`/sites/${site.id}`)"
       >
         <template v-slot:activator>
           <v-list-item-title>{{ site.name }}</v-list-item-title>
@@ -13,7 +13,7 @@
 
         <v-list-item
           :link="true"
-          :to="`/s/${site.key}/pages`"
+          :to="`/sites/${site.id}/pages`"
         >
           <v-list-item-icon>
             <v-icon size="20" v-text="`mdi-file-document-multiple`"></v-icon>

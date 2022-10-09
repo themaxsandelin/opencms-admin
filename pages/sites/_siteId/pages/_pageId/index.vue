@@ -33,7 +33,7 @@ export default {
   },
   async fetch() {
     this.$set(this.$data, 'loadingPage', true);
-    const { data, error } = await this.$api(`/sites/${this.$route.params.siteKey}/pages/${this.$route.params.pageId}`);
+    const { data, error } = await this.$api(`/sites/${this.$route.params.siteId}/pages/${this.$route.params.pageId}`);
     this.$set(this.$data, 'loadingPage', false);
     if (error) {
       console.error(error);

@@ -6,10 +6,10 @@ const router = Router({ mergeParams: true });
 
 router.post('/', async (req: Request, res: Response) => {
   try {
-    const { name, site } = req.body;
-    const { pageId } = req.params;
+    const { name } = req.body;
+    const { pageId, siteId } = req.params;
 
-    const request = await fetch(`${process.env.ADMIN_API_URL}/sites/${site.id}/pages/${pageId}/layouts`, {
+    const request = await fetch(`${process.env.ADMIN_API_URL}/sites/${siteId}/pages/${pageId}/layouts`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

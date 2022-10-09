@@ -65,7 +65,7 @@ export default {
     };
   },
   async fetch() {
-    const { data, error } = await this.$api(`/sites/${this.$route.params.siteKey}/pages`);
+    const { data, error } = await this.$api(`/sites/${this.$route.params.siteId}/pages`);
     if (error) {
       console.error(error);
       return this.$store.commit('alert/set', { message: 'Failed to load pages.', type: 'error' });

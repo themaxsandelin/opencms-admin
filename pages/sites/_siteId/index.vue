@@ -17,11 +17,11 @@ export default {
   name: 'SitePage',
   data() {
     return {
-      site: {}
+      site: null
     };
   },
   async fetch() {
-    const { data, error } = await this.$api(`/sites/${this.$route.params.siteKey}`);
+    const { data, error } = await this.$api(`/sites/${this.$route.params.siteId}`);
     if (error) {
       console.error(error);
       return this.$store.commit('alert/set', { message: 'Failed to load the site.', type: 'error' });

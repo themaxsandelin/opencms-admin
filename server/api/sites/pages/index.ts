@@ -10,8 +10,8 @@ const router = Router({ mergeParams: true });
 router.get('/', async (req: Request, res: Response) => {
   try {
     const { search } = req.query;
-    const { site } = req.body;
-    let uri = `${process.env.ADMIN_API_URL}/sites/${site.id}/pages`;
+    const { siteId } = req.params;
+    let uri = `${process.env.ADMIN_API_URL}/sites/${siteId}/pages`;
     if (search) {
       uri += `?search=${search}`;
     }
@@ -27,8 +27,9 @@ router.get('/', async (req: Request, res: Response) => {
 
 router.post('/', async (req: Request, res: Response) => {
   try {
-    const { title, slug, parentId, site } = req.body;
-    const request = await fetch(`${process.env.ADMIN_API_URL}/sites/${site.id}/pages`, {
+    const { title, slug, parentId } = req.body;
+    const { siteId } = req.params;
+    const request = await fetch(`${process.env.ADMIN_API_URL}/sites/${siteId}/pages`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -46,15 +47,14 @@ router.post('/', async (req: Request, res: Response) => {
 
 router.get('/:pageId', async (req: Request, res: Response) => {
   try {
-    const { site } = req.body;
-    const { pageId } = req.params;
-    const pageRequest = await fetch(`${process.env.ADMIN_API_URL}/sites/${site.id}/pages/${pageId}`);
+    const { pageId, siteId } = req.params;
+    const pageRequest = await fetch(`${process.env.ADMIN_API_URL}/sites/${siteId}/pages/${pageId}`);
     const pageBody = await pageRequest.json();
     if ((pageBody as any).error) {
       return res.status(pageRequest.status).json(pageBody);
     }
 
-    const layoutsRequest = await fetch(`${process.env.ADMIN_API_URL}/sites/${site.id}/pages/${pageId}/layouts`);
+    const layoutsRequest = await fetch(`${process.env.ADMIN_API_URL}/sites/${siteId}/pages/${pageId}/layouts`);
     const layoutsBody = await layoutsRequest.json();
     if ((layoutsBody as any).error) {
       return res.status(layoutsRequest.status).json(layoutsBody);
