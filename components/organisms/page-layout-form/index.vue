@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :value="visible" max-width="720px">
+  <v-dialog :value="visible" max-width="720px" @click:outside="hideForm">
     <v-card>
       <v-card-title>
         <span class="text-h5">Create new page layout</span>
@@ -27,7 +27,7 @@
 
 <script>
   export default {
-    name: 'LayoutForm',
+    name: 'PageLayoutForm',
     props: {
       visible: {
         type: Boolean,
