@@ -80,7 +80,7 @@
     },
     methods: {
       instanceRowClick(instance) {
-        console.log(instance);
+        this.$router.push(`${this.$route.path}/${instance.id}`);
       },
       showInstanceForm() {
         this.instanceFormVisible = true;

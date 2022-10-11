@@ -4,7 +4,7 @@
       v-for="(item, i) in tabs"
       :key="i"
       :link="true"
-      :exact="true"
+      :exact="item.exact || false"
       :to="item.url"
     >
       {{ item.text }}
@@ -20,7 +20,8 @@
         return [
           {
             text: 'Overview',
-            url: this.pageUrl
+            url: this.pageUrl,
+            exact: true
           },
           {
             text: 'Instances',

@@ -4,6 +4,20 @@ import fetch from 'node-fetch';
 
 const router = Router({ mergeParams: true });
 
+router.get('/', async (req: Request, res: Response) => {
+  try {
+    const { pageId, siteId } = req.params;
+
+    const request = await fetch(`${process.env.ADMIN_API_URL}/sites/${siteId}/pages/${pageId}/layouts`);
+    const body = await request.json();
+
+    res.status(request.status).json(body);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 router.post('/', async (req: Request, res: Response) => {
   try {
     const { name } = req.body;

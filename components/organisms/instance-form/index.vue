@@ -13,7 +13,6 @@
                 label="Choose an instance language..."
                 outlined
                 required
-                :rules="[validation.required]"
                 :items="localeList"
                 :value="selectedLocale"
                 @change="localeChange"
@@ -22,11 +21,11 @@
           </v-row>
           <v-row>
             <v-col cols="12" sm="6" md="6">
-              <v-text-field v-model="title" label="Title *" required :rules="[validation.required]"></v-text-field>
+              <v-text-field v-model="title" label="Title *" required></v-text-field>
             </v-col>
 
             <v-col cols="12" sm="6" md="6">
-              <v-text-field v-model="slug" label="Slug *" required :rules="[validation.required]"></v-text-field>
+              <v-text-field v-model="slug" label="Slug *" required></v-text-field>
             </v-col>
           </v-row>
           <v-row>
@@ -63,9 +62,6 @@
         description: '',
         selectedLocale: '',
         creationLoading: false,
-        validation: {
-          required: value => !!value || 'This field is required.',
-        },
         locales: []
       };
     },
