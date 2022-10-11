@@ -8,7 +8,7 @@
     <v-divider />
 
     <h2>Layouts</h2>
-    <v-layout>
+    <v-layout column>
       <v-row v-for="(environment, i) in publishingEnvironments" :key="i">
         <v-col cols="12" lg="3" md="3" sm="3">
           <h4>{{ environment.name }}</h4>
