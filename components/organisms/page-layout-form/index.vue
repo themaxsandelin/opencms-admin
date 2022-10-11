@@ -52,12 +52,13 @@
           return this.$store.commit('alert/set', { type: 'error', message: 'You have to give the layout a name.' });
         }
 
+        const { siteId, pageId } = this.$route.params;
         const body = {
           name: this.name
         };
 
         this.$set(this.$data, 'requestLoading', true);
-        const { error } = await this.$api(`/sites/${this.$route.params.siteKey}/pages/${this.$route.params.pageId}/layouts`, {
+        const { error } = await this.$api(`/sites/${siteId}/pages/${pageId}/layouts`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -68,7 +69,7 @@
 
         if (error) {
           console.error(error);
-          return this.$store.commit('alert/set', { message: 'Failed to create the page layout.', type: 'error' });
+          return this.$store.commit('alert/set', { message: error, type: 'error' });
         }
 
         this.$store.commit('alert/set', { message: 'Page layout successfully created!', type: 'success' });
