@@ -2,6 +2,8 @@
   <v-navigation-drawer permanent fixed app :clipped="true">
     <v-list>
       <v-subheader>Sites</v-subheader>
+      <v-list-item :link="true" to="/sites" :exact="true">All sites</v-list-item>
+
       <v-list-group
         v-for="(site, i) in sites"
         :key="i"

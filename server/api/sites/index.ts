@@ -18,6 +18,23 @@ router.get('/', async (_req: Request, res: Response) => {
   }
 });
 
+router.post('/', async (req: Request, res: Response) => {
+  try {
+    const request = await fetch(`${process.env.ADMIN_API_URL}/sites`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(req.body)
+    });
+    const body = await request.json();
+    res.status(request.status).json(body);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 router.get('/:siteId', async (req: Request, res: Response) => {
   try {
     const { siteId } = req.params;

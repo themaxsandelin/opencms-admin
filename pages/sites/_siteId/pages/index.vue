@@ -1,14 +1,9 @@
 <template>
   <div>
     <h1>Pages</h1>
-    <v-btn color="primary" dark @click="showPageForm">
-      Create new
-    </v-btn>
-    <page-form
-      :visible="pageFormVisible"
-      @hide="hidePageForm"
-      @created="pageCreatedCallback"
-    />
+    <v-btn color="primary" dark @click="showPageForm">Create new</v-btn>
+    <page-form :visible="pageFormVisible" @hide="hidePageForm" @created="pageCreatedCallback" />
+
     <v-data-table
       :loading="$fetchState.pending"
       loading-text="Loading pages... Please wait"
@@ -40,18 +35,18 @@ export default {
       pages: [],
       tableHeaders: [
         {
-          text: 'Title',
+          text: 'Name',
           align: 'start',
-          value: 'title'
+          value: 'name'
         },
-        {
-          text: 'Slug',
-          value: 'slug'
-        },
-        {
-          text: 'Path',
-          value: 'path'
-        },
+        // {
+        //   text: 'Slug',
+        //   value: 'slug'
+        // },
+        // {
+        //   text: 'Path',
+        //   value: 'path'
+        // },
         {
           text: 'Updated',
           value: 'updatedAt'

@@ -9,11 +9,11 @@
         <v-container>
           <v-row>
             <v-col cols="12" sm="6" md="6">
-              <v-text-field v-model="title" label="Title *" required :rules="[validation.required]"></v-text-field>
+              <v-text-field v-model="name" label="Name *" required :rules="[validation.required]"></v-text-field>
             </v-col>
 
             <v-col cols="12" sm="6" md="6">
-              <v-text-field v-model="slug" label="Slug *" hint="/example-slug" required :rules="[validation.required, validation.slug]"></v-text-field>
+              <v-checkbox v-model="isFrontPage" label="Set as the site front page"></v-checkbox>
             </v-col>
 
             <v-col cols="12">
@@ -34,11 +34,7 @@
                   </v-expansion-panel-header>
 
                   <v-expansion-panel-content>
-                    <select-page
-                      :selected="selectedPages"
-                      @selection="parentPageSelected"
-                      @deselection="parentPageUnSelected"
-                    />
+                    <select-page :selected="selectedPages" @selection="parentPageSelected" @deselection="parentPageUnSelected"/>
                   </v-expansion-panel-content>
                 </v-expansion-panel>
               </v-expansion-panels>
@@ -74,17 +70,17 @@ export default {
   },
   data() {
     return {
-      title: '',
-      slug: '',
+      name: '',
+      isFrontPage: false,
       selectedPages: [],
       showingSelectPageDialog: false,
       creationLoading: false,
       validation: {
         required: value => !!value || 'This field is required.',
-        slug: value => {
-          const pattern = /^\/((\*?)|([a-z0-9]*)|(([a-z0-9]?)+(?:-[a-z0-9]+))*){1}$/gm;
-          return pattern.test(value) || 'Invalid slug.';
-        }
+        // slug: value => {
+        //   const pattern = /^\/((\*?)|([a-z0-9]*)|(([a-z0-9]?)+(?:-[a-z0-9]+))*){1}$/gm;
+        //   return pattern.test(value) || 'Invalid slug.';
+        // }
       }
     };
   },
@@ -110,20 +106,20 @@ export default {
       this.selectedPages = [];
     },
     async attemptCreatePage() {
-      if (!this.title || !this.slug) {
-        this.$store.commit('alert/set', { message: `You have to give the page a ${!this.title ? 'title' : 'slug'}.`, type: 'error' });
+      if (!this.name) {
+        this.$store.commit('alert/set', { message: `You have to give the page a name.`, type: 'error' });
         return;
       }
 
       try {
         const body = {
-          title: this.title,
-          slug: this.slug,
+          name: this.name,
+          isFrontPage: this.isFrontPage
         };
         if (this.parentPage) {
           body.parentId = this.parentPage.id;
         }
-        const { error } = await this.$api(`/sites/${this.$route.params.siteKey}/pages`, {
+        const { error } = await this.$api(`/sites/${this.$route.params.siteId}/pages`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -133,12 +129,12 @@ export default {
 
         if (error) {
           console.error(error);
-          return this.$store.commit('alert/set', { message: 'Failed to create the page.', type: 'error' });
+          return this.$store.commit('alert/set', { message: error, type: 'error' });
         }
 
         this.$store.commit('alert/set', { message: 'Page successfully created!', type: 'success' });
-        this.title = '';
-        this.slug = '';
+        this.$set(this.$data, 'name', '');
+        this.$set(this.$data, 'isFrontPage', false);
         this.parentPageUnSelected();
         this.hideDialog();
         this.$emit('created');

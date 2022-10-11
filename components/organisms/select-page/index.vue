@@ -31,17 +31,9 @@ export default {
       fetching: false,
       headers: [
         {
-          text: 'Title',
-          value: 'title',
+          text: 'Name',
+          value: 'name',
           align: 'start'
-        },
-        {
-          text: 'Slug',
-          value: 'slug',
-        },
-        {
-          text: 'Path',
-          value: 'path'
         }
       ]
     };

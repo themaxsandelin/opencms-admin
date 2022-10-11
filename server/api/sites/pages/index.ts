@@ -27,14 +27,13 @@ router.get('/', async (req: Request, res: Response) => {
 
 router.post('/', async (req: Request, res: Response) => {
   try {
-    const { title, slug, parentId } = req.body;
     const { siteId } = req.params;
     const request = await fetch(`${process.env.ADMIN_API_URL}/sites/${siteId}/pages`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ title, slug, parentId })
+      body: JSON.stringify(req.body)
     });
     const body: any = await request.json();
 
