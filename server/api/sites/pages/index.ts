@@ -4,6 +4,7 @@ import fetch from 'node-fetch';
 
 // Routers
 import LayoutsRouter from './layouts';
+import InstancesRouter from './instances';
 
 const router = Router({ mergeParams: true });
 
@@ -72,5 +73,6 @@ router.get('/:pageId', async (req: Request, res: Response) => {
 });
 
 router.use('/:pageId/layouts', LayoutsRouter);
+router.use('/:pageId/instances', InstancesRouter);
 
 export default router;

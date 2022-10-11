@@ -7,7 +7,7 @@
     <v-data-table
       :loading="$fetchState.pending"
       loading-text="Loading pages... Please wait"
-      :headers="tableHeaders"
+      :headers="headers"
       :items="pages"
       @click:row="pageRowClick"
     >
@@ -33,20 +33,12 @@ export default {
   data() {
     return {
       pages: [],
-      tableHeaders: [
+      headers: [
         {
           text: 'Name',
           align: 'start',
           value: 'name'
         },
-        // {
-        //   text: 'Slug',
-        //   value: 'slug'
-        // },
-        // {
-        //   text: 'Path',
-        //   value: 'path'
-        // },
         {
           text: 'Updated',
           value: 'updatedAt'

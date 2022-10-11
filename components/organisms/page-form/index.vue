@@ -26,7 +26,7 @@
                         <v-fade-transition leave-absolute>
                           <span v-if="pagePanelOpen">Select a parent page</span>
                           <v-row v-else no-gutters style="width: 100%">
-                            <v-col cols="6">{{ parentPage ? parentPage.title : 'Not selected' }}</v-col>
+                            <v-col cols="6">{{ parentPage ? parentPage.name : 'Not selected' }}</v-col>
                           </v-row>
                         </v-fade-transition>
                       </v-col>
