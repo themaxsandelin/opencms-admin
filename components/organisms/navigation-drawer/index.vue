@@ -1,6 +1,11 @@
 <template>
   <v-navigation-drawer permanent fixed app :clipped="true">
     <v-list>
+      <v-subheader>Publishing environments</v-subheader>
+      <v-list-item :link="true" to="/environments" :exact="true">All environments</v-list-item>
+    </v-list>
+
+    <v-list>
       <v-subheader>Sites</v-subheader>
       <v-list-item :link="true" to="/sites" :exact="true">All sites</v-list-item>
 
