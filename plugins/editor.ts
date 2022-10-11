@@ -2,6 +2,7 @@
 import { Plugin } from '@nuxt/types';
 import EditorJS from '@editorjs/editorjs';
 import Header from '@editorjs/header';
+import Table from '@editorjs/table';
 
 const Editor: Plugin = (_context, inject) => {
   const defaultOptions = {
@@ -18,7 +19,8 @@ const Editor: Plugin = (_context, inject) => {
       placeholder: 'You look great today! Have fun editing. :)',
       holder: options.id,
       tools: {
-        header: Header
+        header: Header,
+        table: Table
       },
       data: options.data || { blocks: [] },
       onChange(data, event) {
