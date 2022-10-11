@@ -40,7 +40,7 @@ export default {
   },
   async fetch() {
     this.$set(this.$data, 'fetching', true);
-    const { data, error } = await this.$api(`/sites/${this.$route.params.siteKey}/pages?search=${this.searchTerm}`);
+    const { data, error } = await this.$api(`/sites/${this.$route.params.siteId}/pages?search=${this.searchTerm}`);
     this.$set(this.$data, 'fetching', false);
     if (error) {
       console.error(error);
