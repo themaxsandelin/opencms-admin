@@ -2,6 +2,9 @@
 import { Router, Request, Response } from 'express';
 import fetch from 'node-fetch';
 
+// Routers
+import VersionsRouter from './versions';
+
 const router = Router({ mergeParams: true });
 
 router.get('/', async (req: Request, res: Response) => {
@@ -52,5 +55,7 @@ router.get('/:layoutId', async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+
+router.use('/:layoutId/versions', VersionsRouter);
 
 export default router;

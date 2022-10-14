@@ -1,8 +1,4 @@
 .v-application .v-btn {
-  &:not(.v-btn--round)[class*=v-size--] {
-    padding: 0 rem(24)
-  }
-
   &.v-btn--icon .v-btn__content span:not([aria-hidden]) {
     clip: rect( 0 0 0 0 );
     height: 1px;

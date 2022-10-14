@@ -1,15 +1,8 @@
 <template>
   <div>
-    Page layout editor
     <v-layout>
       <v-row>
-        <v-col cols="12" sm="6" md="6" lg="6">
-          <v-btn color="primary" @click="save">
-            Save changes
-          </v-btn>
-        </v-col>
-
-        <v-col cols="12" sm="6" md="6" lg="6">
+        <v-col cols="12" sm="4" md="4" lg="4">
           <v-select
             v-if="environmentList.length"
             label="Publish"
@@ -22,14 +15,46 @@
             @blur="publish"
           ></v-select>
         </v-col>
+
+        <v-col cols="12" sm="5" md="5" lg="5">
+          <version-selector :selected-version="selectedVersion" :versions="versions" @selection="versionSelection" />
+        </v-col>
+
+        <v-col cols="12" sm="3" md="3" lg="3">
+          <v-btn color="primary" @click="save">
+            Save changes
+          </v-btn>
+        </v-col>
       </v-row>
     </v-layout>
+
+    <div class="component-wrapper">
+      <layout-component-list
+        :components="layoutComponents"
+        @updated="componentsUpdated"
+      />
+      <div class="component-wrapper__add">
+        <v-btn color="secondary" @click="showComponentSelector">Add component</v-btn>
+      </div>
+    </div>
+
+    <component-selector :visible="componentSelectorVisible" @hide="hideComponentSelector" @selection="componentSelection" />
   </div>
 </template>
 
 <script>
+  // Components
+  import ComponentSelector from '@/components/organisms/component-selector';
+  import LayoutComponentList from '@/components/molecules/layout-component-list';
+  import VersionSelector from '@/components/molecules/version-selector';
+
   export default {
     name: 'PageLayoutEditor',
+    components: {
+      ComponentSelector,
+      LayoutComponentList,
+      VersionSelector
+    },
     props: {
       page: {
         type: Object,
@@ -45,15 +70,17 @@
         versions: [],
         publishingEnvironments: [],
         publishToEnvironments: [],
-        selectedVersion: null,
-        fetchingVersions: false
+        selectedVersion: {},
+        fetchingVersions: false,
+        componentSelectorVisible: false,
+        layoutComponents: []
       };
     },
     async fetch() {
       if (!this.publishingEnvironments.length) {
         await this.updatePublishingEnvironments();
       }
-      if (this.selectedLocale) {
+      if (!this.versions.length) {
         await this.updateVersions();
       }
     },
@@ -61,25 +88,32 @@
       environmentList() {
         return this.publishingEnvironments.map(environment => ({
           text: environment.name,
-          value: environment.key,
-          disabled: this.selectedEnvironments.includes(environment.key)
+          value: environment.id,
+          disabled: this.selectedEnvironments.includes(environment.id)
         }))
       },
       selectedEnvironments() {
-        return this.selectedVersion && this.selectedVersion.publications ? this.selectedVersion.publications.map(publication => publication.environment.key) : [];
+        return this.selectedVersion.publications ? this.selectedVersion.publications.map(publication => publication.environmentId) : [];
+      }
+    },
+    watch: {
+      selectedVersion() {
+        let components = [];
+        if (this.selectedVersion.content && this.selectedVersion.content.components) {
+          components = [...this.selectedVersion.content.components];
+        }
+        this.$set(this.$data, 'layoutComponents', components);
       }
     },
     methods: {
       selectLatestVersion() {
-        this.$set(this.$data, 'selectedVersion', this.versions.length ? this.versions[0] : {
-          locale: this.selectedLocale,
-          content: {
-            question: '',
-            answer: {
-              blocks: []
-            }
-          }
-        });
+        this.$set(this.$data, 'selectedVersion', this.versions.length ? this.versions[0] : {});
+      },
+      versionSelection(versionId) {
+        const version = this.versions.find(version => version.id === versionId);
+        if (version) {
+          this.$set(this.$data, 'selectedVersion', version);
+        }
       },
       publishChange(data) {
         this.$set(this.$data, 'publishToEnvironments', data);
@@ -93,7 +127,8 @@
         this.$set(this.$data, 'publishingEnvironments', data);
       },
       async updateVersions() {
-        const { layoutId, pageId, siteId } = this.$route.params;
+        const { layoutId } = this.$route.query;
+        const { pageId, siteId } = this.$route.params;
 
         this.$set(this.$data, 'fetchingVersions', true);
         const { data, error } = await this.$api(`/sites/${siteId}/pages/${pageId}/layouts/${layoutId}/versions`);
@@ -104,10 +139,104 @@
         }
 
         this.$set(this.$data, 'versions', data);
-        this.selectLatestVersion();
+        if (!this.selectedVersion.id) {
+          this.selectLatestVersion();
+        } else {
+          const newSelectedVersion = this.versions.find(version => version.id === this.selectedVersion.id);
+          if (newSelectedVersion) {
+            this.$set(this.$data, 'selectedVersion', newSelectedVersion);
+          }
+        }
       },
-      save() {},
-      publish() {}
+      async save() {
+        const { layoutId } = this.$route.query;
+        const { siteId, pageId } = this.$route.params;
+
+        let method = 'POST';
+        let uri = `/sites/${siteId}/pages/${pageId}/layouts/${layoutId}/versions`;
+        const wasPublished = this.selectedVersion.wasPublished || false;
+        if (this.selectedVersion.id && !wasPublished) {
+          method = 'PATCH';
+          uri += `/${this.selectedVersion.id}`;
+        }
+        const body = {
+          content: {
+            components: this.layoutComponents
+          }
+        };
+
+        const { error } = await this.$api(uri, {
+          method,
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
+        });
+        if (error) {
+          console.error(error);
+          return this.$store.commit('alert/set', { type: 'error', message: error });
+        }
+
+        this.$store.commit('alert/set', { type: 'success', message: 'Successfully saved changes.' });
+        if (wasPublished) {
+          this.$set(this.$data, 'selectedVersion', {});
+        }
+        this.updateVersions();
+      },
+      async publish() {
+        if (!this.publishToEnvironments.length) {
+          return;
+        }
+
+        const { id: versionId } = this.selectedVersion;
+        const { layoutId } = this.$route.query;
+        const { siteId, pageId } = this.$route.params;
+        const { error } = await this.$api(`/sites/${siteId}/pages/${pageId}/layouts/${layoutId}/versions/${versionId}/publish`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            environments: this.publishToEnvironments
+          })
+        });
+
+        if (error) {
+          console.error('Publishing error', error);
+          return this.$store.commit('alert/set', { type: 'error', message: error });
+        }
+
+        this.$store.commit('alert/set', { type: 'success', message: 'Page layout published!' });
+        this.updateVersions();
+      },
+      showComponentSelector() {
+        this.componentSelectorVisible = true;
+      },
+      hideComponentSelector() {
+        this.componentSelectorVisible = false;
+      },
+      componentSelection(component) {
+        const layoutComponents = [...this.layoutComponents];
+        layoutComponents.push(component);
+        this.$set(this.$data, 'layoutComponents', layoutComponents);
+      },
+      componentsUpdated(components) {
+        this.$set(this.$data, 'layoutComponents', components);
+      }
     }
   };
 </script>
+
+<style lang="scss" scoped>
+  .component-wrapper {
+    width: 100%;
+    padding: 10px;
+    border: 2px dashed #eee;
+
+    &__add {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+  }
+</style>

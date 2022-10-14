@@ -56,7 +56,7 @@
       if (!this.page.id) {
         await this.updatePage();
       }
-      if (!this.layout && this.$route.query.layout) {
+      if (!this.layout && this.$route.query.layoutId) {
         await this.updateLayout();
       }
     },
@@ -68,7 +68,7 @@
         })) : [];
       },
       selectedLayout() {
-        return this.$route.query.layout || '';
+        return this.$route.query.layoutId || '';
       }
     },
     watch: {
@@ -84,13 +84,14 @@
         this.layoutFormVisible = false;
       },
       layoutCreated() {
-        this.$fetch();
+        this.updatePage();
       },
       layoutSelectionChange(layoutId) {
-        this.$router.push({ query: { layout: layoutId } });
+        this.$router.push({ query: { layoutId } });
       },
       async updatePage() {
-        const { data, error } = await this.$api(`/sites/${this.$route.params.siteId}/pages/${this.$route.params.pageId}`);
+        const { siteId, pageId } = this.$route.params;
+        const { data, error } = await this.$api(`/sites/${siteId}/pages/${pageId}`);
         if (error) {
           console.error(error);
           return this.$store.commit('alert/set', { message: 'Failed to load sites.', type: 'error' });
@@ -98,7 +99,9 @@
         this.$set(this.$data, 'page', data);
       },
       async updateLayout() {
-        const { data, error } = await this.$api(`/sites/${this.$route.params.siteId}/pages/${this.$route.params.pageId}/layouts/${this.$route.query.layout}`);
+        const { layoutId } = this.$route.query;
+        const { siteId, pageId } = this.$route.params;
+        const { data, error } = await this.$api(`/sites/${siteId}/pages/${pageId}/layouts/${layoutId}`);
         if (error) {
           console.error('Failed to fetch page layout', error);
           return this.$store.commit('alert/set', { type: 'error', message: 'Failed to load layout.' });
