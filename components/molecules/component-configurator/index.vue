@@ -1,10 +1,10 @@
 <template>
   <div class="component-configurator">
     <p>{{ component.name }}</p>
-    <v-btn icon small @click="moveUp">
+    <v-btn :disabled="first" icon small @click="moveUp">
       <v-icon>mdi-arrow-up</v-icon>
     </v-btn>
-    <v-btn icon small @click="moveDown">
+    <v-btn :disabled="last" icon small @click="moveDown">
       <v-icon>mdi-arrow-down</v-icon>
     </v-btn>
     <v-btn icon small color="red" @click="remove">
@@ -20,6 +20,14 @@
       component: {
         type: Object,
         required: true
+      },
+      first: {
+        type: Boolean,
+        default: false
+      },
+      last: {
+        type: Boolean,
+        default: false
       }
     },
     methods: {

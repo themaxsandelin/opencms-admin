@@ -3,6 +3,8 @@
     <component-configurator
       v-for="(component, i) in componentList"
       :key="i"
+      :first="i === 0"
+      :last="i === (componentList.length - 1)"
       :component="component"
       @moveUp="moveComponent('up', i)"
       @moveDown="moveComponent('down', i)"
