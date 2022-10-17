@@ -7,6 +7,20 @@
 
     <v-divider />
 
+    <h2>Data</h2>
+    <v-layout column>
+      <v-row>
+        <v-col cols="12" lg="6" md="6" sm="6">
+          <v-select v-model="instanceChanges.data.source" label="Data source" :items="dataOptions.sources" />
+        </v-col>
+        <v-col cols="12" lg="6" md="6" sm="6">
+          <v-select v-model="instanceChanges.data.type" label="Data type" :items="dataOptions.types" />
+        </v-col>
+      </v-row>
+    </v-layout>
+
+    <v-divider />
+
     <h2>Layouts</h2>
     <v-layout column>
       <v-row v-for="(environment, i) in publishingEnvironments" :key="i">
@@ -24,7 +38,7 @@
       </v-row>
     </v-layout>
 
-    <v-btn color="primary" :disabled="!Object.keys(layoutChanges).length" @click="save">Save changes</v-btn>
+    <v-btn color="primary" :disabled="!changesMade" @click="save">Save changes</v-btn>
   </div>
 </template>
 
@@ -43,7 +57,27 @@
         publishingEnvironments: [],
         layouts: [],
         layoutEnvironments: {},
-        layoutChanges: {}
+        instanceChanges: {
+          data: {
+            source: undefined,
+            type: undefined
+          },
+          environments: {}
+        },
+        dataOptions: {
+          sources: [
+            {
+              text: 'Route parameter',
+              value: 'route-parameter'
+            }
+          ],
+          types: [
+            {
+              text: 'Question (Content Type)',
+              value: 'content-type_question'
+            }
+          ]
+        }
       };
     },
     async fetch() {
@@ -64,6 +98,18 @@
           text: layout.name,
           value: layout.id
         }))
+      },
+      instanceData() {
+        return this.instance.config && this.instance.config.data ? this.instance.config.data : {};
+      },
+      changesMade() {
+        return (
+          (Object.keys(this.instanceChanges.environments).length > 0) ||
+          (
+            this.instanceChanges.data.source !== this.instanceData.source &&
+            this.instanceChanges.data.type !== this.instanceData.type
+          )
+        );
       }
     },
     methods: {
@@ -75,6 +121,9 @@
           return this.$store.commit('alert/set', { type: 'error', message: error });
         }
         this.$set(this.$data, 'instance', data);
+        if (data.config && data.config.data) {
+          this.$set(this.$data.instanceChanges, 'data', data.config.data);
+        }
       },
       async updateInstanceLayouts() {
         const { siteId, pageId, instanceId } = this.$route.params;
@@ -107,25 +156,24 @@
         this.$set(this.$data, 'layouts', data);
       },
       layoutChange(layoutId, environmentKey) {
+        const changes = {...this.instanceChanges};
         const selection = {...this.layoutEnvironments};
-        selection[environmentKey] = layoutId;
-        this.$set(this.$data, 'layoutChanges', selection);
+        changes.environments[environmentKey] = layoutId;
+
+        this.$set(this.$data, 'instanceChanges', changes);
         this.$set(this.$data, 'layoutEnvironments', selection);
       },
       async save() {
-        const environmentIds = Object.keys(this.layoutChanges);
-        if (!environmentIds.length) {
-          return this.$store.commit('alert/set', { type: 'warning', message: 'You have to set the layout for each environment before saving' });
-        }
-
+        const { data } = this.instanceChanges;
+        const environmentIds = Object.keys(this.instanceChanges.environments);
         const { siteId, pageId, instanceId } = this.$route.params;
 
         try {
           await Promise.all(
-            environmentIds.map(async (publishingEnvironmentId) => {
+            environmentIds.map((publishingEnvironmentId) => {
               const body = {
                 publishingEnvironmentId,
-                layoutId: this.layoutChanges[publishingEnvironmentId]
+                layoutId: this.instanceChanges.environments[publishingEnvironmentId]
               };
               return this.$api(`/sites/${siteId}/pages/${pageId}/instances/${instanceId}/layouts`, {
                 method: 'POST',
@@ -137,9 +185,19 @@
             })
           );
 
+          await this.$api(`/sites/${siteId}/pages/${pageId}/instances/${instanceId}`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              config: { data }
+            })
+          });
+
           this.updateInstance();
           this.updateInstanceLayouts();
-          this.$store.commit('alert/set', { type: 'success', message: 'Instance layouts updated!' });
+          this.$store.commit('alert/set', { type: 'success', message: 'Instance layout updated!' });
         } catch (error) {
           console.error(error);
           return this.$store.commit('alert/set', { type: 'error', message: error });
