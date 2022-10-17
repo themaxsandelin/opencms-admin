@@ -32,7 +32,17 @@
         </v-col>
       </v-row>
     </v-layout>
-    <component :is="component" v-if="isValidComponent && selectedVersion" ref="editor" v-bind="selectedVersion" />
+
+    <template v-if="selectedLocale && selectedVersion">
+      <v-divider />
+      <v-subheader>Generic config</v-subheader>
+      <v-text-field v-model="selectedVersion.slug" label="Content block slug" placeholder="Ex. /this-is-a-slug" />
+
+      <v-divider />
+
+      <v-subheader>Type specific content</v-subheader>
+      <component :is="component" v-if="isValidComponent && selectedVersion" ref="editor" v-bind="selectedVersion" />
+    </template>
   </div>
 </template>
 
@@ -67,6 +77,7 @@
     },
     data() {
       return {
+        defaultVersion: {},
         locales: [],
         selectedLocale: '',
         versions: [],
@@ -108,7 +119,7 @@
         }))
       },
       selectedEnvironments() {
-        return this.selectedVersion.id && this.selectedVersion.publications ? this.selectedVersion.publications.map(publication => publication.environment.id) : [];
+        return this.selectedVersion.publications ? this.selectedVersion.publications.map(publication => publication.environment.id) : [];
       }
     },
     methods: {
@@ -117,16 +128,20 @@
         this.$router.push({ query: { ...this.$route.query, locale: localeCode } });
         this.$fetch();
       },
-      selectLatestVersion() {
-        this.$set(this.$data, 'selectedVersion', this.versions.length ? this.versions[0] : {
+      getBaseVersionData() {
+        return {
           locale: this.selectedLocale,
+          slug: '',
           content: {
             question: '',
             answer: {
               blocks: []
             }
           }
-        });
+        };
+      },
+      selectLatestVersion() {
+        this.$set(this.$data, 'selectedVersion', this.versions.length ? this.versions[0] : this.getBaseVersionData());
       },
       publishChange(data) {
         this.$set(this.$data, 'publishToEnvironments', data);
@@ -165,7 +180,11 @@
           return this.$store.commit('alert/set', { type: 'error', message: error });
         }
         this.$set(this.$data, 'versions', data);
-        this.selectLatestVersion();
+        if (!this.selectedVersion.id || this.selectedVersion.locale !== this.selectedLocale) {
+          this.selectLatestVersion();
+        } else {
+          this.versionSelection(this.selectedVersion.id);
+        }
       },
       async publish() {
         if (!this.publishToEnvironments.length) {
@@ -191,9 +210,10 @@
       },
       async save() {
         const content = await this.$refs.editor.save();
-        const { locale } = this.selectedVersion;
+        const { slug, locale } = this.selectedVersion;
 
-        const updating = !!this.selectedVersion.id && !this.selectedVersion.wasPublished;
+        const wasPublished = this.selectedVersion.wasPublished || false;
+        const updating = !!this.selectedVersion.id && !wasPublished;
         const method = updating ? 'PATCH' : 'POST';
         let uri = `/content-blocks/${this.block.id}/variants/${this.variant.id}/versions`;
         if (updating) {
@@ -207,7 +227,8 @@
           },
           body: JSON.stringify({
             content,
-            locale
+            locale,
+            slug
           })
         });
         if (error) {
@@ -216,6 +237,9 @@
         }
 
         this.$store.commit('alert/set', { type: 'success', message: 'Content block version saved!' });
+        if (wasPublished) {
+          this.$set(this.$data, 'selectedVersion', this.getBaseVersionData());
+        }
         this.updateVersions();
       }
     }

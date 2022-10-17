@@ -76,11 +76,7 @@ export default {
       showingSelectPageDialog: false,
       creationLoading: false,
       validation: {
-        required: value => !!value || 'This field is required.',
-        // slug: value => {
-        //   const pattern = /^\/((\*?)|([a-z0-9]*)|(([a-z0-9]?)+(?:-[a-z0-9]+))*){1}$/gm;
-        //   return pattern.test(value) || 'Invalid slug.';
-        // }
+        required: value => !!value || 'This field is required.'
       }
     };
   },
