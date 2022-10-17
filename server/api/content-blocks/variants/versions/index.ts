@@ -69,44 +69,24 @@ router.post('/:versionId/publish', async (req: Request, res: Response) => {
     const { versionId, variantId, blockId } = req.params;
     const { environments } = req.body;
 
-    const environmentListRequest = await fetch(`${process.env.ADMIN_API_URL}/publishing-environments`);
-    const environmentList = await environmentListRequest.json();
-    if (environmentListRequest.status !== 200) {
-      console.error('Environment list request error', environmentList);
-      return res.status(environmentListRequest.status).json(environmentList);
-    }
-
-    let environmentMap: Array<PublishingEnvironment> = [];
-    try {
-      environmentMap = environments.map((environmentKey: string) => {
-        const foundEnvironment = (environmentList as PublishingEnvironmentList).find((environment) => environment.key === environmentKey);
-        if (!foundEnvironment) {
-          throw new Error(`No environment found with key ${environmentKey}`);
-        }
-        return foundEnvironment;
-      });
-    } catch (error) {
-      return res.status(400).json({ error: (error as any).message });
-    }
-
-    const publications = await Promise.all(environmentMap.map(async (environment) => {
+    const publications = await Promise.all(environments.map(async (environmentId: string) => {
       const request = await fetch(`${process.env.ADMIN_API_URL}/content-blocks/${blockId}/variants/${variantId}/versions/${versionId}/publish`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ environment: environment.id })
+        body: JSON.stringify({ environment: environmentId })
       });
       const response: any = await request.json();
       if (response.error) {
         return {
-          key: environment.key,
+          id: environmentId,
           success: false,
           error: response.error
         };
       }
       return {
-        key: environment.key,
+        id: environmentId,
         success: true
       };
     }));

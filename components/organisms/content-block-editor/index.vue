@@ -1,15 +1,16 @@
 <template>
   <div>
-    <v-layout>
+    <v-layout column>
       <v-row>
-        <v-col cols="12" sm="6" md="6" lg="6">
+        <v-col cols="12" sm="4" md="4" lg="4">
           <v-autocomplete label="Choose a language..." outlined :items="localeList" :value="selectedLocale" @change="localeChange"></v-autocomplete>
-          <v-btn color="primary" @click="save">
-            Save changes
-          </v-btn>
         </v-col>
 
-        <v-col cols="12" sm="6" md="6" lg="6">
+        <v-col cols="12" sm="4" md="4" lg="4">
+          <version-selector :selected-version="selectedVersion" :versions="versions" @selection="versionSelection" />
+        </v-col>
+
+        <v-col cols="12" sm="4" md="4" lg="4">
           <v-select
             v-if="environmentList.length && selectedLocale"
             label="Publish"
@@ -23,6 +24,13 @@
           ></v-select>
         </v-col>
       </v-row>
+      <v-row>
+        <v-col cols="12" lg="12" md="12" sm="12">
+          <v-btn color="primary" @click="save">
+            Save changes
+          </v-btn>
+        </v-col>
+      </v-row>
     </v-layout>
     <component :is="component" v-if="isValidComponent && selectedVersion" ref="editor" v-bind="selectedVersion" />
   </div>
@@ -30,6 +38,9 @@
 
 <script>
   // Components
+  import VersionSelector from '@/components/molecules/version-selector';
+
+  // Async components
   const components = {
     'question': () => import('@/components/organisms/question-editor'),
     'question-category': () => import('@/components/organisms/question-category-editor')
@@ -37,6 +48,9 @@
 
   export default {
     name: 'ContentBlockEditor',
+    components: {
+      VersionSelector
+    },
     props: {
       type: {
         type: String,
@@ -49,11 +63,7 @@
       variant: {
         type: Object,
         required: true
-      },
-      // version: {
-      //   type: Object,
-      //   default: () => ({})
-      // }
+      }
     },
     data() {
       return {
@@ -62,7 +72,7 @@
         versions: [],
         publishingEnvironments: [],
         publishToEnvironments: [],
-        selectedVersion: null,
+        selectedVersion: {},
         fetchingVersions: false
       };
     },
@@ -93,12 +103,12 @@
       environmentList() {
         return this.publishingEnvironments.map(environment => ({
           text: environment.name,
-          value: environment.key,
-          disabled: this.selectedEnvironments.includes(environment.key)
+          value: environment.id,
+          disabled: this.selectedEnvironments.includes(environment.id)
         }))
       },
       selectedEnvironments() {
-        return this.selectedVersion && this.selectedVersion.publications ? this.selectedVersion.publications.map(publication => publication.environment.key) : [];
+        return this.selectedVersion.id && this.selectedVersion.publications ? this.selectedVersion.publications.map(publication => publication.environment.id) : [];
       }
     },
     methods: {
@@ -120,6 +130,12 @@
       },
       publishChange(data) {
         this.$set(this.$data, 'publishToEnvironments', data);
+      },
+      versionSelection(versionId) {
+        const version = this.versions.find(version => version.id === versionId);
+        if (version) {
+          this.$set(this.$data, 'selectedVersion', version);
+        }
       },
       async updateLocales() {
         const { data, error } = await this.$api('/locales');
@@ -146,7 +162,7 @@
         this.$set(this.$data, 'fetchingVersions', false);
         if (error) {
           console.error('Failed to load versions', error);
-          return this.$store.commit('alert/set', { type: 'error', message: 'Failed to load versions.' });
+          return this.$store.commit('alert/set', { type: 'error', message: error });
         }
         this.$set(this.$data, 'versions', data);
         this.selectLatestVersion();
@@ -167,7 +183,7 @@
         });
         if (error) {
           console.error('Publishing error', error);
-          return this.$store.commit('alert/set', { type: 'error', message: 'Failed to publish content block variant version.' });
+          return this.$store.commit('alert/set', { type: 'error', message: error });
         }
 
         this.$store.commit('alert/set', { type: 'success', message: 'Content block version published!' });
@@ -177,7 +193,7 @@
         const content = await this.$refs.editor.save();
         const { locale } = this.selectedVersion;
 
-        const updating = !!this.selectedVersion.id;
+        const updating = !!this.selectedVersion.id && !this.selectedVersion.wasPublished;
         const method = updating ? 'PATCH' : 'POST';
         let uri = `/content-blocks/${this.block.id}/variants/${this.variant.id}/versions`;
         if (updating) {
@@ -196,7 +212,7 @@
         });
         if (error) {
           console.error('Content block save/update error', error);
-          return this.$store.commit('alert/set', { type: 'error', message: 'Failed to update content block variant version.' });
+          return this.$store.commit('alert/set', { type: 'error', message: error });
         }
 
         this.$store.commit('alert/set', { type: 'success', message: 'Content block version saved!' });

@@ -52,7 +52,9 @@
     },
     watch: {
       selectedIndex(index) {
-        this.$emit('selection', this.versions[index].id);
+        if (typeof this.versions[index] !== 'undefined') {
+          this.$emit('selection', this.versions[index].id);
+        }
       }
     }
   };
