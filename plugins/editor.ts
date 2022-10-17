@@ -4,6 +4,14 @@ import EditorJS from '@editorjs/editorjs';
 import Header from '@editorjs/header';
 import Table from '@editorjs/table';
 
+// Temporarily add this enum here to fix EditorJS config since LogLevels cannot be imported.
+enum LogLevels {
+  VERBOSE = 'VERBOSE',
+  INFO = 'INFO',
+  WARN = 'WARN',
+  ERROR = 'ERROR',
+}
+
 const Editor: Plugin = (_context, inject) => {
   const defaultOptions = {
     id: '',
@@ -22,6 +30,7 @@ const Editor: Plugin = (_context, inject) => {
         header: Header,
         table: Table
       },
+      logLevel: LogLevels.ERROR,
       data: options.data || { blocks: [] },
       onChange(data, event) {
         if (options.onChange) {
