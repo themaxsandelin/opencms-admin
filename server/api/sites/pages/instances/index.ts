@@ -71,6 +71,21 @@ router.patch('/:instanceId', async (req: Request, res: Response) => {
   }
 });
 
+router.delete('/:instanceId', async (req: Request, res: Response) => {
+  try {
+    const { instanceId, pageId, siteId } = req.params;
+    const request = await fetch(`${process.env.ADMIN_API_URL}/sites/${siteId}/pages/${pageId}/instances/${instanceId}`, {
+      method: 'DELETE'
+    });
+    const body = await request.json();
+
+    res.status(request.status).json(body);
+  } catch (error) {
+    console.error('API error', error);
+    res.status(500).json({ error: (error as any).message });
+  }
+});
+
 router.use('/:instanceId/layouts', LayoutsRouter);
 
 export default router;

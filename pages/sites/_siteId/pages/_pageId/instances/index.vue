@@ -6,7 +6,14 @@
 
     <v-btn color="primary" dark @click="showInstanceForm">Create new instance</v-btn>
 
-    <instance-form :visible="instanceFormVisible" @hide="hideInstanceForm" @created="createdCallback" />
+    <instance-form
+      :instance="editingInstance"
+      :visible="instanceFormVisible"
+      @hide="hideInstanceForm"
+      @created="createdCallback"
+      @updated="updatedDeletedCallback"
+      @deleted="updatedDeletedCallback"
+    />
 
     <v-data-table
       :loading="$fetchState.pending"
@@ -20,6 +27,11 @@
       </template>
       <template v-slot:item.createdAt="{ item }">
         <span>{{ new Date(item.createdAt).toLocaleString() }}</span>
+      </template>
+      <template v-slot:item.actions="{ item }">
+        <v-btn @click="editInstance($event, item)">
+          Edit
+        </v-btn>
       </template>
     </v-data-table>
   </div>
@@ -64,9 +76,14 @@
           {
             text: 'Created',
             value: 'createdAt'
+          },
+          {
+            text: '',
+            value: 'actions'
           }
         ],
-        instanceFormVisible: false
+        instanceFormVisible: false,
+        editingInstance: null
       };
     },
     async fetch() {
@@ -90,6 +107,15 @@
       },
       createdCallback() {
         this.$fetch();
+      },
+      updatedDeletedCallback() {
+        this.$set(this.$data, 'editingInstance', null);
+        this.$fetch();
+      },
+      editInstance(event, instance) {
+        event.stopPropagation();
+        this.$set(this.$data, 'editingInstance', instance);
+        this.showInstanceForm();
       }
     }
   };

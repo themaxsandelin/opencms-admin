@@ -2,7 +2,7 @@
   <v-dialog :value="visible" max-width="720px" @click:outside="hideDialog">
     <v-card>
       <v-card-title>
-        <span class="text-h5">Create new page instance</span>
+        <span class="text-h5">{{ editingInstance ? 'Update': 'Create new' }} page instance</span>
       </v-card-title>
 
       <v-card-text>
@@ -15,6 +15,7 @@
                 required
                 :items="localeList"
                 :value="selectedLocale"
+                :disabled="editingInstance"
                 @change="localeChange"
               />
             </v-col>
@@ -40,19 +41,36 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="blue darken-1" text @click="hideDialog">Close</v-btn>
-        <v-btn color="primary" @click="attemptCreate">Create</v-btn>
+        <v-btn v-if="editingInstance" :loading="deletionLoading" color="error" text @click="showActionDialog">Delete</v-btn>
+        <v-btn color="primary" :loading="saveLoading" @click="submit">{{ editingInstance ? 'Save changes' : 'Create' }}</v-btn>
       </v-card-actions>
     </v-card>
+
+    <verify-action
+      v-bind="deleteAction"
+      @abort="hideActionDialog"
+      @confirm="attemptDeletion"
+    />
   </v-dialog>
 </template>
 
 <script>
+  // Components
+  import VerifyAction from '@/components/organisms/verify-action';
+
   export default {
     name: 'InstanceForm',
+    components: {
+      VerifyAction
+    },
     props: {
       visible: {
         type: Boolean,
         default: false
+      },
+      instance: {
+        type: Object,
+        default: null
       }
     },
     data() {
@@ -61,8 +79,17 @@
         slug: '',
         description: '',
         selectedLocale: '',
-        creationLoading: false,
-        locales: []
+        saveLoading: false,
+        locales: [],
+        deleteAction: {
+          visible: false,
+          type: 'warning',
+          title: 'You are about to delete an instance',
+          text: 'Heads up, you are about to delete a page instance. Are you sure you want to do that?',
+          cancelLabel: 'Abort',
+          confirmLabel: 'Delete'
+        },
+        deletionLoading: false
       };
     },
     async fetch() {
@@ -80,6 +107,25 @@
           value: locale.code
         }));
       },
+      editingInstance() {
+        return this.instance !== null;
+      },
+    },
+    watch: {
+      instance() {
+        if (this.instance) {
+          const { title, slug, description, localeCode } = this.instance;
+          this.$set(this.$data, 'title', title);
+          this.$set(this.$data, 'slug', slug);
+          this.$set(this.$data, 'description', description);
+          this.$set(this.$data, 'selectedLocale', localeCode);
+        } else {
+          this.$set(this.$data, 'title', '');
+          this.$set(this.$data, 'slug', '');
+          this.$set(this.$data, 'description', '');
+          this.$set(this.$data, 'selectedLocale', '');
+        }
+      }
     },
     methods: {
       hideDialog() {
@@ -88,7 +134,7 @@
       localeChange(localeCode) {
         this.$set(this.$data, 'selectedLocale', localeCode);
       },
-      async attemptCreate() {
+      async submit() {
         if (!this.selectedLocale) {
           return this.$store.commit('alert/set', { message: `You have to assign the instance a locale.`, type: 'error' });
         }
@@ -100,36 +146,82 @@
         }
 
         try {
+          this.$set(this.$data, 'saveLoading', true);
+
           const { siteId, pageId } = this.$route.params;
+          let method = 'POST';
+          let uri = `/sites/${siteId}/pages/${pageId}/instances`;
+
           const body = {
             title: this.title,
             slug: this.slug,
             description: this.description,
-            localeCode: this.selectedLocale
           };
+          if (!this.editingInstance) {
+            body.localeCode = this.selectedLocale;
+          } else if (this.editingInstance) {
+            method = 'PATCH';
+            uri += `/${this.instance.id}`;
+          }
 
-          const { error } = await this.$api(`/sites/${siteId}/pages/${pageId}/instances`, {
-            method: 'POST',
+          const { error } = await this.$api(uri, {
+            method,
             headers: {
               'Content-Type': 'application/json'
             },
             body: JSON.stringify(body)
           });
 
+          this.$set(this.$data, 'saveLoading', false);
+
           if (error) {
             console.error(error);
             return this.$store.commit('alert/set', { message: error, type: 'error' });
           }
 
-          this.$store.commit('alert/set', { message: 'Instance successfully created!', type: 'success' });
+          this.$store.commit('alert/set', { message: `Instance successfully ${this.editingInstance ? 'updated' : 'created'}!`, type: 'success' });
           this.$set(this.$data, 'title', '');
           this.$set(this.$data, 'slug', '');
           this.$set(this.$data, 'description', '');
           this.hideDialog();
-          this.$emit('created');
+          if (this.editingInstance) {
+            this.$emit('updated');
+          } else {
+            this.$emit('created');
+          }
         } catch (error) {
           this.$store.commit('alert/set', { message: error.message, type: 'error' });
         }
+      },
+      showActionDialog() {
+        this.$set(this.$data.deleteAction, 'visible', true);
+      },
+      hideActionDialog() {
+        this.$set(this.$data.deleteAction, 'visible', false);
+      },
+      async attemptDeletion() {
+        this.$set(this.$data, 'deletionLoading', true);
+
+        const { siteId, pageId } = this.$route.params;
+        const { id: instanceId } = this.instance;
+
+        const { error } = await this.$api(`/sites/${siteId}/pages/${pageId}/instances/${instanceId}`, {
+          method: 'DELETE'
+        });
+
+        this.$set(this.$data, 'deletionLoading', false);
+
+        if (error) {
+          console.error(error);
+          return this.$store.commit('alert/set', { message: error, type: 'error' });
+        }
+
+        this.$store.commit('alert/set', { message: 'Instance successfully deleted!', type: 'success' });
+        this.$set(this.$data, 'title', '');
+        this.$set(this.$data, 'slug', '');
+        this.$set(this.$data, 'description', '');
+        this.hideDialog();
+        this.$emit('deleted');
       }
     }
   }
