@@ -30,7 +30,7 @@
           </v-row>
           <v-row>
             <v-col cols="12" sm="12" md="12">
-              <v-textarea v-model="description" label="Desceription" hint="Enter a description for the page."></v-textarea>
+              <v-textarea v-model="description" label="Description" hint="Enter a description for the page."></v-textarea>
             </v-col>
           </v-row>
         </v-container>

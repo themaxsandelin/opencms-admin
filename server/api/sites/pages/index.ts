@@ -72,6 +72,40 @@ router.get('/:pageId', async (req: Request, res: Response) => {
   }
 });
 
+router.patch('/:pageId', async (req: Request, res: Response) => {
+  try {
+    const { pageId, siteId } = req.params;
+    const request = await fetch(`${process.env.ADMIN_API_URL}/sites/${siteId}/pages/${pageId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(req.body)
+    });
+    const body: any = await request.json();
+
+    res.status(request.status).json(body);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+router.delete('/:pageId', async (req: Request, res: Response) => {
+  try {
+    const { pageId, siteId } = req.params;
+    const request = await fetch(`${process.env.ADMIN_API_URL}/sites/${siteId}/pages/${pageId}`, {
+      method: 'delete'
+    });
+    const body: any = await request.json();
+
+    res.status(request.status).json(body);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 router.use('/:pageId/layouts', LayoutsRouter);
 router.use('/:pageId/instances', InstancesRouter);
 

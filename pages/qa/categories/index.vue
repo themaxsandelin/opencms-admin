@@ -82,6 +82,9 @@
         this.categoryFormVisible = true;
       },
       hideCategoryForm() {
+        if (this.editingCategory) {
+          this.$set(this.$data, 'editingCategory', null);
+        }
         this.categoryFormVisible = false;
       },
       questionCategoryCreated() {

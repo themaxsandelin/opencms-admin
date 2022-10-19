@@ -73,6 +73,10 @@
           ],
           types: [
             {
+              text: 'Question category (Content Type)',
+              value: 'content-type_question-category'
+            },
+            {
               text: 'Question (Content Type)',
               value: 'content-type_question'
             }

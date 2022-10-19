@@ -2,7 +2,14 @@
   <div>
     <h1>Pages</h1>
     <v-btn color="primary" dark @click="showPageForm">Create new</v-btn>
-    <page-form :visible="pageFormVisible" @hide="hidePageForm" @created="pageCreatedCallback" />
+    <page-form
+      :visible="pageFormVisible"
+      :page="editingPage"
+      @hide="hidePageForm"
+      @created="pageUpdateCallback"
+      @updated="pageUpdateCallback"
+      @deleted="pageUpdateCallback"
+    />
 
     <v-data-table
       :loading="$fetchState.pending"
@@ -16,6 +23,11 @@
       </template>
       <template v-slot:item.createdAt="{ item }">
         <span>{{ new Date(item.createdAt).toLocaleString() }}</span>
+      </template>
+      <template v-slot:item.actions="{ item }">
+        <v-btn @click="editPage($event, item)">
+          Edit
+        </v-btn>
       </template>
     </v-data-table>
   </div>
@@ -46,9 +58,14 @@ export default {
         {
           text: 'Created',
           value: 'createdAt'
+        },
+        {
+          text: '',
+          value: 'actions'
         }
       ],
-      pageFormVisible: false
+      pageFormVisible: false,
+      editingPage: null
     };
   },
   async fetch() {
@@ -65,13 +82,21 @@ export default {
       this.pageFormVisible = true;
     },
     hidePageForm() {
+      if (this.editingPage) {
+        this.$set(this.$data, 'editingPage', null);
+      }
       this.pageFormVisible = false;
     },
-    pageCreatedCallback() {
+    pageUpdateCallback() {
       this.$fetch();
     },
     pageRowClick(page) {
       this.$router.push({ path: `${this.$route.path}/${page.id}` });
+    },
+    editPage(event, page) {
+      event.stopPropagation();
+      this.$set(this.$data, 'editingPage', page);
+      this.showPageForm();
     }
   }
 };
