@@ -47,6 +47,16 @@
             name: 'Similar questions list',
             description: 'A list of similar questions',
             key: 'similar-questions-list'
+          },
+          {
+            name: 'Question category lineup',
+            description: 'A linup of all question categories',
+            key: 'question-category-lineup'
+          },
+          {
+            name: 'Question list',
+            description: 'A list of questions based on certain criteria',
+            key: 'question-list'
           }
         ]
       };
