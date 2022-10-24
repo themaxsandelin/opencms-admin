@@ -6,7 +6,7 @@
 # install dependencies
 $ pnpm install --shamefully-hoist
 
-# serve with hot reload at localhost:3000
+# serve with hot reload at localhost:3300
 $ pnpm dev
 
 # build for production and launch server

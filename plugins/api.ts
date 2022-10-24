@@ -14,7 +14,7 @@ const ApiClientPlugin : Plugin = (context, inject) => {
     if (typeof document !== 'undefined') {
       hostUrl = `${document.location.protocol}//${document.location.host}`;
     } else {
-      hostUrl = 'http://localhost:3000';
+      hostUrl = 'http://localhost:3300';
     }
     // const $cId = `${document.location.hostname}-${Date.now()}-${(Math.random() * 10000).toFixed(0)}`;
 

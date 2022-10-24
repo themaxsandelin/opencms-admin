@@ -1,4 +1,8 @@
 export default {
+  server: {
+    port: 3300
+  },
+
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     titleTemplate: '%s - opencms-app',
