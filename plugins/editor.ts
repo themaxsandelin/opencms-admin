@@ -3,6 +3,7 @@ import { Plugin } from '@nuxt/types';
 import EditorJS from '@editorjs/editorjs';
 import Header from '@editorjs/header';
 import Table from '@editorjs/table';
+import NestedList from '@editorjs/nested-list';
 
 // Temporarily add this enum here to fix EditorJS config since LogLevels cannot be imported.
 enum LogLevels {
@@ -28,7 +29,11 @@ const Editor: Plugin = (_context, inject) => {
       holder: options.id,
       tools: {
         header: Header,
-        table: Table
+        table: Table,
+        list: {
+          class: NestedList,
+          inlineToolbar: true
+        }
       },
       logLevel: LogLevels.ERROR,
       data: options.data || { blocks: [] },
