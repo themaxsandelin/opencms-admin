@@ -1,0 +1,10 @@
+.page-field {
+  width: 100%;
+
+  &__selector {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    border: 2px dashed #ddd;
+  }
+}

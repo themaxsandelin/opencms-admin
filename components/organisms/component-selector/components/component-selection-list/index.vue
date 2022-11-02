@@ -26,6 +26,9 @@
 </template>
 
 <script>
+  // Config
+  import components from '@/config/components';
+
   export default {
     name: 'ComponentSelectionList',
     props: {
@@ -37,28 +40,7 @@
     data() {
       return {
         selectedIndex: null,
-        components: [
-          {
-            name: 'Question detail',
-            description: 'The question detail component',
-            key: 'question-detail'
-          },
-          {
-            name: 'Similar questions list',
-            description: 'A list of similar questions',
-            key: 'similar-questions-list'
-          },
-          {
-            name: 'Question category lineup',
-            description: 'A linup of all question categories',
-            key: 'question-category-lineup'
-          },
-          {
-            name: 'Question list',
-            description: 'A list of questions based on certain criteria',
-            key: 'question-list'
-          }
-        ]
+        components
       };
     },
     watch: {

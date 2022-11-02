@@ -6,9 +6,10 @@
       :first="i === 0"
       :last="i === (componentList.length - 1)"
       :component="component"
-      @moveUp="moveComponent('up', i)"
-      @moveDown="moveComponent('down', i)"
+      @moveUp="moveComponent(i, 'up')"
+      @moveDown="moveComponent(i, 'down')"
       @delete="deleteComponent(i)"
+      @update="updateComponent(i, $event)"
     />
   </div>
 </template>
@@ -40,7 +41,7 @@
       }
     },
     methods: {
-      moveComponent(direction, index) {
+      moveComponent(index, direction) {
         if (direction === 'up' && index === 0) return;
         if (direction === 'down' && index === (this.componentList.length - 1)) return;
 
@@ -54,6 +55,17 @@
       deleteComponent(index) {
         const list = [...this.componentList];
         list.splice(index, 1);
+        this.$set(this.$data, 'componentList', list);
+        this.$emit('updated', this.componentList);
+      },
+      updateComponent(index, { fieldKey, data }) {
+        const list = [...this.componentList];
+        const component = {...list[index]};
+        if (!component.fieldData) {
+          component.fieldData = {};
+        }
+        component.fieldData[fieldKey] = data;
+        list[index] = component;
         this.$set(this.$data, 'componentList', list);
         this.$emit('updated', this.componentList);
       }
