@@ -38,7 +38,7 @@
     props: {
       selectedVersion: {
         type: Object,
-        required: true
+        default: null
       },
       versions: {
         type: Array,

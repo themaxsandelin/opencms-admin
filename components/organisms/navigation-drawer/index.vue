@@ -1,11 +1,6 @@
 <template>
   <v-navigation-drawer permanent fixed app :clipped="true">
     <v-list>
-      <v-subheader>Publishing environments</v-subheader>
-      <v-list-item :link="true" to="/environments" :exact="true">All environments</v-list-item>
-    </v-list>
-
-    <v-list>
       <v-subheader>Sites</v-subheader>
       <v-list-item :link="true" to="/sites" :exact="true">All sites</v-list-item>
 
@@ -28,6 +23,16 @@
           <v-list-item-title v-text="`Pages`"></v-list-item-title>
         </v-list-item>
       </v-list-group>
+    </v-list>
+
+    <v-list>
+      <v-list-item :link="true" to="/environments" :exact="true">Publishing environments</v-list-item>
+    </v-list>
+
+    <v-list>
+      <v-list-item :link="true" to="/forms">
+        <v-list-item-title>Forms</v-list-item-title>
+      </v-list-item>
     </v-list>
 
     <v-list>
