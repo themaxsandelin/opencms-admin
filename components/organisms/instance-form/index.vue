@@ -183,6 +183,7 @@
           this.$set(this.$data, 'title', '');
           this.$set(this.$data, 'slug', '');
           this.$set(this.$data, 'description', '');
+          this.$set(this.$data, 'selectedLocale', '');
           this.hideDialog();
           if (this.editingInstance) {
             this.$emit('updated');
