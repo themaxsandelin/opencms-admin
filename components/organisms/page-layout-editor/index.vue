@@ -2,6 +2,16 @@
   <div>
     <v-layout>
       <v-row>
+        <v-col cols="12" sm="3" md="3" lg="3">
+          <v-btn color="primary" @click="save">
+            Save changes
+          </v-btn>
+        </v-col>
+
+        <v-col cols="12" sm="5" md="5" lg="5">
+          <version-selector :selected-version="selectedVersion" :versions="versions" @selection="versionSelection" />
+        </v-col>
+
         <v-col cols="12" sm="4" md="4" lg="4">
           <v-select
             v-if="environmentList.length"
@@ -14,16 +24,6 @@
             @change="publishChange"
             @blur="publish"
           ></v-select>
-        </v-col>
-
-        <v-col cols="12" sm="5" md="5" lg="5">
-          <version-selector :selected-version="selectedVersion" :versions="versions" @selection="versionSelection" />
-        </v-col>
-
-        <v-col cols="12" sm="3" md="3" lg="3">
-          <v-btn color="primary" @click="save">
-            Save changes
-          </v-btn>
         </v-col>
       </v-row>
     </v-layout>
@@ -47,6 +47,9 @@
   import ComponentSelector from '@/components/organisms/component-selector';
   import LayoutComponentList from '@/components/molecules/layout-component-list';
   import VersionSelector from '@/components/molecules/version-selector';
+
+  // Selectable components
+  import configComponents from '@/config/components';
 
   export default {
     name: 'PageLayoutEditor',
@@ -100,7 +103,17 @@
       selectedVersion() {
         let components = [];
         if (this.selectedVersion.content && this.selectedVersion.content.components) {
-          components = [...this.selectedVersion.content.components];
+          // Complete the lean database component with the full component config.
+          components = this.selectedVersion.content.components.map(component => {
+            const componentConfig = configComponents.find(configComponent => configComponent.key === component.key);
+            if (!componentConfig) {
+              return component;
+            }
+            return {
+              ...componentConfig,
+              fieldData: component.fieldData || {}
+            };
+          });
         }
         this.$set(this.$data, 'layoutComponents', components);
       }
@@ -159,9 +172,13 @@
           method = 'PATCH';
           uri += `/${this.selectedVersion.id}`;
         }
+
         const body = {
           content: {
-            components: this.layoutComponents
+            components: this.layoutComponents.map(component => ({
+              key: component.key,
+              fieldData: component.fieldData
+            }))
           }
         };
 

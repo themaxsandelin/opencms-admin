@@ -27,23 +27,17 @@
 </template>
 
 <script>
-  // Components
-  import PageField from '@/components/molecules/page-field';
-
   // Components config
   import components from '@/config/components';
 
   // Field components
   const fieldComponents = {
-    'page': () => import('@/components/molecules/page-field'),
-    'select': () => import('@/components/molecules/select-field')
+    'select': () => import('@/components/molecules/select-field'),
+    'reference': () => import('@/components/molecules/reference-field')
   };
 
   export default {
     name: 'ComponentConfigurator',
-    components: {
-      PageField
-    },
     props: {
       component: {
         type: Object,

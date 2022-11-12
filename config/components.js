@@ -16,9 +16,10 @@ export default [
     fields: [
       {
         key: 'detailPage',
-        fieldType: 'page',
+        fieldType: 'reference',
         props: {
-          label: 'Detail page'
+          label: 'Detail page',
+          type: 'page'
         }
       }
     ]
@@ -30,9 +31,10 @@ export default [
     fields: [
       {
         key: 'detailPage',
-        fieldType: 'page',
+        fieldType: 'reference',
         props: {
-          label: 'Detail page'
+          label: 'Detail page',
+          type: 'page'
         }
       },
       {
@@ -52,6 +54,21 @@ export default [
           ]
         }
       }
+    ]
+  },
+  {
+    name: 'Form',
+    description: 'Display a form on the page.',
+    key: 'form',
+    fields: [
+      {
+        key: 'form',
+        fieldType: 'reference',
+        props: {
+          type: 'form',
+          label: 'Form'
+        }
+      },
     ]
   }
 ];
