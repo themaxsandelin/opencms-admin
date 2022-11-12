@@ -101,7 +101,7 @@
         this.variantFormVisible = false;
       },
       variantCreated() {
-        this.$fetch();
+        this.updateQuestion();
       },
       variantSelectionChange(variantId) {
         this.$router.push({ query: { variant: variantId } });
