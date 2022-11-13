@@ -93,7 +93,7 @@
         }))
       },
       selectedEnvironments() {
-        return this.selectedVersion.publications ? this.selectedVersion.publications.map(publication => publication.environment.id) : [];
+        return this.selectedVersion && this.selectedVersion.publications ? this.selectedVersion.publications.map(publication => publication.environment.id) : [];
       }
     },
     watch: {
