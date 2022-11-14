@@ -109,20 +109,20 @@
         const [item] = fields.splice(index, 1);
         fields.splice(newIndex, 0, item);
         this.$set(this.$data, 'localFields', fields);
-        this.$emit('update', this.localFields);
+        this.emitFieldsUpdate();
       },
       removeField(index) {
         const fields = [...this.localFields];
         fields.splice(index, 1);
         this.$set(this.$data, 'localFields', fields);
-        this.$emit('update', this.localFields);
+        this.emitFieldsUpdate();
       },
       fieldSelection(field) {
         const fields = [...this.localFields];
         fields.push(field);
         this.$set(this.$data, 'localFields', fields);
         this.configureField(this.localFields.length - 1);
-        this.$emit('update', this.localFields);
+        this.emitFieldsUpdate();
       },
       configureField(index) {
         this.$set(this.$data, 'activeFieldIndex', index);
@@ -134,7 +134,17 @@
         this.$set(this.$data.localFields, this.activeFieldIndex, field);
         this.hideFieldConfigurator();
         this.$set(this.$data, 'activeFieldIndex', -1);
-        this.$emit('update', this.localFields);
+        this.emitFieldsUpdate();
+      },
+      emitFieldsUpdate() {
+        // Emit a simplified version of each field to not have to store each field config in the DB.
+        this.$emit(
+          'update',
+          this.localFields.map(field => ({
+            type: field.type,
+            config: field.config
+          }))
+        );
       }
     }
   };

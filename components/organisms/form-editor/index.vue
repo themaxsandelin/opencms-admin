@@ -25,7 +25,7 @@
       </v-row>
       <v-row>
         <v-col cols="12" sm="12" md="12" lg="12">
-          <form-builder :fields="localVersion.config.fields" @update="formFieldsUpdate" />
+          <form-builder :fields="fields" @update="formFieldsUpdate" />
         </v-col>
       </v-row>
     </v-layout>
@@ -36,6 +36,9 @@
   // Components
   import FormBuilder from '@/components/organisms/form-builder';
   import VersionSelector from '@/components/molecules/version-selector';
+
+  // Form fields
+  import { fields } from '@/config/forms';
 
   export default {
     name: 'FormEditor',
@@ -94,6 +97,18 @@
       },
       selectedEnvironments() {
         return this.selectedVersion && this.selectedVersion.publications ? this.selectedVersion.publications.map(publication => publication.environment.id) : [];
+      },
+      fields() {
+        return this.localVersion.config.fields.map((field) => {
+          const configField = fields.find(configField => configField.key === field.key);
+          if (!configField) {
+            return field;
+          }
+          return {
+            ...configField,
+            config: field.config
+          };
+        });
       }
     },
     watch: {
