@@ -14,7 +14,7 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="blue darken-1" text @click="hideDialog">Cancel</v-btn>
-        <v-btn color="primary" :disabled="!changesMade" @click="saveChanges">Save changes</v-btn>
+        <v-btn color="primary" @click="saveChanges">Save changes</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -47,11 +47,6 @@
       return {
         config: {...this.values}
       };
-    },
-    computed: {
-      changesMade() {
-        return JSON.stringify(this.values) !== JSON.stringify(this.config);
-      },
     },
     watch: {
       values() {
