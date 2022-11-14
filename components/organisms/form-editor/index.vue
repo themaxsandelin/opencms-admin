@@ -100,7 +100,7 @@
       },
       fields() {
         return this.localVersion.config.fields.map((field) => {
-          const configField = fields.find(configField => configField.key === field.key);
+          const configField = fields.find(configField => configField.type === field.type);
           if (!configField) {
             return field;
           }
