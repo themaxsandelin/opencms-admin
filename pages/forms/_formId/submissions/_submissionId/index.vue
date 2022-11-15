@@ -96,8 +96,6 @@
           return this.$store.commit('alert/set', { type: 'error', message: error });
         }
 
-        console.log(data);
-
         this.$set(this.$data, 'submission', data);
       }
     }

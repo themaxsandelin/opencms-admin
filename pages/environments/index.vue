@@ -66,9 +66,7 @@
       this.$set(this.$data, 'environments', data);
     },
     methods: {
-      environmentRowClick(environment) {
-        console.log(environment);
-      },
+      environmentRowClick() {},
       showEnvironmentForm() {
         this.environmentFormVisible = true;
       },

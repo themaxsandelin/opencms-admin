@@ -72,9 +72,7 @@
       this.$set(this.$data, 'sites', data);
     },
     methods: {
-      clickSite(site) {
-        console.log(site);
-      }
+      clickSite() {}
     }
   }
 </script>
