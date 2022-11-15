@@ -53,7 +53,7 @@
           return this.$store.commit('alert/set', { type: 'error', message: versionError });
         }
 
-        this.$router.push({ path: `${this.$route.path}/${id}` });
+        this.$router.push({ path: `/forms/${id}` });
       }
     }
   };
