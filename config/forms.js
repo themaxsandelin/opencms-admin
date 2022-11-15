@@ -38,11 +38,11 @@ export const fields = [
         }
       },
       {
-        key: 'placeholder',
+        key: 'description',
         type: 'localized-text',
         props: {
-          label: 'Placeholder',
-          placeholder: 'Define the placeholder for your input field'
+          label: 'Description',
+          placeholder: 'Define a description for your input field'
         }
       }
     ]
@@ -71,11 +71,11 @@ export const fields = [
         }
       },
       {
-        key: 'placeholder',
+        key: 'description',
         type: 'localized-text',
         props: {
-          label: 'Placeholder',
-          placeholder: 'Define the placeholder for your text area'
+          label: 'Description',
+          placeholder: 'Define a description for your text area'
         }
       }
     ]
