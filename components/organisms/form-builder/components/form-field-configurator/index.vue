@@ -8,7 +8,7 @@
       <v-card-text>
         <configuration-field v-for="(field, i) in fields" :key="i" :field="field" :config="{ value: config[field.key] || '' }" @update="fieldUpdate" />
 
-        <v-checkbox label="Field is always required" :value="values.alwaysRequired || false" @change="fieldUpdate({ key: 'alwaysRequired', value: $event })" />
+        <v-checkbox v-model="config.alwaysRequired" label="Field is always required" @change="fieldUpdate({ key: 'alwaysRequired', value: $event })" />
       </v-card-text>
 
       <v-card-actions>
