@@ -2,6 +2,9 @@
 import { Router, Request, Response } from 'express';
 import fetch from 'node-fetch';
 
+// Routers
+import FilesRouter from './files';
+
 const router = Router({ mergeParams: true });
 
 router.get('/', async (req: Request, res: Response) => {
@@ -29,5 +32,7 @@ router.get('/:submissionId', async (req: Request, res: Response) => {
     res.status(500).json({ error: (error as any).message });
   }
 });
+
+router.use('/:submissionId/files', FilesRouter);
 
 export default router;

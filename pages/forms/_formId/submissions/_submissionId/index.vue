@@ -4,41 +4,52 @@
     <form-tabs />
 
     <template v-if="submission">
-      <h3>Meta data</h3>
-      <v-card outlined>
-        <v-simple-table>
-          <template v-slot:default>
-            <tbody>
-              <tr>
-                <td>Site</td>
-                <td>{{ submission.site.name }}</td>
-              </tr>
-              <tr>
-                <td>Locale</td>
-                <td>{{ submission.localeCode }}</td>
-              </tr>
-              <tr>
-                <td>Environment</td>
-                <td>{{ submission.environment.name }}</td>
-              </tr>
-            </tbody>
-          </template>
-        </v-simple-table>
-      </v-card>
+      <div class="submission-row">
+        <h3>Meta data</h3>
+        <v-card outlined>
+          <v-simple-table>
+            <template v-slot:default>
+              <tbody>
+                <tr>
+                  <td>Site</td>
+                  <td>{{ submission.site.name }}</td>
+                </tr>
+                <tr>
+                  <td>Locale</td>
+                  <td>{{ submission.localeCode }}</td>
+                </tr>
+                <tr>
+                  <td>Environment</td>
+                  <td>{{ submission.environment.name }}</td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+        </v-card>
+      </div>
 
-      <h3>Form data</h3>
-      <v-card outlined>
-        <v-simple-table>
-          <template v-slot:default>
-            <tbody>
-              <tr v-for="(item, i) in formData" :key="i">
-                <td>{{ item.key }}</td>
-                <td>{{ item.value }}</td>
-              </tr>
-            </tbody>
-          </template>
-        </v-simple-table>
-      </v-card>
+      <div class="submission-row">
+        <h3>Form data</h3>
+        <v-card outlined>
+          <v-simple-table>
+            <template v-slot:default>
+              <tbody>
+                <tr v-for="(item, i) in formData" :key="i">
+                  <td>{{ item.key }}</td>
+                  <td>{{ item.value }}</td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+        </v-card>
+      </div>
+
+      <template v-if="files.length">
+        <div class="submission-row">
+          <h3>Files</h3>
+          <file-grid :files="files" />
+        </div>
+      </template>
     </template>
   </div>
 </template>
@@ -46,11 +57,13 @@
 <script>
   // Components
   import FormTabs from '@/components/molecules/form-tabs';
+  import FileGrid from '@/components/organisms/file-grid';
 
   export default {
     name: 'FormSubmissionPage',
     components: {
-      FormTabs
+      FormTabs,
+      FileGrid
     },
     data() {
       return {
@@ -75,6 +88,13 @@
           key,
           value: this.submission.data[key]
         }))
+      },
+      files() {
+        const { submissionId, formId } = this.$route.params;
+        return this.submission.files.map(file => ({
+          ...file,
+          url: `/api/forms/${formId}/submissions/${submissionId}/files/${file.id}/file`
+        }));
       },
     },
     methods: {
@@ -101,3 +121,14 @@
     }
   };
 </script>
+
+<style lang="scss" scoped>
+  .submission-row {
+    width: 100%;
+    margin: 24px 0 0;
+
+    h3 {
+      margin: 0 0 12px;
+    }
+  }
+</style>
