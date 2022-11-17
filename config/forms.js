@@ -79,6 +79,41 @@ export const fields = [
         }
       }
     ]
+  },
+  {
+    name: 'File',
+    description: 'A file field allowing customers to upload files in the form.',
+    type: 'file',
+    configFields: [
+      {
+        key: 'label',
+        type: 'localized-text',
+        required: true,
+        props: {
+          label: 'Label',
+          placeholder: 'Define the label for your file input'
+        }
+      },
+      {
+        key: 'description',
+        type: 'localized-text',
+        props: {
+          label: 'Description',
+          placeholder: 'Define a description for your file input'
+        }
+      },
+      {
+        key: 'limit',
+        type: 'number',
+        defaultValue: 1,
+        props: {
+          label: 'File limit',
+          placeholder: 'Set a limit to the number of files the customer can attach to the form.',
+          max: 5,
+          min: 1
+        }
+      }
+    ]
   }
 ];
 

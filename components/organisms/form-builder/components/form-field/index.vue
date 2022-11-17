@@ -18,6 +18,7 @@
     <div class="form-field__content" @click="openConfigurator">
       <form-field-input v-if="field.type === 'input-field'" :config="field.config" />
       <form-field-textarea v-if="field.type === 'textarea'" :config="field.config" />
+      <form-field-file v-if="field.type === 'file'" :config="field.config" />
     </div>
   </div>
 </template>
@@ -26,12 +27,14 @@
   // Components
   import FormFieldInput from '../form-field-input';
   import FormFieldTextarea from '../form-field-textarea';
+  import FormFieldFile from '../form-field-file';
 
   export default {
     name: 'FormField',
     components: {
       FormFieldInput,
-      FormFieldTextarea
+      FormFieldTextarea,
+      FormFieldFile
     },
     props: {
       field: {
