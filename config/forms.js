@@ -112,6 +112,20 @@ export const fields = [
           max: 5,
           min: 1
         }
+      },
+      {
+        key: 'mimeTypes',
+        type: 'select',
+        options: [
+          { text: 'JPEG', value: 'image/jpeg' },
+          { text: 'PNG', value: 'image/png' },
+          { text: 'PDF', value: 'application/pdf' }
+        ],
+        props: {
+          label: 'File types',
+          placeholder: 'Select the file types to accept.',
+          multiple: true
+        }
       }
     ]
   }
