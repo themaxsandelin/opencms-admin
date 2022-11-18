@@ -34,6 +34,8 @@
         const value = this.config && this.config.value ? this.config.value : '';
         if (this.field.type === 'localized-text') {
           return value || {};
+        } else if (this.field.type === 'select' && this.field.props.multiple) {
+          return value ? value.split(', ') : [];
         }
         return value || '';
       }
@@ -48,7 +50,11 @@
         }
       },
       update(value) {
-        this.$emit('update', { key: this.field.key, value });
+        if (this.field.type === 'select' && this.field.props.multiple) {
+          this.$emit('update', { key: this.field.key, value: value.join(', ') });
+        } else {
+          this.$emit('update', { key: this.field.key, value });
+        }
       }
     }
   };
