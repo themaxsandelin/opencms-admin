@@ -161,19 +161,36 @@
           return;
         }
 
-        const { error } = await this.$api(`/forms/${this.form.id}/versions/${this.selectedVersion.id}/publish`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            environments: publishToEnvironments
+        const failed = [];
+        const succeeded = [];
+        await Promise.all(
+          publishToEnvironments.map(async (environment) => {
+            const { error } = await this.$api(`/forms/${this.form.id}/versions/${this.selectedVersion.id}/publish`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                environment
+              })
+            });
+            if (error) {
+              failed.push({
+                environment,
+                error
+              });
+            } else {
+              succeeded.push({
+                environment
+              })
+            }
           })
-        });
+        );
 
-        if (error) {
-          console.error('Publishing error', error);
-          return this.$store.commit('alert/set', { type: 'error', message: error });
+        if (failed.length) {
+          const [ attempt ] = failed;
+          console.error('Publishing error', attempt.error);
+          return this.$store.commit('alert/set', { type: 'error', message: attempt.error });
         }
 
         this.$store.commit('alert/set', { type: 'success', message: 'Form version published!' });
