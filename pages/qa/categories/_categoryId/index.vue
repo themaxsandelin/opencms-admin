@@ -67,7 +67,7 @@
         this.fetchingInitialData = false;
       }
       if (!this.variants.length) {
-        return this.updateVariants();
+        await this.updateVariants();
       }
       if (this.selectedVariant) {
         await this.updateVariant();
@@ -112,6 +112,7 @@
           console.error('Failed to fetch question category variant', error);
           return this.$store.commit('alert/set', { type: 'error', message: 'Failed to load variant.' });
         }
+        console.log('variant', data);
         this.$set(this.$data, 'variant', data);
       },
       variantSelectionChange(variantId) {
@@ -125,6 +126,7 @@
       },
       variantCreated() {
         this.updateCategory();
+        this.updateVariants();
       }
     }
   };

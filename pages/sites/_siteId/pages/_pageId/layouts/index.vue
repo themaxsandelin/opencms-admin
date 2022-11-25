@@ -7,7 +7,7 @@
     <v-row>
       <v-col cols="3">
         <v-select
-          :items="layouts"
+          :items="layoutList"
           label="Select a layout.."
           :value="selectedLayout"
           @change="layoutSelectionChange"
@@ -48,6 +48,7 @@
     data() {
       return {
         page: {},
+        layouts: [],
         layout: null,
         layoutFormVisible: false
       };
@@ -56,13 +57,16 @@
       if (!this.page.id) {
         await this.updatePage();
       }
+      if (!this.layouts.length) {
+        await this.updateLayouts();
+      }
       if (!this.layout && this.$route.query.layoutId) {
         await this.updateLayout();
       }
     },
     computed: {
-      layouts() {
-        return this.page.layouts ? this.page.layouts.map(layout => ({
+      layoutList() {
+        return this.layouts ? this.layouts.map(layout => ({
           value: layout.id,
           text: layout.name
         })) : [];
@@ -85,6 +89,7 @@
       },
       layoutCreated() {
         this.updatePage();
+        this.updateLayouts();
       },
       layoutSelectionChange(layoutId) {
         this.$router.push({ query: { layoutId } });
@@ -97,6 +102,15 @@
           return this.$store.commit('alert/set', { message: 'Failed to load sites.', type: 'error' });
         }
         this.$set(this.$data, 'page', data);
+      },
+      async updateLayouts() {
+        const { siteId, pageId } = this.$route.params;
+        const { data, error } = await this.$api(`/sites/${siteId}/pages/${pageId}/layouts`);
+        if (error) {
+          console.error('Failed to fetch page layouts', error);
+          return this.$store.commit('alert/set', { type: 'error', message: 'Failed to load layouts.' });
+        }
+        this.$set(this.$data, 'layouts', data);
       },
       async updateLayout() {
         const { layoutId } = this.$route.query;

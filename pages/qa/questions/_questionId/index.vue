@@ -112,6 +112,7 @@
       },
       variantCreated() {
         this.updateQuestion();
+        this.updateVariants();
       },
       variantSelectionChange(variantId) {
         this.$router.push({ query: { variant: variantId } });

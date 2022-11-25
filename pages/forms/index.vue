@@ -15,8 +15,14 @@
       <template v-slot:item.updatedAt="{ item }">
         <span>{{ new Date(item.updatedAt).toLocaleString() }}</span>
       </template>
+      <template v-slot:item.updatedBy="{ item }">
+        <span>{{ item.updatedBy.firstName }} {{ item.updatedBy.lastName }}</span>
+      </template>
       <template v-slot:item.createdAt="{ item }">
         <span>{{ new Date(item.createdAt).toLocaleString() }}</span>
+      </template>
+      <template v-slot:item.createdBy="{ item }">
+        <span>{{ item.createdBy.firstName }} {{ item.createdBy.lastName }}</span>
       </template>
     </v-data-table>
   </div>
@@ -38,8 +44,16 @@
             value: 'updatedAt'
           },
           {
+            text: 'Updated by',
+            value: 'updatedBy'
+          },
+          {
             text: 'Created',
-            value: 'updatedAt'
+            value: 'createdAt'
+          },
+          {
+            text: 'Created by',
+            value: 'createdBy'
           }
         ],
         forms: []
