@@ -20,8 +20,16 @@ export async function adminApiRequest({ path, method, body, accessToken }: Admin
       options.body = JSON.stringify(body);
     }
     const request = await fetch(uri, options);
-    const response = await request.json();
-    return { statusCode: request.status, response: (response as AdminApiResponseObject) };
+    const contentType = request.headers.get('Content-Type') as string;
+    const contentDisposition = request.headers.get('Content-Disposition') as string || '';
+    let response;
+    if (contentType.includes('application/json')) {
+      response = await request.json();
+    } else {
+      const arrayBuffer = await request.arrayBuffer();
+      response = Buffer.from(arrayBuffer);
+    }
+    return { statusCode: request.status, contentType, contentDisposition, response: (response as AdminApiResponseObject) };
   } catch (error) {
     throw new Error((error as any).message);
   }
@@ -34,8 +42,17 @@ export default async function adminRequestHandler(req: Request, res: Response) {
     const path = `${req.baseUrl.substring(4, req.baseUrl.length)}${queryString}`;
     const accessToken = req.session.accessToken || '';
 
-    const { statusCode, response } = await adminApiRequest({ path, method, body, accessToken });
-    res.status(statusCode).json(response);
+    const { statusCode, response, contentType, contentDisposition } = await adminApiRequest({ path, method, body, accessToken });
+    res.setHeader('Content-Type', contentType);
+    if (contentDisposition) {
+      res.setHeader('Content-Disposition', contentDisposition);
+    }
+    res.status(statusCode);
+    if (contentType.includes('application/json')) {
+      res.json(response);
+    } else {
+      res.send(response);
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Server error' });

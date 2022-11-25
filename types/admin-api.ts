@@ -13,4 +13,6 @@ export interface AdminApiResponseObject {
 export interface AdminApiRequestResponse {
   statusCode: number;
   response: AdminApiResponseObject;
+  contentType: string;
+  contentDisposition: string;
 }
