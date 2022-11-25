@@ -5,7 +5,7 @@
     <v-row>
       <v-col cols="3">
         <v-select
-          :items="variants"
+          :items="variantList"
           label="Select a variant.."
           :value="selectedVariant"
           @change="variantSelectionChange"
@@ -47,6 +47,7 @@
     data() {
       return {
         question: {},
+        variants: [],
         variant: null,
         variantFormVisible: false
       };
@@ -55,15 +56,16 @@
       if (!this.question.id || (this.question.id !== this.$route.params.questionId)) {
         await this.updateQuestion();
       }
+      if (!this.variants.length) {
+        await this.updateVariants();
+      }
       if (this.selectedVariant) {
         await this.updateVariant();
       }
     },
     computed: {
-      variants() {
-        if (!this.question.variants) return [];
-
-        return this.question.variants.map(variant => ({
+      variantList() {
+        return this.variants.map(variant => ({
           text: variant.name,
           value: variant.id
         }));
@@ -85,6 +87,14 @@
           return this.$store.commit('alert/set', { type: 'error', message: 'Failed to load question.' });
         }
         this.$set(this.$data, 'question', data);
+      },
+      async updateVariants() {
+        const { data, error } = await this.$api(`/content-blocks/${this.$route.params.questionId}/variants`);
+        if (error) {
+          console.error('Failed to fetch question variants', error);
+          return this.$store.commit('alert/set', { type: 'error', message: 'Failed to load variants.' });
+        }
+        this.$set(this.$data, 'variants', data);
       },
       async updateVariant() {
         const { data, error } = await this.$api(`/content-blocks/${this.$route.params.questionId}/variants/${this.selectedVariant}`);

@@ -1,0 +1,17 @@
+.user-menu {
+  &__btn {
+    background: #ddd;
+    padding: 4px 4px 4px 16px;
+    border-radius: 25px;
+    font-size: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+
+    .v-avatar {
+      color: #fff;
+      font-weight: 500;
+      margin-left: 8px;
+    }
+  }
+}

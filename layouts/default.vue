@@ -1,6 +1,12 @@
 <template>
-  <v-app dark>
-    <v-app-bar fixed app :clipped-left="true"></v-app-bar>
+  <v-app>
+    <v-app-bar fixed app :clipped-left="true">
+      <v-layout justify-space-between align-center>
+        <h3>Open CMS</h3>
+
+        <user-menu :user="user" />
+      </v-layout>
+    </v-app-bar>
     <NavigationDrawer />
     <v-main>
       <v-container>
@@ -20,14 +26,27 @@
 <script>
   // Components
   import NavigationDrawer from '../components/organisms/navigation-drawer/index.vue';
+  import UserMenu from '../components/molecules/user-menu';
 
   export default {
     name: 'DefaultLayout',
     components: {
-      NavigationDrawer
+      NavigationDrawer,
+      UserMenu
     },
     data() {
-      return {}
+      return {
+        user: null
+      };
+    },
+    async fetch() {
+      const { data, error } = await this.$api('/users/me');
+      if (error) {
+        console.error('Failed to fetch logged in user', error);
+        return this.$store.commit('alert/set', { type: 'error', message: error });
+      }
+
+      this.$set(this.$data, 'user', data);
     },
     computed: {
       alert() {

@@ -12,7 +12,7 @@
       <v-row>
         <v-col cols="3">
           <v-select
-            :items="variants"
+            :items="variantList"
             label="Select a variant.."
             :value="selectedVariant"
             @change="variantSelectionChange"
@@ -56,6 +56,7 @@
       return {
         fetchingInitialData: true,
         category: {},
+        variants: [],
         variant: null,
         variantFormVisible: false
       };
@@ -65,15 +66,16 @@
         await this.updateCategory();
         this.fetchingInitialData = false;
       }
+      if (!this.variants.length) {
+        return this.updateVariants();
+      }
       if (this.selectedVariant) {
         await this.updateVariant();
       }
     },
     computed: {
-      variants() {
-        if (!this.category.variants) return [];
-
-        return this.category.variants.map(variant => ({
+      variantList() {
+        return this.variants.map(variant => ({
           text: variant.name,
           value: variant.id
         }));
@@ -96,10 +98,18 @@
         }
         this.$set(this.$data, 'category', data);
       },
+      async updateVariants() {
+        const { data, error } = await this.$api(`/content-blocks/${this.$route.params.categoryId}/variants`);
+        if (error) {
+          console.error('Failed to fetch question category variants', error);
+          return this.$store.commit('alert/set', { type: 'error', message: 'Failed to load variants.' });
+        }
+        this.$set(this.$data, 'variants', data);
+      },
       async updateVariant() {
         const { data, error } = await this.$api(`/content-blocks/${this.$route.params.categoryId}/variants/${this.selectedVariant}`);
         if (error) {
-          console.error('Failed to fetch question variant', error);
+          console.error('Failed to fetch question category variant', error);
           return this.$store.commit('alert/set', { type: 'error', message: 'Failed to load variant.' });
         }
         this.$set(this.$data, 'variant', data);
