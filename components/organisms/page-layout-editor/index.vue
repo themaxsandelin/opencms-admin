@@ -208,19 +208,37 @@
         const { id: versionId } = this.selectedVersion;
         const { layoutId } = this.$route.query;
         const { siteId, pageId } = this.$route.params;
-        const { error } = await this.$api(`/sites/${siteId}/pages/${pageId}/layouts/${layoutId}/versions/${versionId}/publish`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            environments: this.publishToEnvironments
-          })
-        });
 
-        if (error) {
-          console.error('Publishing error', error);
-          return this.$store.commit('alert/set', { type: 'error', message: error });
+        const failed = [];
+        const succeeded = [];
+        await Promise.all(
+          this.publishToEnvironments.map(async (environment) => {
+            const { error } = await this.$api(`/sites/${siteId}/pages/${pageId}/layouts/${layoutId}/versions/${versionId}/publish`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                environment
+              })
+            });
+            if (error) {
+              failed.push({
+                environment,
+                error
+              });
+            } else {
+              succeeded.push({
+                environment
+              })
+            }
+          })
+        );
+
+        if (failed.length) {
+          const [ attempt ] = failed;
+          console.error('Publishing error', attempt.error);
+          return this.$store.commit('alert/set', { type: 'error', message: attempt.error });
         }
 
         this.$store.commit('alert/set', { type: 'success', message: 'Page layout published!' });
