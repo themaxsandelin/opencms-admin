@@ -46,7 +46,11 @@
     },
     async fetch() {
       this.$set(this.$data, 'fetching', true);
-      const { data, error } = await this.$api(`/content-blocks/?search=${this.searchTerm}&type=${this.type}`);
+      let uri = `/content-blocks/?type=${this.type}`;
+      if (this.searchTerm) {
+        uri += `&search=${this.searchTerm}`;
+      }
+      const { data, error } = await this.$api(uri);
       this.$set(this.$data, 'fetching', false);
       if (error) {
         console.error(`Failed to find content block by type ${this.type}`, error);
