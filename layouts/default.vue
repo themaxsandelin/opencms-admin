@@ -4,7 +4,7 @@
       <v-layout justify-space-between align-center>
         <h3>Open CMS</h3>
 
-        <user-menu :user="user" />
+        <user-menu v-if="user" :user="user" />
       </v-layout>
     </v-app-bar>
     <NavigationDrawer />
