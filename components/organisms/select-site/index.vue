@@ -22,6 +22,7 @@
     },
     data() {
       return {
+        fetching: false,
         searchTerm: '',
         sites: [],
         headers: [
