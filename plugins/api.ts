@@ -18,11 +18,11 @@ const ApiClientPlugin : Plugin = (context, inject) => {
     }
     // const $cId = `${document.location.hostname}-${Date.now()}-${(Math.random() * 10000).toFixed(0)}`;
 
-    const requestContext = {
+    const requestContext: unknown = {
       ...context
-    } as IFetchContext;
+    };
 
-    return apiFetch(requestContext, `${hostUrl}${context.app.router!.options.base}api${endpoint}`, ...args);
+    return apiFetch((requestContext as IFetchContext), `${hostUrl}${context.app.router!.options.base}api${endpoint}`, ...args);
   });
 };
 
