@@ -7,7 +7,17 @@ export default [
   {
     name: 'Similar questions list',
     description: 'A list of similar questions',
-    key: 'similar-questions-list'
+    key: 'similar-questions-list',
+    fields: [
+      {
+        key: 'detailPage',
+        fieldType: 'reference',
+        props: {
+          label: 'Detail page',
+          type: 'page'
+        }
+      }
+    ]
   },
   {
     name: 'Question category lineup',
