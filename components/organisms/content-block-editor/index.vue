@@ -173,7 +173,7 @@
       },
       async updateVersions() {
         this.$set(this.$data, 'fetchingVersions', true);
-        const { data, error } = await this.$api(`/content-blocks/${this.block.id}/variants/${this.variant.id}/versions?locale=${this.selectedLocale}`);
+        const { data, error } = await this.$api(`/content-blocks/${this.block.id}/variants/${this.variant.id}/versions?localeCode=${this.selectedLocale}`);
         this.$set(this.$data, 'fetchingVersions', false);
         if (error) {
           console.error('Failed to load versions', error);
