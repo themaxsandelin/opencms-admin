@@ -9,6 +9,7 @@ specifiers:
   '@editorjs/table': ^2.0.4
   '@nuxt/types': ^2.15.8
   '@nuxt/typescript-build': ^2.1.0
+  '@nuxt/ufo': ^0.5.4
   '@nuxtjs/eslint-config-typescript': ^8.0.0
   '@nuxtjs/eslint-module': ^3.0.2
   '@nuxtjs/vuetify': ^1.12.3
@@ -28,6 +29,7 @@ specifiers:
   node-fetch: ^3.2.10
   nuxt: ^2.15.8
   prettier: ^2.5.1
+  ufo: ^1.0.1
   vue: ^2.6.14
   vue-server-renderer: ^2.6.14
   vue-template-compiler: ^2.6.14
@@ -40,12 +42,14 @@ dependencies:
   '@editorjs/header': 2.6.2
   '@editorjs/nested-list': 1.0.2
   '@editorjs/table': 2.0.4
+  '@nuxt/ufo': 0.5.4
   cookie-parser: 1.4.6
   core-js: 3.25.2
   express: 4.18.1
   express-session: 1.17.3
   node-fetch: 3.2.10
   nuxt: 2.15.8_vue@2.7.10
+  ufo: 1.0.1
   vue: 2.7.10
   vue-server-renderer: 2.7.10
   vue-template-compiler: 2.7.10
@@ -1774,6 +1778,11 @@ packages:
       - vue-template-compiler
       - webpack
     dev: true
+
+  /@nuxt/ufo/0.5.4:
+    resolution: {integrity: sha512-JZOGDlt2BvLCBmLhrchhRJ6tP9PBfSWLdsHC+JVJ5Qp8/hT/2u61cSsLS30zUOwcPRaQ3y2oHNkEiKJ5v90iEQ==}
+    deprecated: please migrate to ufo npm package
+    dev: false
 
   /@nuxt/utils/2.15.8:
     resolution: {integrity: sha512-e0VBarUbPiQ4ZO1T58puoFIuXme7L5gk1QfwyxOONlp2ryE7aRyZ8X/mryuOiIeyP64c4nwSUtN7q9EUWRb7Lg==}
@@ -9427,6 +9436,10 @@ packages:
 
   /ufo/0.7.11:
     resolution: {integrity: sha512-IT3q0lPvtkqQ8toHQN/BkOi4VIqoqheqM1FnkNWT9y0G8B3xJhwnoKBu5OHx8zHDOvveQzfKuFowJ0VSARiIDg==}
+    dev: false
+
+  /ufo/1.0.1:
+    resolution: {integrity: sha512-boAm74ubXHY7KJQZLlXrtMz52qFvpsbOxDcZOnw/Wf+LS4Mmyu7JxmzD4tDLtUQtmZECypJ0FrCz4QIe6dvKRA==}
     dev: false
 
   /uglify-js/3.17.1:

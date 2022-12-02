@@ -1,0 +1,18 @@
+
+namespace: dev-web
+
+ingress_host: faq-dev.int.ellosgroup.com
+version: c3dcc8e5b77e6f81909007c83ad051a6a33c3a24-jenkins_deploy-experimental-2
+exclude_list:
+-
+
+admin_ui:
+  port: 3000
+  replicas: 1
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+
+app_url: https://faq-dev.int.ellosgroup.com
+admin_api_url: https://service-k8s-dev.int.ellosgroup.com/dev-web/opencms-mirror-admin-api
