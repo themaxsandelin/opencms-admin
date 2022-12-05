@@ -125,12 +125,12 @@
     methods: {
       localeChange(localeCode) {
         this.$set(this.$data, 'selectedLocale', localeCode);
-        this.$router.push({ query: { ...this.$route.query, locale: localeCode } });
+        this.$router.push({ query: { ...this.$route.query, localeCode } });
         this.$fetch();
       },
       getBaseVersionData() {
         return {
-          locale: this.selectedLocale,
+          localeCode: this.selectedLocale,
           slug: '',
           content: {
             question: '',
@@ -159,8 +159,8 @@
           return this.$store.commit('alert/set', { type: 'error', message: 'Failed to load locales.' });
         }
         this.$set(this.$data, 'locales', data);
-        if (this.$route.query.locale) {
-          this.$set(this.$data, 'selectedLocale', this.$route.query.locale);
+        if (this.$route.query.localeCode) {
+          this.$set(this.$data, 'selectedLocale', this.$route.query.localeCode);
         }
       },
       async updatePublishingEnvironments() {
@@ -173,14 +173,14 @@
       },
       async updateVersions() {
         this.$set(this.$data, 'fetchingVersions', true);
-        const { data, error } = await this.$api(`/content-blocks/${this.block.id}/variants/${this.variant.id}/versions?locale=${this.selectedLocale}`);
+        const { data, error } = await this.$api(`/content-blocks/${this.block.id}/variants/${this.variant.id}/versions?localeCode=${this.selectedLocale}`);
         this.$set(this.$data, 'fetchingVersions', false);
         if (error) {
           console.error('Failed to load versions', error);
           return this.$store.commit('alert/set', { type: 'error', message: error });
         }
         this.$set(this.$data, 'versions', data);
-        if (!this.selectedVersion.id || this.selectedVersion.locale !== this.selectedLocale) {
+        if (!this.selectedVersion.id || this.selectedVersion.localeCode !== this.selectedLocale) {
           this.selectLatestVersion();
         } else {
           this.versionSelection(this.selectedVersion.id);
@@ -228,7 +228,7 @@
       },
       async save() {
         const content = await this.$refs.editor.save();
-        const { slug, locale } = this.selectedVersion;
+        const { slug, localeCode } = this.selectedVersion;
 
         const wasPublished = this.selectedVersion.wasPublished || false;
         const updating = !!this.selectedVersion.id && !wasPublished;
@@ -245,7 +245,7 @@
           },
           body: JSON.stringify({
             content,
-            locale,
+            localeCode,
             slug
           })
         });
