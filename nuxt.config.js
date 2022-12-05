@@ -3,6 +3,11 @@ export default {
     port: process.env.NUXT_PORT || process.env.PORT || 3300
   },
 
+  env: {
+    NODE_ENV: process.env.NODE_ENV,
+    PORT: process.env.PORT || 3000,
+  },
+
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     titleTemplate: '%s - opencms-app',

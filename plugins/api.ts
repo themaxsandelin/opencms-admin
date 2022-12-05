@@ -1,6 +1,9 @@
 // Dependencies
 import { Plugin } from '@nuxt/types';
 
+// Config
+import hosts from '../config/admin.config';
+
 // Utils
 import apiFetch from '../utils/fetch';
 
@@ -14,7 +17,7 @@ const ApiClientPlugin : Plugin = (context, inject) => {
     if (typeof document !== 'undefined') {
       hostUrl = `${document.location.protocol}//${document.location.host}`;
     } else {
-      hostUrl = 'http://localhost:3300';
+      hostUrl = hosts[(process.env.NODE_ENV as string)] || 'http://localhost:3300';
     }
     // const $cId = `${document.location.hostname}-${Date.now()}-${(Math.random() * 10000).toFixed(0)}`;
 
