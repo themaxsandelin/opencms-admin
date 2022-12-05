@@ -11,35 +11,45 @@
       :visible="instanceFormVisible"
       @hide="hideInstanceForm"
       @created="createdCallback"
-      @updated="updatedDeletedCallback"
-      @deleted="updatedDeletedCallback"
+      @updated="updatedCallback"
     />
 
-    <v-data-table
-      :loading="$fetchState.pending"
-      loading-text="Loading page instances... Please wait"
-      :headers="headers"
-      :items="instances"
-      @click:row="instanceRowClick"
-    >
-      <template v-slot:item.updatedAt="{ item }">
-        <span>{{ new Date(item.updatedAt).toLocaleString() }}</span>
-      </template>
-      <template v-slot:item.updatedBy="{ item }">
-        <span>{{ item.updatedBy.firstName }} {{ item.updatedBy.lastName }}</span>
-      </template>
-      <template v-slot:item.createdAt="{ item }">
-        <span>{{ new Date(item.createdAt).toLocaleString() }}</span>
-      </template>
-      <template v-slot:item.createdBy="{ item }">
-        <span>{{ item.createdBy.firstName }} {{ item.createdBy.lastName }}</span>
-      </template>
-      <template v-slot:item.actions="{ item }">
-        <v-btn @click="editInstance($event, item)">
-          Edit
-        </v-btn>
-      </template>
-    </v-data-table>
+    <v-card class="mt-6" outlined>
+      <v-card-title class="pt-0 pb-1">
+        <v-text-field
+          v-model="search"
+          append-icon="mdi-magnify"
+          label="Search"
+          single-line
+          hide-details
+        ></v-text-field>
+      </v-card-title>
+
+      <v-data-table
+        :loading="$fetchState.pending"
+        loading-text="Loading page instances... Please wait"
+        :headers="headers"
+        :items="instances"
+        :search="search"
+        @click:row="instanceRowClick"
+      >
+        <template v-slot:item.updatedAt="{ item }">
+          <span>{{ new Date(item.updatedAt).toLocaleString() }}</span>
+        </template>
+        <template v-slot:item.updatedBy="{ item }">
+          <span>{{ item.updatedBy.firstName }} {{ item.updatedBy.lastName }}</span>
+        </template>
+        <template v-slot:item.createdAt="{ item }">
+          <span>{{ new Date(item.createdAt).toLocaleString() }}</span>
+        </template>
+        <template v-slot:item.createdBy="{ item }">
+          <span>{{ item.createdBy.firstName }} {{ item.createdBy.lastName }}</span>
+        </template>
+        <template v-slot:item.actions="{ item }">
+          <v-btn small outlined @click="editInstance($event, item)">...</v-btn>
+        </template>
+      </v-data-table>
+    </v-card>
   </div>
 </template>
 
@@ -56,6 +66,7 @@
     },
     data() {
       return {
+        search: '',
         instances: [],
         headers: [
           {
@@ -122,7 +133,7 @@
       createdCallback() {
         this.$fetch();
       },
-      updatedDeletedCallback() {
+      updatedCallback() {
         this.$set(this.$data, 'editingInstance', null);
         this.$fetch();
       },

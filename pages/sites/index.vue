@@ -6,26 +6,40 @@
 
     <site-form :visible="siteFormVisible" @hide="hideSiteForm" @created="siteCreatedCallback" />
 
-    <v-data-table
-      :loading="$fetchState.pending"
-      loading-text="Loading sites... Please wait"
-      :headers="headers"
-      :items="sites"
-      @click:row="siteRowClick"
-    >
-      <template v-slot:item.updatedAt="{ item }">
-        <span>{{ new Date(item.updatedAt).toLocaleString() }}</span>
-      </template>
-      <template v-slot:item.updatedBy="{ item }">
-        <span>{{ item.updatedBy.firstName }} {{ item.updatedBy.lastName }}</span>
-      </template>
-      <template v-slot:item.createdAt="{ item }">
-        <span>{{ new Date(item.createdAt).toLocaleString() }}</span>
-      </template>
-      <template v-slot:item.createdBy="{ item }">
-        <span>{{ item.createdBy.firstName }} {{ item.createdBy.lastName }}</span>
-      </template>
-    </v-data-table>
+
+    <v-card class="mt-6" outlined>
+      <v-card-title class="pt-0 pb-1">
+        <v-text-field
+          v-model="search"
+          append-icon="mdi-magnify"
+          label="Search"
+          single-line
+          hide-details
+        ></v-text-field>
+      </v-card-title>
+
+      <v-data-table
+        :loading="$fetchState.pending"
+        loading-text="Loading sites... Please wait"
+        :headers="headers"
+        :items="sites"
+        :search="search"
+        @click:row="siteRowClick"
+      >
+        <template v-slot:item.updatedAt="{ item }">
+          <span>{{ new Date(item.updatedAt).toLocaleString() }}</span>
+        </template>
+        <template v-slot:item.updatedBy="{ item }">
+          <span>{{ item.updatedBy.firstName }} {{ item.updatedBy.lastName }}</span>
+        </template>
+        <template v-slot:item.createdAt="{ item }">
+          <span>{{ new Date(item.createdAt).toLocaleString() }}</span>
+        </template>
+        <template v-slot:item.createdBy="{ item }">
+          <span>{{ item.createdBy.firstName }} {{ item.createdBy.lastName }}</span>
+        </template>
+      </v-data-table>
+    </v-card>
   </div>
 </template>
 
@@ -40,6 +54,7 @@
     },
     data() {
       return {
+        search: '',
         sites: [],
         headers: [
           {

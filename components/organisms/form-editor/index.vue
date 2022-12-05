@@ -4,7 +4,6 @@
     <v-layout column>
       <v-row>
         <v-col cols="12" sm="4" md="4" lg="4">
-          <v-btn v-if="editing" color="error" @click="deleteForm">Delete form</v-btn>
           <v-btn color="primary" :disabled="saveDisabled" @click="save">Save changes</v-btn>
         </v-col>
         <v-col v-if="editing && versions.length" cols="12" sm="4" md="4" lg="4">
@@ -141,9 +140,6 @@
       },
       publish() {
         this.$emit('publish', this.publishToEnvironments);
-      },
-      deleteForm() {
-        this.$emit('delete');
       }
     }
   };

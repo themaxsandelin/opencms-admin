@@ -12,31 +12,42 @@
       @created="questionCategoryCreated"
     />
 
-    <v-data-table
-      :loading="$fetchState.pending"
-      loading-text="Loading categories... Please wait"
-      :headers="headers"
-      :items="categories"
-      @click:row="categoryRowClick"
-    >
-      <template v-slot:item.updatedAt="{ item }">
-        <span>{{ new Date(item.updatedAt).toLocaleString() }}</span>
-      </template>
-      <template v-slot:item.updatedBy="{ item }">
-        <span>{{ item.updatedBy.firstName }} {{ item.updatedBy.lastName }}</span>
-      </template>
-      <template v-slot:item.createdAt="{ item }">
-        <span>{{ new Date(item.createdAt).toLocaleString() }}</span>
-      </template>
-      <template v-slot:item.createdBy="{ item }">
-        <span>{{ item.createdBy.firstName }} {{ item.createdBy.lastName }}</span>
-      </template>
-      <template v-slot:item.actions="{ item }">
-        <v-btn @click="editCategory($event, item)">
-          Edit
-        </v-btn>
-      </template>
-    </v-data-table>
+    <v-card class="mt-6" outlined>
+      <v-card-title class="pt-0 pb-1">
+        <v-text-field
+          v-model="search"
+          append-icon="mdi-magnify"
+          label="Search"
+          single-line
+          hide-details
+        ></v-text-field>
+      </v-card-title>
+
+      <v-data-table
+        :loading="$fetchState.pending"
+        loading-text="Loading categories... Please wait"
+        :headers="headers"
+        :items="categories"
+        :search="search"
+        @click:row="categoryRowClick"
+      >
+        <template v-slot:item.updatedAt="{ item }">
+          <span>{{ new Date(item.updatedAt).toLocaleString() }}</span>
+        </template>
+        <template v-slot:item.updatedBy="{ item }">
+          <span>{{ item.updatedBy.firstName }} {{ item.updatedBy.lastName }}</span>
+        </template>
+        <template v-slot:item.createdAt="{ item }">
+          <span>{{ new Date(item.createdAt).toLocaleString() }}</span>
+        </template>
+        <template v-slot:item.createdBy="{ item }">
+          <span>{{ item.createdBy.firstName }} {{ item.createdBy.lastName }}</span>
+        </template>
+        <template v-slot:item.actions="{ item }">
+          <v-btn small outlined @click="editCategory($event, item)">...</v-btn>
+        </template>
+      </v-data-table>
+    </v-card>
   </div>
 </template>
 
@@ -51,6 +62,7 @@
     },
     data() {
       return {
+        search: '',
         categoryFormVisible: false,
         categories: [],
         headers: [
