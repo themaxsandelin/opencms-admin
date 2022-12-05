@@ -6,26 +6,39 @@
 
     <locale-form :visible="localeFormVisible" @created="newLocaleCreated" />
 
-    <v-data-table
-      :loading="$fetchState.pending"
-      loading-text="Loading locales... Please wait"
-      :headers="headers"
-      :items="locales"
-      @click:row="localeRowClick"
-    >
-      <template v-slot:item.updatedAt="{ item }">
-        <span>{{ new Date(item.updatedAt).toLocaleString() }}</span>
-      </template>
-      <template v-slot:item.updatedBy="{ item }">
-        <span>{{ item.updatedBy.firstName }} {{ item.updatedBy.lastName }}</span>
-      </template>
-      <template v-slot:item.createdAt="{ item }">
-        <span>{{ new Date(item.createdAt).toLocaleString() }}</span>
-      </template>
-      <template v-slot:item.createdBy="{ item }">
-        <span>{{ item.createdBy.firstName }} {{ item.createdBy.lastName }}</span>
-      </template>
-    </v-data-table>
+    <v-card class="mt-6" outlined>
+      <v-card-title class="pt-0 pb-1">
+        <v-text-field
+          v-model="search"
+          append-icon="mdi-magnify"
+          label="Search"
+          single-line
+          hide-details
+        ></v-text-field>
+      </v-card-title>
+
+      <v-data-table
+        :loading="$fetchState.pending"
+        loading-text="Loading locales... Please wait"
+        :headers="headers"
+        :items="locales"
+        :search="search"
+        @click:row="localeRowClick"
+      >
+        <template v-slot:item.updatedAt="{ item }">
+          <span>{{ new Date(item.updatedAt).toLocaleString() }}</span>
+        </template>
+        <template v-slot:item.updatedBy="{ item }">
+          <span>{{ item.updatedBy.firstName }} {{ item.updatedBy.lastName }}</span>
+        </template>
+        <template v-slot:item.createdAt="{ item }">
+          <span>{{ new Date(item.createdAt).toLocaleString() }}</span>
+        </template>
+        <template v-slot:item.createdBy="{ item }">
+          <span>{{ item.createdBy.firstName }} {{ item.createdBy.lastName }}</span>
+        </template>
+      </v-data-table>
+    </v-card>
   </div>
 </template>
 
@@ -40,6 +53,7 @@
     },
     data() {
       return {
+        search: '',
         localeFormVisible: false,
         locales: [],
         headers: [
