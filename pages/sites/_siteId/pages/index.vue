@@ -8,7 +8,6 @@
       @hide="hidePageForm"
       @created="pageUpdateCallback"
       @updated="pageUpdateCallback"
-      @deleted="pageUpdateCallback"
     />
 
     <v-card class="mt-6" outlined>

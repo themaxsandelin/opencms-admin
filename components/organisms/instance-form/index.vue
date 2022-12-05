@@ -41,28 +41,15 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="blue darken-1" text @click="hideDialog">Close</v-btn>
-        <v-btn v-if="editingInstance" :loading="deletionLoading" color="error" text @click="showActionDialog">Delete</v-btn>
         <v-btn color="primary" :loading="saveLoading" @click="submit">{{ editingInstance ? 'Save changes' : 'Create' }}</v-btn>
       </v-card-actions>
     </v-card>
-
-    <verify-action
-      v-bind="deleteAction"
-      @abort="hideActionDialog"
-      @confirm="attemptDeletion"
-    />
   </v-dialog>
 </template>
 
 <script>
-  // Components
-  import VerifyAction from '@/components/organisms/verify-action';
-
   export default {
     name: 'InstanceForm',
-    components: {
-      VerifyAction
-    },
     props: {
       visible: {
         type: Boolean,
@@ -81,15 +68,6 @@
         selectedLocale: '',
         saveLoading: false,
         locales: [],
-        deleteAction: {
-          visible: false,
-          type: 'warning',
-          title: 'You are about to delete an instance',
-          text: 'Heads up, you are about to delete a page instance. Are you sure you want to do that?',
-          cancelLabel: 'Abort',
-          confirmLabel: 'Delete'
-        },
-        deletionLoading: false
       };
     },
     async fetch() {
@@ -193,36 +171,6 @@
         } catch (error) {
           this.$store.commit('alert/set', { message: error.message, type: 'error' });
         }
-      },
-      showActionDialog() {
-        this.$set(this.$data.deleteAction, 'visible', true);
-      },
-      hideActionDialog() {
-        this.$set(this.$data.deleteAction, 'visible', false);
-      },
-      async attemptDeletion() {
-        this.$set(this.$data, 'deletionLoading', true);
-
-        const { siteId, pageId } = this.$route.params;
-        const { id: instanceId } = this.instance;
-
-        const { error } = await this.$api(`/sites/${siteId}/pages/${pageId}/instances/${instanceId}`, {
-          method: 'DELETE'
-        });
-
-        this.$set(this.$data, 'deletionLoading', false);
-
-        if (error) {
-          console.error(error);
-          return this.$store.commit('alert/set', { message: error, type: 'error' });
-        }
-
-        this.$store.commit('alert/set', { message: 'Instance successfully deleted!', type: 'success' });
-        this.$set(this.$data, 'title', '');
-        this.$set(this.$data, 'slug', '');
-        this.$set(this.$data, 'description', '');
-        this.hideDialog();
-        this.$emit('deleted');
       }
     }
   }

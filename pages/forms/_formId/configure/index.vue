@@ -12,13 +12,6 @@
       @version-change="versionSelection"
       @save="patchUpdates"
       @publish="publish"
-      @delete="attemptDelete"
-    />
-
-    <verify-action
-      v-bind="deleteDialog"
-      @abort="abortDelete"
-      @confirm="deleteForm"
     />
   </div>
 </template>
@@ -26,14 +19,12 @@
 <script>
   // Components
   import FormEditor from '@/components/organisms/form-editor';
-  import VerifyAction from '@/components/organisms/verify-action';
   import FormTabs from '@/components/molecules/form-tabs';
 
   export default {
     name: 'ConfigureFormPage',
     components: {
       FormEditor,
-      VerifyAction,
       FormTabs
     },
     data() {
@@ -43,15 +34,7 @@
         },
         versions: [],
         selectedVersion: null,
-        publishingEnvironments: [],
-        deleteDialog: {
-          type: 'warning',
-          title: 'You are about to delete a form',
-          text: 'Just a heads up, you are about to delete this form. This will delete both the form, and all of it\'s versions.',
-          cancelLabel: 'Abort',
-          confirmLabel: 'Delete',
-          visible: false
-        }
+        publishingEnvironments: []
       };
     },
     async fetch() {
@@ -195,24 +178,6 @@
 
         this.$store.commit('alert/set', { type: 'success', message: 'Form version published!' });
         this.updateVersions();
-      },
-      attemptDelete() {
-        this.$set(this.$data.deleteDialog, 'visible', true);
-      },
-      abortDelete() {
-        this.$set(this.$data.deleteDialog, 'visible', false);
-      },
-      async deleteForm() {
-        const { error } = await this.$api(`/forms/${this.form.id}`, {
-          method: 'DELETE'
-        });
-        if (error) {
-          console.error('Failed to delete form', error);
-          return this.$store.commit('alert/set', { type: 'error', message: error });
-        }
-
-        this.$store.commit('alert/set', { type: 'success', message: 'Form successfully deleted!' });
-        this.$router.push({ path: '/forms' });
       }
     }
   };

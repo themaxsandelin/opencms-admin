@@ -47,29 +47,20 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="blue darken-1" text @click="hideDialog">Close</v-btn>
-        <v-btn v-if="page" color="error" text :loading="deletionLoading" @click="attemptDeletePage">Delete</v-btn>
         <v-btn color="primary" :loading="actionLoading" @click="attemptCreatePage">{{ page ? 'Save' : 'Create' }}</v-btn>
       </v-card-actions>
     </v-card>
-
-    <verify-action
-      v-bind="deleteDialog"
-      @abort="abortDelete"
-      @confirm="performDelete"
-    />
   </v-dialog>
 </template>
 
 <script>
 // Components
 import SelectPage from '@/components/organisms/select-page';
-import VerifyAction from '@/components/organisms/verify-action';
 
 export default {
   name: 'PageForm',
   components: {
-    SelectPage,
-    VerifyAction
+    SelectPage
   },
   props: {
     visible: {
@@ -91,14 +82,6 @@ export default {
       deletionLoading: false,
       validation: {
         required: value => !!value || 'This field is required.'
-      },
-      deleteDialog: {
-        type: 'warning',
-        title: 'You are about to delete a page',
-        text: 'Just a heads up, you are about to delete a page. This will delete both the page, and the instances and the layouts in that page. Any child pages that might exist will be assigned as the children of this page\'s parent page, if there is one.',
-        cancelLabel: 'Abort',
-        confirmLabel: 'Delete',
-        visible: false
       }
     };
   },
@@ -188,34 +171,6 @@ export default {
       } catch (error) {
         this.$store.commit('alert/set', { message: error.message, type: 'error' });
       }
-    },
-    attemptDeletePage() {
-      this.$set(this.$data.deleteDialog, 'visible', true);
-    },
-    abortDelete() {
-      this.$set(this.$data.deleteDialog, 'visible', false);
-    },
-    async performDelete() {
-      this.$set(this.$data.deleteDialog, 'visible', false);
-      this.$set(this.$data, 'deletionLoading', true);
-
-      const { siteId } = this.$route.params;
-      const { error } = await this.$api(`/sites/${siteId}/pages/${this.page.id}`, {
-        method: 'DELETE'
-      });
-      this.$set(this.$data, 'deletionLoading', false);
-
-      if (error) {
-        console.error(error);
-        return this.$store.commit('alert/set', { message: error, type: 'error' });
-      }
-
-      this.$store.commit('alert/set', { message: 'Page successfully deleted!', type: 'success' });
-      this.$set(this.$data, 'name', '');
-      this.$set(this.$data, 'isFrontPage', false);
-      this.parentPageUnSelected();
-      this.hideDialog();
-      this.$emit('deleted');
     }
   }
 }

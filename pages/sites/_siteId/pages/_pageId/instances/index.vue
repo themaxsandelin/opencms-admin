@@ -11,8 +11,7 @@
       :visible="instanceFormVisible"
       @hide="hideInstanceForm"
       @created="createdCallback"
-      @updated="updatedDeletedCallback"
-      @deleted="updatedDeletedCallback"
+      @updated="updatedCallback"
     />
 
     <v-data-table
@@ -122,7 +121,7 @@
       createdCallback() {
         this.$fetch();
       },
-      updatedDeletedCallback() {
+      updatedCallback() {
         this.$set(this.$data, 'editingInstance', null);
         this.$fetch();
       },
