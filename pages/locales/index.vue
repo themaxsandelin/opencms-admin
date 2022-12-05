@@ -76,11 +76,11 @@
           },
           {
             text: 'Created',
-            value: 'updatedAt'
+            value: 'createdAt'
           },
           {
             text: 'Created by',
-            value: 'updatedBy'
+            value: 'createdBy'
           }
         ],
       };

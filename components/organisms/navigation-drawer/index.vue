@@ -36,6 +36,12 @@
     </v-list>
 
     <v-list>
+      <v-list-item :link="true" to="/logs">
+        <v-list-item-title>Activity logs</v-list-item-title>
+      </v-list-item>
+    </v-list>
+
+    <v-list>
       <v-list-item :link="true" to="/forms">
         <v-list-item-title>Forms</v-list-item-title>
       </v-list-item>
