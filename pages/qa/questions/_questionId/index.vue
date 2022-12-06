@@ -2,33 +2,39 @@
   <div>
     <v-subheader>Question</v-subheader>
     <h1>{{ question.name }}</h1>
-    <v-row>
-      <v-col cols="3">
-        <v-select
-          :items="variantList"
-          label="Select a variant.."
-          :value="selectedVariant"
-          @change="variantSelectionChange"
-        />
-      </v-col>
-      <v-col cols="3">
-        <v-btn color="primary" dark @click="showVariantForm">Create new variant</v-btn>
-      </v-col>
-    </v-row>
+    <v-layout column wrap>
+      <v-row>
+        <v-col cols="3">
+          <v-select
+            :items="variantList"
+            label="Select a variant.."
+            :value="selectedVariant"
+            @change="variantSelectionChange"
+          />
+        </v-col>
+        <v-col cols="9">
+          <div class="variant-actions">
+            <v-btn color="primary" dark @click="showVariantForm">Create new variant</v-btn>
+            <v-btn v-if="selectedVariant" @click="editSelectedVariant">Edit variant</v-btn>
+          </div>
+        </v-col>
+      </v-row>
+      <content-block-editor
+        v-if="variant"
+        :type="question.type"
+        :block="question"
+        :variant="variant"
+        :version="variant.latestVersion"
+      />
+    </v-layout>
 
     <content-block-variant-form
       :block-id="$route.params.questionId"
       :visible="variantFormVisible"
+      :editing-variant="editingVariant"
       @hide="hideVariantForm"
-      @created="variantCreated"
-    />
-
-    <content-block-editor
-      v-if="variant"
-      :type="question.type"
-      :block="question"
-      :variant="variant"
-      :version="variant.latestVersion"
+      @created="variantUpdatedOrCreated"
+      @updated="variantUpdatedOrCreated"
     />
   </div>
 </template>
@@ -49,7 +55,8 @@
         question: {},
         variants: [],
         variant: null,
-        variantFormVisible: false
+        variantFormVisible: false,
+        editingVariant: null
       };
     },
     async fetch() {
@@ -109,14 +116,31 @@
       },
       hideVariantForm() {
         this.variantFormVisible = false;
+        this.$set(this.$data, 'editingVariant', null);
       },
-      variantCreated() {
+      variantUpdatedOrCreated() {
         this.updateQuestion();
         this.updateVariants();
       },
       variantSelectionChange(variantId) {
         this.$router.push({ query: { variant: variantId } });
+      },
+      editSelectedVariant() {
+        this.$set(this.$data, 'editingVariant', this.variant);
+        this.showVariantForm();
       }
     }
   };
 </script>
+
+<style lang="scss" scoped>
+  .variant-actions {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+
+    button:not(:first-child) {
+      margin-left: 16px;
+    }
+  }
+</style>

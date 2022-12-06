@@ -2,7 +2,7 @@
   <v-dialog :value="visible" max-width="720px" @click:outside="hideForm">
     <v-card>
       <v-card-title>
-        <span class="text-h5">Create new content block variant</span>
+        <span class="text-h5">{{ editing ? 'Update' : 'Create new'}} content block variant</span>
       </v-card-title>
 
       <v-card-text>
@@ -43,7 +43,7 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="blue darken-1" text @click="hideForm">Close</v-btn>
-        <v-btn color="primary" :loading="requestLoading" @click="attemptCreateVariant">Create</v-btn>
+        <v-btn color="primary" :loading="requestLoading" @click="attemptSubmit">{{ editing ? 'Save changes' : 'Create' }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -66,6 +66,10 @@
       visible: {
         type: Boolean,
         default: false
+      },
+      editingVariant: {
+        type: Object,
+        default: null
       }
     },
     data() {
@@ -77,6 +81,23 @@
         },
         selectedSites: []
       };
+    },
+    computed: {
+      editing() {
+        return this.editingVariant !== null;
+      },
+    },
+    watch: {
+      editingVariant() {
+        if (this.editingVariant) {
+          const { name, sites } = this.editingVariant;
+          this.$set(this.$data, 'name', name);
+          this.$set(this.$data, 'selectedSites', sites);
+        } else {
+          this.$set(this.$data, 'name', '');
+          this.$set(this.$data, 'selectedSites', []);
+        }
+      }
     },
     methods: {
       hideForm() {
@@ -97,7 +118,7 @@
             this.selectedSites = [];
           }
       },
-      async attemptCreateVariant() {
+      async attemptSubmit() {
         if (!this.name) {
           return this.$store.commit('alert/set', { type: 'error', message: 'You have to give the variant a name.' });
         }
@@ -110,9 +131,15 @@
           sites: this.selectedSites.map(site => site.id)
         };
 
+        let uri = `/content-blocks/${this.blockId}/variants`;
+        let method = 'POST';
+        if (this.editingVariant) {
+          uri += `/${this.editingVariant.id}`;
+          method = 'PATCH';
+        }
         this.$set(this.$data, 'requestLoading', true);
-        const { error } = await this.$api(`/content-blocks/${this.blockId}/variants`, {
-          method: 'POST',
+        const { error } = await this.$api(uri, {
+          method,
           headers: {
             'Content-Type': 'application/json'
           },
@@ -121,14 +148,18 @@
         this.$set(this.$data, 'requestLoading', false);
 
         if (error) {
-          console.error('Variant creation failed.', error);
-          return this.$store.commit('alert/set', { message: 'Failed to create content block variant.', type: 'error' });
+          console.error(`Variant ${this.editing ? 'edit' : 'creation'} failed.`, error);
+          return this.$store.commit('alert/set', { message: `Failed to ${this.editing ? 'update' : 'create'} content block variant.`, type: 'error' });
         }
 
-        this.$store.commit('alert/set', { message: 'Content block variant successfully created!', type: 'success' });
+        this.$store.commit('alert/set', { message: `Content block variant successfully ${this.editing ? 'edited' : 'created'}!`, type: 'success' });
         this.name = '';
         this.hideForm();
-        this.$emit('created');
+        if (this.editing) {
+          this.$emit('updated');
+        } else {
+          this.$emit('created');
+        }
       }
     }
   };
