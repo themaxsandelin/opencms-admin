@@ -1,15 +1,16 @@
-FROM node:16.17.1-alpine
+FROM node:16.17.1-bullseye-slim
 
 WORKDIR /app
-
-# Prepare for running pnpm install.
-COPY . /app
-
 # Install pnpm
 RUN npm install -g pnpm
 
-RUN pnpm install
+# Prepare for running pnpm install.
+COPY --chown=node:node . /app
+RUN pnpm install --shamefully-hoist
 RUN pnpm build
+RUN pnpm install @nuxt/ufo
+
+USER node
 
 EXPOSE 3000
 ENV NUXT_HOST=0.0.0.0

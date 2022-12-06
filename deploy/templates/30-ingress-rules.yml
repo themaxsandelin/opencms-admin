@@ -1,0 +1,25 @@
+---
+
+- name: "ingress-rules"
+  k8s:
+    state: present
+    definition:
+      apiVersion: networking.k8s.io/v1beta1
+      kind: Ingress
+      metadata:
+        name: "{{ basename }}-ingress-class-green"
+        namespace: "{{ namespace }}"
+        annotations:
+          kubernetes.io/ingress.class: "class-green"
+          nginx.ingress.kubernetes.io/ssl-redirect: "false"
+          nginx.ingress.kubernetes.io/rewrite-target: /$1
+      spec:
+        rules:
+        # Expose service
+        - host: "{{ ingress_host }}"
+          http:
+            paths:
+            - path: "/(.*)"
+              backend:
+                serviceName: "{{ basename }}-admin-ui"
+                servicePort: 80
