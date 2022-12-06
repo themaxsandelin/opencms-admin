@@ -29,8 +29,6 @@ export async function adminApiRequest({ path, method, body, accessToken }: Admin
       const arrayBuffer = await request.arrayBuffer();
       response = Buffer.from(arrayBuffer);
     }
-    // DEBUG LOG
-    console.log('Admin API request', request.status, request.statusText, response);
     return { statusCode: request.status, contentType, contentDisposition, response: (response as AdminApiResponseObject) };
   } catch (error) {
     throw new Error((error as any).message);
