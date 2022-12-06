@@ -1,0 +1,7 @@
+---
+
+- name: "deployment-{{ basename }}-admin-ui"
+  k8s:
+    state: present
+    force: true
+    definition: "{{ lookup('template', 'admin-ui-deployment.yaml.j2') }}"

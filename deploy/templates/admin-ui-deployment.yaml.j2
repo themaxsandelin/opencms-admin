@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ basename }}-admin-ui"
+  namespace: "{{ namespace }}"
+spec:
+  replicas: {{ admin_ui.replicas | int }}
+  selector:
+    matchLabels:
+      app: "{{ basename }}-admin-ui"
+  template:
+    metadata:
+      labels:
+        app: "{{ basename }}-admin-ui"
+        prometheus: nodejs
+    spec:      
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+      - name: "{{ basename }}-admin-ui"
+        image: "registry1.redcatsnordic.ad:5000/{{ basename }}-admin-ui:{{ version }}"
+        resources:
+          requests:
+            cpu: "{{ admin_ui.resources.requests.cpu }}"
+            memory: "{{ admin_ui.resources.requests.memory }}"
+        securityContext:
+          allowPrivilegeEscalation: false
+        ports:
+        - containerPort: {{ admin_ui.port | int }}
+          name: web
+        env:
+        - name: APP_URL
+          value: {{ app_url }}
+        - name: ADMIN_API_URL
+          value: {{ admin_api_url }}        
+        - name: AUTH_CLIENT_AUTHORITY
+          valueFrom:
+            secretKeyRef:
+              name: opencms-admin-auth-client-authority
+              key: auth_client_authority
+        - name: AUTH_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: opencms-admin-auth-client-secret
+              key: auth_client_secret
+        - name: AUTH_SESSION_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: opencms-admin-auth-session-secret
+              key: auth_session_secret  
+        - name: AUTH_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: opencms-admin-auth-client-id
+              key: auth_client_id
+        #readinessProbe:
+        #  httpGet:
+        #    path: /health/readiness
+        #    port: {{ admin_ui.port }}
+        #  initialDelaySeconds: 30
+        #  timeoutSeconds: 10
+        #  periodSeconds: 10
+        #livenessProbe:
+        #  httpGet:
+        #    path: /health/liveness
+        #    port: {{ admin_ui.port }}
+        #  initialDelaySeconds: 30
+        #  timeoutSeconds: 10
+        #  periodSeconds: 30

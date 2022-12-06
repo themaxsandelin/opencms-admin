@@ -1,0 +1,21 @@
+---
+
+- name: "service-{{ basename }}-admin-ui"
+  k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: "{{ basename }}-admin-ui"
+        labels:
+          app: "{{ basename }}-admin-ui"
+        namespace: "{{ namespace }}"
+      spec:
+        ports:
+        - name: web
+          port: 80
+          protocol: TCP
+          targetPort: web
+        selector:
+          app: "{{ basename }}-admin-ui"
