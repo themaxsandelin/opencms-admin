@@ -5,7 +5,7 @@ export default {
 
   env: {
     NODE_ENV: process.env.NODE_ENV,
-    PORT: process.env.PORT || 3000,
+    PORT: process.env.PORT || 3300,
   },
 
   // Global page headers: https://go.nuxtjs.dev/config-head

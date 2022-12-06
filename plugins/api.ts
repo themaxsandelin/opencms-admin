@@ -2,7 +2,7 @@
 import { Plugin } from '@nuxt/types';
 
 // Config
-import hosts from '../config/admin.config';
+import hosts from '../config/app.config';
 
 // Utils
 import apiFetch from '../utils/fetch';
