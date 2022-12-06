@@ -36,6 +36,7 @@
     name: 'ActivityLogsPage',
     data() {
       return {
+        search: '',
         logs: [],
         headers: [
           {
