@@ -13,6 +13,8 @@ export default ({ req, res }: IFetchContext, url: string = '', passedOptions: IF
     ...args
   };
 
+  console.log('App fetch request', url, options);
+
   // Pass along cookies on server-side since `credentials: 'include';` is a client-side (browser) option.
   if (process.server) {
     options.headers.cookie = req.headers.cookie;
