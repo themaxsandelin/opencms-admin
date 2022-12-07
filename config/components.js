@@ -11,10 +11,18 @@ export default [
     fields: [
       {
         key: 'detailPage',
-        fieldType: 'reference',
+        type: 'reference',
         props: {
           label: 'Detail page',
           type: 'page'
+        }
+      },
+      {
+        key: 'title',
+        type: 'localized-text',
+        props: {
+          label: 'Title',
+          placeholder: 'Set a title for the question list'
         }
       }
     ]
@@ -26,7 +34,7 @@ export default [
     fields: [
       {
         key: 'detailPage',
-        fieldType: 'reference',
+        type: 'reference',
         props: {
           label: 'Detail page',
           type: 'page'
@@ -40,8 +48,16 @@ export default [
     key: 'question-list',
     fields: [
       {
+        key: 'title',
+        type: 'localized-text',
+        props: {
+          label: 'Title',
+          placeholder: 'Set a title for the question list'
+        }
+      },
+      {
         key: 'detailPage',
-        fieldType: 'reference',
+        type: 'reference',
         props: {
           label: 'Detail page',
           type: 'page'
@@ -49,7 +65,7 @@ export default [
       },
       {
         key: 'filter',
-        fieldType: 'select',
+        type: 'select',
         props: {
           label: 'List filter',
           options: [
@@ -73,7 +89,7 @@ export default [
     fields: [
       {
         key: 'form',
-        fieldType: 'reference',
+        type: 'reference',
         props: {
           type: 'form',
           label: 'Form'

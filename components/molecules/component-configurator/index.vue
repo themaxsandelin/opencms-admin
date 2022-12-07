@@ -9,6 +9,7 @@
         v-bind="field.props"
         :value="field.value"
         @update="fieldUpdate(field.key, $event)"
+        @input="fieldUpdate(field.key, $event)"
       />
     </div>
 
@@ -33,7 +34,8 @@
   // Field components
   const fieldComponents = {
     'select': () => import('@/components/molecules/select-field'),
-    'reference': () => import('@/components/molecules/reference-field')
+    'reference': () => import('@/components/molecules/reference-field'),
+    'localized-text': () => import('@/components/molecules/localized-input')
   };
 
   export default {
@@ -64,7 +66,7 @@
 
         return componentConfig.fields.map(field => ({
           ...field,
-          component: Object.prototype.hasOwnProperty.call(fieldComponents, field.fieldType) ? fieldComponents[field.fieldType] : undefined,
+          component: Object.prototype.hasOwnProperty.call(fieldComponents, field.type) ? fieldComponents[field.type] : undefined,
           value: this.component && this.component.fieldData && Object.prototype.hasOwnProperty.call(this.component.fieldData, field.key) ? this.component.fieldData[field.key] : undefined
         })).filter(field => field.component !== null);
       }
