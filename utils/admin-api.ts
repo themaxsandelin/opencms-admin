@@ -38,7 +38,7 @@ export async function adminApiRequest({ path, method, body, accessToken }: Admin
 export default async function adminRequestHandler(req: Request, res: Response) {
   try {
     const { body, method } = req;
-    const queryString = Object.keys(req.query).map((key, i) => `${!i ? '?' : '&'}${key}=${req.query[key]}`);
+    const queryString = Object.keys(req.query).map((key, i) => `${!i ? '?' : '&'}${key}=${req.query[key]}`).join('');
     const path = `${req.baseUrl.substring(4, req.baseUrl.length)}${queryString}`;
     const accessToken = req.session.accessToken || '';
 
