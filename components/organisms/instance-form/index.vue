@@ -58,6 +58,10 @@
       instance: {
         type: Object,
         default: null
+      },
+      instances: {
+        type: Array,
+        default: () => []
       }
     },
     data() {
@@ -80,10 +84,13 @@
     },
     computed: {
       localeList() {
-        return this.locales.map(locale => ({
+        return this.locales.filter(locale => !this.existingLocales.includes(locale.code)).map(locale => ({
           text: `${locale.code} - ${locale.name}`,
           value: locale.code
         }));
+      },
+      existingLocales() {
+        return this.instances.filter(instance => this.instance ? instance.id !== this.instance.id : true).map(instance => instance.localeCode);
       },
       editingInstance() {
         return this.instance !== null;

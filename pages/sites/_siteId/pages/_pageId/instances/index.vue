@@ -9,6 +9,7 @@
     <instance-form
       :instance="editingInstance"
       :visible="instanceFormVisible"
+      :instances="instances"
       @hide="hideInstanceForm"
       @created="createdCallback"
       @updated="updatedCallback"
