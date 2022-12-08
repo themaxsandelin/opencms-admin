@@ -8,6 +8,7 @@
       :loading="fetching"
       item-key="id"
       show-select
+      :single-select="singleSelect"
     />
   </div>
 </template>
@@ -26,6 +27,10 @@
       selectedIds: {
         type: Array,
         default: () => ([])
+      },
+      singleSelect: {
+        type: Boolean,
+        default: false
       }
     },
     data() {
