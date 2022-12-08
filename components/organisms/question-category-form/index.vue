@@ -16,12 +16,12 @@
                 <v-expansion-panel>
                   <v-expansion-panel-header v-slot="{ questionsPanelOpen }">
                     <v-row no-gutters>
-                      <v-col cols="4">Child questions</v-col>
+                      <v-col cols="4">Parent category</v-col>
                       <v-col cols="8" class="text--secondary">
                         <v-fade-transition leave-absolute>
-                          <span v-if="questionsPanelOpen">Select one or more questions</span>
+                          <span v-if="questionsPanelOpen">Select a parent category</span>
                           <v-row v-else no-gutters style="width: 100%">
-                            <v-col cols="6">{{ selectedQuestions.length ? `${selectedQuestions.length} selected` : 'None selected' }}</v-col>
+                            <v-col cols="6">{{ selectedCategories.length ? `${selectedCategories.length} selected` : 'None selected' }}</v-col>
                           </v-row>
                         </v-fade-transition>
                       </v-col>
@@ -30,9 +30,10 @@
 
                   <v-expansion-panel-content>
                     <select-content-blocks
-                      type="question"
+                      type="question-category"
                       :selected-ids="preSelectedIds"
-                      @update="selectedQuestionsUpdated"
+                      :single-select="true"
+                      @update="selectedCategoriesUpdated"
                     />
                   </v-expansion-panel-content>
                 </v-expansion-panel>
@@ -77,7 +78,7 @@
         name: '',
         requestLoading: false,
         preSelectedIds: [],
-        selectedQuestions: [],
+        selectedCategories: [],
         validation: {
           required: value => !!value || 'You have to give the category a name.',
         }
@@ -86,13 +87,13 @@
     watch: {
       category() {
         if (this.category) {
-          const { name, children } = this.category;
+          const { name, parents } = this.category;
           this.$set(this.$data, 'name', name);
-          this.$set(this.$data, 'preSelectedIds', children.length ? children.map(child => child.id) : []);
-          this.$set(this.$data, 'selectedQuestions', this.preSelectedIds);
+          this.$set(this.$data, 'preSelectedIds', parents.length ? parents.map(parent => parent.id) : []);
+          this.$set(this.$data, 'selectedCategories', this.preSelectedIds);
         } else {
           this.$set(this.$data, 'name', '');
-          this.$set(this.$data, 'selectedQuestions', []);
+          this.$set(this.$data, 'selectedCategories', []);
           this.$set(this.$data, 'preSelectedIds', []);
         }
         this.$set(this.$data, 'panels', undefined);
@@ -102,8 +103,8 @@
       hideForm() {
         this.$emit('hide');
       },
-      selectedQuestionsUpdated(selectedQuestions) {
-        this.$set(this.$data, 'selectedQuestions', selectedQuestions.map(question => question.id));
+      selectedCategoriesUpdated(selectedCategories) {
+        this.$set(this.$data, 'selectedCategories', selectedCategories.map(category => category.id));
       },
       async submit() {
         if (!this.name) {
@@ -114,7 +115,7 @@
         let uri = '/content-blocks';
         const body = {
           name: this.name,
-          childIds: this.selectedQuestions
+          parentIds: this.selectedCategories
         };
         if (this.category) {
           method = 'PATCH';
