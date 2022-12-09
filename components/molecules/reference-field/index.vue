@@ -9,6 +9,8 @@
     <reference-selector-modal
       :visible="modalVisible"
       :type="type"
+      :content-block="contentBlock"
+      :multiple="multiple"
       :selected="selected"
       @hide="hideSelector"
       @select="referenceSelected"
@@ -37,36 +39,55 @@
       value: {
         type: String,
         default: ''
+      },
+      contentBlock: {
+        type: String,
+        default: ''
+      },
+      multiple: {
+        type: Boolean,
+        default: false
       }
     },
     data() {
       return {
         modalVisible: false,
-        selected: null
+        selected: []
       };
     },
     async fetch() {
       if (this.value) {
-        const [,,id] = this.value.split(':').filter(Boolean);
-        let uri = '';
-        if (this.type === 'page') {
-          const { siteId } = this.$route.params;
-          uri = `/sites/${siteId}/pages/${id}`;
-        } else if (this.type === 'form') {
-          uri = `/forms/${id}`;
-        }
+        const [,,ids] = this.value.split(':').filter(Boolean);
+        const idList = ids.split(',');
+        const selected = await Promise.all(
+          idList.map(async (id) => {
+            let uri = '';
+            if (this.type === 'page') {
+              const { siteId } = this.$route.params;
+              uri = `/sites/${siteId}/pages/${id}`;
+            } else if (this.type === 'form') {
+              uri = `/forms/${id}`;
+            } else if (this.type === 'content-block') {
+              uri = `/content-blocks/${id}`;
+            }
 
-        if (!uri) {
-          return console.error(`Could not fetch reference due to unknown type ${this.type}`);
-        }
+            if (!uri) {
+              return console.error(`Could not fetch reference due to unknown type ${this.type}`);
+            }
 
-        const { data, error } = await this.$api(uri);
-        if (error) {
-          console.error(`Failed to load ${this.type} reference value by id ${id}`, error);
-          return this.$store.commit('alert/set', { type: 'error', message: error });
-        }
+            const { data, error } = await this.$api(uri);
+            if (error) {
+              console.error(`Failed to load ${this.type} reference value by id ${id}`, error);
+              this.$store.commit('alert/set', { type: 'error', message: error });
+              return false;
+            }
 
-        this.$set(this.$data, 'selected', data);
+            return data;
+          })
+        );
+
+        console.log('Selected', selected);
+        this.$set(this.$data, 'selected', selected);
       }
     },
     computed: {
@@ -74,10 +95,10 @@
         if (this.$fetchState.pending) {
           return 'Loading reference..';
         }
-        return this.selected ? this.selected.name : `No ${this.type} selected`;
+        return this.selected.length ? this.selected.map(item => item.name).join(', ') : `No ${this.type} selected`;
       },
       buttonText() {
-        return this.selected ? `Change ${this.type}` : `Select ${this.type}`;
+        return this.selected.length ? `Change ${this.type}` : `Select ${this.type}`;
       },
     },
     methods: {
@@ -89,8 +110,8 @@
       },
       referenceSelected(data) {
         this.hideSelector();
-        this.$set(this.$data, 'selected', data[0]);
-        this.$emit('update', `reference:${this.type}:${this.selected.id}`);
+        this.$set(this.$data, 'selected', data);
+        this.$emit('update', `reference:${this.type}:${this.selected.map(item => item.id).join(',')}`);
       }
     }
   };

@@ -5,7 +5,7 @@
         <span class="text-h5">Select a {{ type }}</span>
       </v-card-title>
       <v-card-text>
-        <select-reference :selected="selectedItems" :type="type" @selection="selection" @deselection="deselection" />
+        <select-reference :selected="selectedItems" :type="type" :content-block="contentBlock" :multiple="multiple" @selection="selection" @deselection="deselection" />
       </v-card-text>
       <v-card-actions>
         <v-btn color="blue darken-1" text @click="hide">Close</v-btn>
@@ -34,18 +34,26 @@
         required: true
       },
       selected: {
-        type: Object,
-        default: null
+        type: Array,
+        default: () => []
+      },
+      contentBlock: {
+        type: String,
+        default: ''
+      },
+      multiple: {
+        type: Boolean,
+        default: false
       }
     },
     data() {
       return {
-        selectedItems: this.selected ? [this.selected] : []
+        selectedItems: this.selected ? this.selected : []
       };
     },
     watch: {
       selected() {
-        this.$set(this.$data, 'selectedItems', this.selected ? [this.selected] : []);
+        this.$set(this.$data, 'selectedItems', this.selected ? this.selected : []);
       }
     },
     methods: {

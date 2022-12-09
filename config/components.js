@@ -39,6 +39,16 @@ export default [
           label: 'Detail page',
           type: 'page'
         }
+      },
+      {
+        key: 'categories',
+        type: 'reference',
+        props: {
+          label: 'Selected categories',
+          type: 'content-block',
+          contentBlock: 'question-category',
+          multiple: true
+        }
       }
     ]
   },
