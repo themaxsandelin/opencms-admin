@@ -18,16 +18,21 @@
             @change="variantSelectionChange"
           />
         </v-col>
-        <v-col cols="3">
-          <v-btn color="primary" dark @click="showVariantForm">Create new variant</v-btn>
+        <v-col cols="9">
+          <div class="variant-actions">
+            <v-btn color="primary" dark @click="showVariantForm">Create new variant</v-btn>
+            <v-btn v-if="selectedVariant" @click="editSelectedVariant">Edit variant</v-btn>
+          </div>
         </v-col>
       </v-row>
 
       <content-block-variant-form
         :block-id="$route.params.categoryId"
         :visible="variantFormVisible"
+        :editing-variant="editingVariant"
         @hide="hideVariantForm"
-        @created="variantCreated"
+        @created="variantUpdatedOrCreated"
+        @updated="variantUpdatedOrCreated"
       />
 
       <content-block-editor
@@ -58,7 +63,8 @@
         category: {},
         variants: [],
         variant: null,
-        variantFormVisible: false
+        variantFormVisible: false,
+        editingVariant: null
       };
     },
     async fetch() {
@@ -112,7 +118,6 @@
           console.error('Failed to fetch question category variant', error);
           return this.$store.commit('alert/set', { type: 'error', message: 'Failed to load variant.' });
         }
-        console.log('variant', data);
         this.$set(this.$data, 'variant', data);
       },
       variantSelectionChange(variantId) {
@@ -123,11 +128,28 @@
       },
       hideVariantForm() {
         this.variantFormVisible = false;
+        this.$set(this.$data, 'editingVariant', null);
       },
-      variantCreated() {
+      variantUpdatedOrCreated() {
         this.updateCategory();
         this.updateVariants();
+      },
+      editSelectedVariant() {
+        this.$set(this.$data, 'editingVariant', this.variant);
+        this.showVariantForm();
       }
     }
   };
 </script>
+
+<style lang="scss" scoped>
+  .variant-actions {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+
+    button:not(:first-child) {
+      margin-left: 16px;
+    }
+  }
+</style>
