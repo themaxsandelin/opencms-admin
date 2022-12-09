@@ -1,7 +1,7 @@
 <template>
   <div class="form-field-file">
     <label v-if="label">{{ label }}</label>
-    <input type="file">
+    <input type="file" disabled>
   </div>
 </template>
 

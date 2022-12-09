@@ -1,7 +1,7 @@
 <template>
   <div class="form-field-textarea">
     <label v-if="label">{{ label }}</label>
-    <textarea :placeholder="placeholder"></textarea>
+    <textarea :placeholder="placeholder" disabled></textarea>
   </div>
 </template>
 

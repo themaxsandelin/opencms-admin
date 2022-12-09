@@ -1,7 +1,7 @@
 <template>
   <div class="form-field-input">
     <label v-if="label">{{ label }}</label>
-    <input type="text" :placeholder="placeholder">
+    <input type="text" :placeholder="placeholder" disabled>
   </div>
 </template>
 

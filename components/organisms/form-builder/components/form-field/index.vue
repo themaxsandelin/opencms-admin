@@ -19,6 +19,7 @@
       <form-field-input v-if="field.type === 'input-field'" :config="field.config" />
       <form-field-textarea v-if="field.type === 'textarea'" :config="field.config" />
       <form-field-file v-if="field.type === 'file'" :config="field.config" />
+      <form-field-hidden v-if="field.type === 'hidden'" :config="field.config" />
     </div>
   </div>
 </template>
@@ -28,13 +29,15 @@
   import FormFieldInput from '../form-field-input';
   import FormFieldTextarea from '../form-field-textarea';
   import FormFieldFile from '../form-field-file';
+  import FormFieldHidden from '../form-field-hidden';
 
   export default {
     name: 'FormField',
     components: {
       FormFieldInput,
       FormFieldTextarea,
-      FormFieldFile
+      FormFieldFile,
+      FormFieldHidden
     },
     props: {
       field: {
