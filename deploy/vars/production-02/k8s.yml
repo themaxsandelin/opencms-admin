@@ -1,0 +1,18 @@
+
+namespace: prod-web
+
+ingress_host: faq.int.ellosgroup.com
+version: v0.5.0
+exclude_list:
+-
+
+admin_ui:
+  port: 3000
+  replicas: 1
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+
+app_url: https://faq.int.ellosgroup.com
+admin_api_url: https://service-k8s-p02.int.ellosgroup.com/prod-web/opencms-mirror-admin-api
