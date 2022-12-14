@@ -28,6 +28,22 @@
         </v-card>
       </div>
 
+      <div v-if="dynamicData.length" class="submission-row">
+        <h3>Dynamic data</h3>
+        <v-card outlined>
+          <v-simple-table>
+            <template v-slot:default>
+              <tbody>
+                <tr v-for="(item, i) in dynamicData" :key="i">
+                  <td>{{ item.key }}</td>
+                  <td>{{ item.value }}</td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+        </v-card>
+      </div>
+
       <div class="submission-row">
         <h3>Form data</h3>
         <v-card outlined>
@@ -84,10 +100,21 @@
     computed: {
       formData() {
         const keys = Object.keys(this.submission.data);
-        return keys.map(key => ({
+        return keys.filter(key => key !== 'dynamic').map(key => ({
           key,
           value: this.submission.data[key]
-        }))
+        }));
+      },
+      dynamicData() {
+        const dataKeys = Object.keys(this.submission.data);
+        if (!dataKeys.includes('dynamic')) {
+          return [];
+        }
+        const keys = Object.keys(this.submission.data.dynamic);
+        return keys.map(key => ({
+          key,
+          value: this.submission.data.dynamic[key]
+        }));
       },
       files() {
         const { submissionId, formId } = this.$route.params;

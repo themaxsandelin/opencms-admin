@@ -86,7 +86,6 @@
           })
         );
 
-        console.log('Selected', selected);
         this.$set(this.$data, 'selected', selected);
       }
     },
