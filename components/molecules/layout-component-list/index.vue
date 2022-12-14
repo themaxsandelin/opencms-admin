@@ -2,7 +2,7 @@
   <div class="layout-component-list">
     <component-configurator
       v-for="(component, i) in componentList"
-      :key="i"
+      :key="component.id"
       :first="i === 0"
       :last="i === (componentList.length - 1)"
       :component="component"

@@ -250,9 +250,21 @@
       hideComponentSelector() {
         this.componentSelectorVisible = false;
       },
+      generateTemporaryComponentId() {
+        let id = `${new Date().getTime()}`;
+        for (let i = 0; i < 10; i++) {
+          const number = Math.floor(Math.random() * (25 - 0 + 1) + 0);
+          const character = String.fromCharCode(65 + number);
+          id += character;
+        }
+        return id.split('').sort(() => 0.5 - Math.random()).join('');
+      },
       componentSelection(component) {
         const layoutComponents = [...this.layoutComponents];
-        layoutComponents.push(component);
+        layoutComponents.push({
+          ...component,
+          id: this.generateTemporaryComponentId()
+        });
         this.$set(this.$data, 'layoutComponents', layoutComponents);
       },
       componentsUpdated(components) {

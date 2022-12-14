@@ -106,5 +106,29 @@ export default [
         }
       },
     ]
+  },
+  {
+    name: 'Page selector',
+    description: 'Display a selection of pages for the visitor to select from',
+    key: 'page-selector',
+    fields: [
+      {
+        key: 'title',
+        type: 'localized-text',
+        props: {
+          label: 'Title',
+          placeholder: 'Set a title for the page selector'
+        }
+      },
+      {
+        key: 'pages',
+        type: 'reference',
+        props: {
+          type: 'page',
+          label: 'Pages',
+          multiple: true
+        }
+      }
+    ]
   }
 ];
