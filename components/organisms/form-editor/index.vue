@@ -24,6 +24,11 @@
       </v-row>
       <v-row>
         <v-col cols="12" sm="12" md="12" lg="12">
+          <form-configurator :settings="settings" @update="formSettingsUpdate" />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12" sm="12" md="12" lg="12">
           <form-builder :fields="fields" @update="formFieldsUpdate" />
         </v-col>
       </v-row>
@@ -33,6 +38,7 @@
 
 <script>
   // Components
+  import FormConfigurator from '@/components/organisms/form-configurator';
   import FormBuilder from '@/components/organisms/form-builder';
   import VersionSelector from '@/components/molecules/version-selector';
 
@@ -42,6 +48,7 @@
   export default {
     name: 'FormEditor',
     components: {
+      FormConfigurator,
       FormBuilder,
       VersionSelector
     },
@@ -108,7 +115,15 @@
             config: field.config
           };
         });
-      }
+      },
+      settings() {
+        if (this.localVersion.config.settings) {
+          return this.localVersion.config.settings;
+        }
+        return {
+          sendToEmail: ''
+        };
+      },
     },
     watch: {
       name() {
@@ -128,6 +143,9 @@
       },
       formFieldsUpdate(fields) {
         this.$set(this.$data.localVersion.config, 'fields', fields);
+      },
+      formSettingsUpdate(settings) {
+        this.$set(this.$data.localVersion.config, 'settings', settings);
       },
       versionSelection(versionId) {
         this.$emit('version-change', versionId);
