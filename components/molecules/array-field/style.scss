@@ -1,0 +1,38 @@
+.array-field {
+  &__contents {
+    width: 100%;
+    border: 2px dashed #ddd;
+    padding: 12px;
+
+    .item-list {
+      display: flex;
+      flex-wrap: wrap;
+
+      &__item {
+        width: 100%;
+        min-height: 100px;
+        border: 2px dashed #ddd;
+        padding: 12px 62px 12px 12px;
+        margin: 0 0 12px;
+        position: relative;
+
+        &-fields {
+          width: 100%;
+        }
+
+        &-actions {
+          width: 50px;
+          height: 100%;
+          position: absolute;
+          top: 0;
+          right: 0;
+          border-left: 2px dashed #ddd;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+        }
+      }
+    }
+  }
+}

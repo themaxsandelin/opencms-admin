@@ -37,7 +37,9 @@
     'reference': () => import('@/components/molecules/reference-field'),
     'localized-text': () => import('@/components/molecules/localized-input'),
     'number': () => import('@/components/molecules/number-field'),
-    'boolean': () => import('@/components/molecules/boolean-field')
+    'boolean': () => import('@/components/molecules/boolean-field'),
+    'array': () => import('@/components/molecules/array-field'),
+    'text': () => import('@/components/molecules/text-field'),
   };
 
   export default {
