@@ -61,6 +61,9 @@
     watch: {
       value() {
         this.$set(this.$data, 'localValue', Object.keys(this.value).length ? this.value : { ...this.defaultValue });
+        if (this.localeCode) {
+          this.$set(this.$data, 'inputValue', this.localValue.values[this.localeCode]);
+        }
       }
     },
     methods: {
