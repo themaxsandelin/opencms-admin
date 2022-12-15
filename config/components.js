@@ -186,5 +186,69 @@ export default [
         }
       }
     ]
+  },
+  {
+    name: 'Contact details',
+    description: 'Display contact details and opening hours',
+    key: 'contact-details',
+    fields: [
+      {
+        key: 'title',
+        type: 'localized-text',
+        props: {
+          label: 'Title',
+          placeholder: 'Set a title for your contact details'
+        }
+      },
+      {
+        key: 'subTitle',
+        type: 'localized-text',
+        props: {
+          label: 'Sub title',
+          placeholder: 'Set a sub title (bold) to go next to the icon'
+        }
+      },
+      {
+        key: 'description',
+        type: 'localized-text',
+        props: {
+          label: 'Description',
+          placeholder: 'Set a description text to go next to the icon'
+        }
+      },
+      {
+        key: 'phone',
+        type: 'text',
+        props: {
+          label: 'Phone number',
+          placeholder: 'Set a phone number to show as a contact detail'
+        }
+      },
+      {
+        key: 'openingHours',
+        type: 'array',
+        props: {
+          name: 'Öppettider',
+          fields: [
+            {
+              key: 'day',
+              type: 'localized-text',
+              props: {
+                label: 'Day(s)',
+                placeholder: 'Set the day(s) for the opening hours'
+              }
+            },
+            {
+              key: 'hours',
+              type: 'text',
+              props: {
+                label: 'Hours',
+                placeholder: 'Enter the opening hours for the day(s)'
+              }
+            },
+          ]
+        }
+      }
+    ]
   }
 ];
