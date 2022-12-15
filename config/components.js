@@ -58,22 +58,6 @@ export default [
     key: 'question-list',
     fields: [
       {
-        key: 'title',
-        type: 'localized-text',
-        props: {
-          label: 'Title',
-          placeholder: 'Set a title for the question list'
-        }
-      },
-      {
-        key: 'detailPage',
-        type: 'reference',
-        props: {
-          label: 'Detail page',
-          type: 'page'
-        }
-      },
-      {
         key: 'filter',
         type: 'select',
         props: {
@@ -86,8 +70,80 @@ export default [
             {
               value: 'common',
               text: 'Most common questions'
+            },
+            {
+              value: 'category',
+              text: 'Specific category'
             }
           ]
+        }
+      },
+      {
+        key: 'title',
+        type: 'localized-text',
+        props: {
+          label: 'Title',
+          placeholder: 'Set a title for the question list'
+        },
+        conditionalRules: [
+          {
+            field: 'filter',
+            comparison: 'not-equals',
+            value: 'route-parameter'
+          }
+        ]
+      },
+      {
+        key: 'detailPage',
+        type: 'reference',
+        props: {
+          label: 'Detail page',
+          type: 'page'
+        }
+      },
+      {
+        key: 'category',
+        type: 'reference',
+        props: {
+          label: 'Selected category',
+          type: 'content-block',
+          contentBlock: 'question-category',
+        },
+        conditionalRules: [
+          {
+            field: 'filter',
+            comparison: 'equals',
+            value: 'category'
+          }
+        ]
+      },
+      {
+        key: 'limit',
+        type: 'number',
+        props: {
+          label: 'Set a limit on the number of questions to display'
+        }
+      },
+      {
+        key: 'pagination',
+        type: 'boolean',
+        props: {
+          label: 'Enable pagination (load more)'
+        }
+      },
+      {
+        key: 'show-more-button',
+        type: 'localized-text',
+        conditionalRules: [
+          {
+            field: 'pagination',
+            comparison: 'equals',
+            value: true
+          }
+        ],
+        props: {
+          label: 'Show more button text',
+          placeholder: 'Set a text for the show more button'
         }
       }
     ]

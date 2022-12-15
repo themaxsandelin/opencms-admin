@@ -35,7 +35,9 @@
   const fieldComponents = {
     'select': () => import('@/components/molecules/select-field'),
     'reference': () => import('@/components/molecules/reference-field'),
-    'localized-text': () => import('@/components/molecules/localized-input')
+    'localized-text': () => import('@/components/molecules/localized-input'),
+    'number': () => import('@/components/molecules/number-field'),
+    'boolean': () => import('@/components/molecules/boolean-field')
   };
 
   export default {
@@ -64,11 +66,30 @@
           return [];
         }
 
-        return componentConfig.fields.map(field => ({
+        const mappedFields = componentConfig.fields.map(field => ({
           ...field,
           component: Object.prototype.hasOwnProperty.call(fieldComponents, field.type) ? fieldComponents[field.type] : undefined,
           value: this.component && this.component.fieldData && Object.prototype.hasOwnProperty.call(this.component.fieldData, field.key) ? this.component.fieldData[field.key] : undefined
-        })).filter(field => field.component !== null);
+        }));
+
+        return mappedFields.filter(field => {
+          const hasComponent = field.component !== null
+          // Handle conditional rules.
+          let conditional = true;
+          if (field.conditionalRules) {
+            field.conditionalRules.forEach((rule) => {
+              const targetField = mappedFields.find(mappedField => mappedField.key === rule.field);
+              if (targetField) {
+                if (rule.comparison === 'equals') {
+                  conditional = targetField.value === rule.value;
+                } else if (rule.comparison === 'not-equals') {
+                  conditional = targetField.value !== rule.value;
+                }
+              }
+            });
+          }
+          return hasComponent && conditional;
+        });
       }
     },
     methods: {
