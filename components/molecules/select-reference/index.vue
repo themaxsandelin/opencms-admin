@@ -9,6 +9,7 @@
       :loading="$fetchState.pending"
       item-key="id"
       show-select
+      @toggle-select-all="toggleSelectAll"
       @item-selected="itemSelected"
     />
   </div>
@@ -92,6 +93,9 @@
           this.$emit('deselection', item);
         }
       },
+      toggleSelectAll(data) {
+        this.$emit('toggle-select-all', data);
+      }
     }
   };
 </script>

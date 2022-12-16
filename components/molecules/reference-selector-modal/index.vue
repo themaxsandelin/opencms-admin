@@ -5,7 +5,7 @@
         <span class="text-h5">Select a {{ type }}</span>
       </v-card-title>
       <v-card-text>
-        <select-reference :selected="selectedItems" :type="type" :content-block="contentBlock" :multiple="multiple" @selection="selection" @deselection="deselection" />
+        <select-reference :selected="selectedItems" :type="type" :content-block="contentBlock" :multiple="multiple" @selection="selection" @deselection="deselection" @toggle-select-all="toggleSelectAll" />
       </v-card-text>
       <v-card-actions>
         <v-btn color="blue darken-1" text @click="hide">Close</v-btn>
@@ -61,6 +61,7 @@
         this.$emit('hide');
       },
       select() {
+        console.log(this.selectedItems);
         this.$emit('select', this.selectedItems);
       },
       selection(data) {
@@ -74,6 +75,13 @@
           const selections = [...this.selectedItems];
           selections.splice(index, 1);
           this.$set(this.$data, 'selectedItems', selections);
+        }
+      },
+      toggleSelectAll({ items, value }) {
+        if (value) {
+          this.$set(this.$data, 'selectedItems', items);
+        } else {
+          this.$set(this.$data, 'selectedItems', []);
         }
       }
     }
