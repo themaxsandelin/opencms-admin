@@ -13,6 +13,7 @@
       @hide="hideInstanceForm"
       @created="createdCallback"
       @updated="updatedCallback"
+      @deleted="deletedCallback"
     />
 
     <v-card class="mt-6" outlined>
@@ -135,6 +136,10 @@
         this.$fetch();
       },
       updatedCallback() {
+        this.$set(this.$data, 'editingInstance', null);
+        this.$fetch();
+      },
+      deletedCallback() {
         this.$set(this.$data, 'editingInstance', null);
         this.$fetch();
       },
