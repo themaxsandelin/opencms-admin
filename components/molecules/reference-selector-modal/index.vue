@@ -61,7 +61,6 @@
         this.$emit('hide');
       },
       select() {
-        console.log(this.selectedItems);
         this.$emit('select', this.selectedItems);
       },
       selection(data) {

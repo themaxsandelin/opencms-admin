@@ -56,10 +56,7 @@
           this.$emit('selection', this.versions[index].id);
         }
       }
-    },
-    mounted() {
-      console.log(this.versions);
-    },
+    }
   };
 </script>
 
