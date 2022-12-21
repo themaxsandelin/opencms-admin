@@ -128,22 +128,6 @@ export const fields = [
         }
       }
     ]
-  },
-  {
-    name: 'Hidden field',
-    description: 'A hidden field for passing along dynamic data in a form submission',
-    type: 'hidden',
-    configFields: [
-      {
-        key: 'key',
-        type: 'text',
-        required: true,
-        props: {
-          label: 'Field key',
-          placeholder: 'Define a unique key for this field within the form.'
-        }
-      }
-    ]
   }
 ];
 
