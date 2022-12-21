@@ -13,15 +13,20 @@
           @change="layoutSelectionChange"
         />
       </v-col>
-      <v-col cols="3">
-        <v-btn color="primary" dark @click="showLayoutForm">Create new layout</v-btn>
+      <v-col cols="9">
+        <div class="layout-actions">
+          <v-btn color="primary" dark @click="showLayoutForm">Create new layout</v-btn>
+          <v-btn v-if="layout" @click="editLayout">Edit layout</v-btn>
+        </div>
       </v-col>
     </v-row>
 
     <page-layout-form
       :visible="layoutFormVisible"
+      :editing-layout="editingLayout"
       @hide="hideLayoutForm"
-      @created="layoutCreated"
+      @created="layoutUpdateCreated"
+      @updated="layoutUpdateCreated"
     />
 
     <page-layout-editor
@@ -50,7 +55,8 @@
         page: {},
         layouts: [],
         layout: null,
-        layoutFormVisible: false
+        layoutFormVisible: false,
+        editingLayout: null
       };
     },
     async fetch() {
@@ -86,8 +92,11 @@
       },
       hideLayoutForm() {
         this.layoutFormVisible = false;
+        if (this.editingLayout) {
+          this.$set(this.$data, 'editingLayout', null);
+        }
       },
-      layoutCreated() {
+      layoutUpdateCreated() {
         this.updatePage();
         this.updateLayouts();
       },
@@ -122,7 +131,23 @@
         }
 
         this.$set(this.$data, 'layout', data);
-      }
+      },
+      editLayout() {
+        this.$set(this.$data, 'editingLayout', this.layout);
+        this.showLayoutForm();
+      },
     }
   };
 </script>
+
+<style lang="scss" scoped>
+  .layout-actions {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+
+    button:not(:first-child) {
+      margin-left: 16px;
+    }
+  }
+</style>
