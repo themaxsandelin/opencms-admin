@@ -27,13 +27,8 @@
         type: 'localized-input',
         values: {}
       };
-      const localValue = Object.keys(this.value).length ? {...this.value} : defaultValue;
-      const initialLocaleCodes = Object.keys(localValue.values);
+      const { localeCode, localValue } = this.parseValue(this.value, defaultValue);
 
-      let localeCode = '';
-      if (initialLocaleCodes.length) {
-        localeCode = Object.prototype.hasOwnProperty.call(initialLocaleCodes, 'sv-SE') ? 'sv-SE' : initialLocaleCodes[0];
-      }
       return {
         locales: [],
         inputValue: localeCode ? localValue.values[localeCode] : '',
@@ -60,7 +55,11 @@
     },
     watch: {
       value() {
-        this.$set(this.$data, 'localValue', Object.keys(this.value).length ? this.value : { ...this.defaultValue });
+        const { localeCode, localValue } = this.parseValue(this.value, this.defaultValue);
+        this.$set(this.$data, 'localValue', localValue);
+        if (!Object.prototype.hasOwnProperty.call(this.localValue.values, this.localeCode)) {
+          this.$set(this.$data, 'localeCode', localeCode);
+        }
         if (this.localeCode) {
           this.$set(this.$data, 'inputValue', this.localValue.values[this.localeCode]);
         }
@@ -71,6 +70,27 @@
         this.$set(this.$data, 'localeCode', localeCode);
         const inputValue = Object.prototype.hasOwnProperty.call(this.localValue.values, localeCode) ? this.localValue.values[localeCode] : '';
         this.$set(this.$data, 'inputValue', inputValue);
+      },
+      parseValue(value, defaultValue) {
+        let previousValue;
+        const localValue = Object.keys(value).length ? {...value} : defaultValue;
+        if (localValue.values.previous) {
+          previousValue = localValue.values.previous;
+          delete localValue.values.previous;
+        }
+        const initialLocaleCodes = Object.keys(localValue.values);
+
+        let localeCode = '';
+        if (previousValue) {
+          localeCode = 'sv-SE';
+          localValue.values[localeCode] = previousValue;
+        } else if (initialLocaleCodes.length) {
+          localeCode = Object.prototype.hasOwnProperty.call(initialLocaleCodes, 'sv-SE') ? 'sv-SE' : initialLocaleCodes[0];
+        }
+        return {
+          localValue,
+          localeCode
+        };
       },
       inputChange(value) {
         const localValue = {...this.localValue};

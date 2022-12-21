@@ -68,11 +68,24 @@
           return [];
         }
 
-        const mappedFields = componentConfig.fields.map(field => ({
-          ...field,
-          component: Object.prototype.hasOwnProperty.call(fieldComponents, field.type) ? fieldComponents[field.type] : undefined,
-          value: this.component && this.component.fieldData && Object.prototype.hasOwnProperty.call(this.component.fieldData, field.key) ? this.component.fieldData[field.key] : undefined
-        }));
+        const mappedFields = componentConfig.fields.map(field => {
+          let value = this.component && this.component.fieldData && Object.prototype.hasOwnProperty.call(this.component.fieldData, field.key) ? this.component.fieldData[field.key] : undefined;
+          if (field.type === 'localized-text') {
+            if (value && typeof value !== 'object') {
+              value = {
+                type: 'localized-input',
+                values: {
+                  previous: value
+                }
+              };
+            }
+          }
+          return {
+            ...field,
+            component: Object.prototype.hasOwnProperty.call(fieldComponents, field.type) ? fieldComponents[field.type] : undefined,
+            value
+          };
+        });
 
         return mappedFields.filter(field => {
           const hasComponent = field.component !== null

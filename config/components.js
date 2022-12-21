@@ -218,7 +218,7 @@ export default [
       },
       {
         key: 'phone',
-        type: 'text',
+        type: 'localized-text',
         props: {
           label: 'Phone number',
           placeholder: 'Set a phone number to show as a contact detail'
@@ -240,7 +240,7 @@ export default [
             },
             {
               key: 'hours',
-              type: 'text',
+              type: 'localized-text',
               props: {
                 label: 'Hours',
                 placeholder: 'Enter the opening hours for the day(s)'

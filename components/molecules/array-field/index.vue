@@ -71,11 +71,24 @@
         return this.localValue.map(item => {
           return {
             ...item,
-            fields: this.fields.map(field => ({
-              ...field,
-              component: Object.prototype.hasOwnProperty.call(fieldComponents, field.type) ? fieldComponents[field.type] : undefined,
-              value: item.fieldData && Object.prototype.hasOwnProperty.call(item.fieldData, field.key) ? item.fieldData[field.key] : undefined,
-            }))
+            fields: this.fields.map(field => {
+              let value = item.fieldData && Object.prototype.hasOwnProperty.call(item.fieldData, field.key) ? item.fieldData[field.key] : undefined;
+              if (field.type === 'localized-text') {
+                if (value &&  typeof value !== 'object') {
+                  value = {
+                    type: 'localized-input',
+                    values: {
+                      previous: value
+                    }
+                  };
+                }
+              }
+              return {
+                ...field,
+                component: Object.prototype.hasOwnProperty.call(fieldComponents, field.type) ? fieldComponents[field.type] : undefined,
+                value
+              };
+            })
           };
         });
       },
