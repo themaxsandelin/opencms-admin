@@ -107,7 +107,6 @@ export default {
       return this.$store.commit('alert/set', { message: 'Failed to load pages.', type: 'error' });
     }
 
-    console.log(data);
     this.$set(this.$data, 'pages', data);
   },
   methods: {
