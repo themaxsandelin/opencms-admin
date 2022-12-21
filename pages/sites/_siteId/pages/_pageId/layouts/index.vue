@@ -120,6 +120,7 @@
           console.error('Failed to fetch page layout', error);
           return this.$store.commit('alert/set', { type: 'error', message: 'Failed to load layout.' });
         }
+
         this.$set(this.$data, 'layout', data);
       }
     }

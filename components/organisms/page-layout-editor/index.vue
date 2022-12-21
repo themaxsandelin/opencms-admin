@@ -100,6 +100,10 @@
       }
     },
     watch: {
+      layout() {
+        this.$set(this.$data, 'selectedVersion', {});
+        this.updateVersions();
+      },
       selectedVersion() {
         let components = [];
         if (this.selectedVersion.content && this.selectedVersion.content.components) {
