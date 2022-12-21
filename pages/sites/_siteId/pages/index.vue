@@ -29,6 +29,9 @@
         :search="search"
         @click:row="pageRowClick"
       >
+        <template v-slot:item.parent="{ item }">
+          <span>{{ item.parent ? item.parent.name : 'None' }}</span>
+        </template>
         <template v-slot:item.updatedAt="{ item }">
           <span>{{ new Date(item.updatedAt).toLocaleString() }}</span>
         </template>
@@ -69,6 +72,10 @@ export default {
           value: 'name'
         },
         {
+          text: 'Parent',
+          value: 'parent'
+        },
+        {
           text: 'Updated',
           value: 'updatedAt'
         },
@@ -100,6 +107,7 @@ export default {
       return this.$store.commit('alert/set', { message: 'Failed to load pages.', type: 'error' });
     }
 
+    console.log(data);
     this.$set(this.$data, 'pages', data);
   },
   methods: {
