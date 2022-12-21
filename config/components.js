@@ -250,5 +250,87 @@ export default [
         }
       }
     ]
+  },
+  {
+    name: 'Content cards',
+    description: 'Display a two column grid of content cards.',
+    key: 'content-cards',
+    fields: [
+      {
+        key: 'cards',
+        type: 'array',
+        props: {
+          name: 'Cards',
+          fields: [
+            {
+              key: 'icon',
+              type: 'select',
+              props: {
+                label: 'Icons',
+                options: [
+                  {
+                    value: 'User',
+                    text: 'User icon'
+                  },
+                  {
+                    value: 'Phone',
+                    text: 'Phone icon'
+                  }
+                ]
+              }
+            },
+            {
+              key: 'title',
+              type: 'localized-text',
+              props: {
+                label: 'Card title',
+                placeholder: 'Set the title for the card'
+              }
+            },
+            {
+              key: 'content',
+              type: 'localized-text',
+              props: {
+                label: 'Card content',
+                placeholder: 'Set the content for the card'
+              }
+            },
+            {
+              key: 'buttonLabel',
+              type: 'localized-text',
+              props: {
+                label: 'Button label',
+                placeholder: 'Set the button label for the card'
+              }
+            },
+            {
+              key: 'buttonLink',
+              type: 'localized-text',
+              props: {
+                label: 'Button link',
+                placeholder: 'Set the button link for the card'
+              }
+            },
+            {
+              key: 'buttonType',
+              type: 'select',
+              props: {
+                label: 'Button type',
+                options: [
+                  {
+                    value: 'primary',
+                    text: 'Primary (orange)'
+                  },
+                  {
+                    value: 'secondary',
+                    text: 'Secondary (sand)'
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
   }
 ];
