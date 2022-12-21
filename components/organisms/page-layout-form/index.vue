@@ -19,15 +19,24 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="blue darken-1" text @click="hideForm">Close</v-btn>
-        <v-btn color="primary" :loading="requestLoading" @click="attemptSubmit">{{ editing ? 'Save changes' : 'Create' }}</v-btn>
+        <v-btn v-if="editing" color="error" plain @click="showDeleteDialog">Delete</v-btn>
+        <v-btn color="primary" :loading="updateRequestLoading" @click="attemptSubmit">{{ editing ? 'Save changes' : 'Create' }}</v-btn>
       </v-card-actions>
     </v-card>
+
+    <verify-action v-bind="deleteAction" @hide="hideDeleteDialog" @abort="hideDeleteDialog" @confirm="attemptDelete" />
   </v-dialog>
 </template>
 
 <script>
+  // Components
+  import VerifyAction from '@/components/organisms/verify-action';
+
   export default {
     name: 'PageLayoutForm',
+    components: {
+      VerifyAction
+    },
     props: {
       visible: {
         type: Boolean,
@@ -41,10 +50,19 @@
     data() {
       return {
         name: this.editingLayout ? this.editingLayout.name : '',
-        requestLoading: false,
+        updateRequestLoading: false,
         validation: {
           required: value => !!value || 'You have to give the layout a name.',
-        }
+        },
+        deleteAction: {
+          visible: false,
+          loading: false,
+          type: 'warning',
+          title: 'Delete page layout',
+          text: 'You are about to delete this page layout, are you sure you want to do that?',
+          cancelLabel: 'Abort',
+          confirmLabel: 'Yes, delete it'
+        },
       };
     },
     computed: {
@@ -82,7 +100,7 @@
           uri += `/${this.editingLayout.id}`;
         }
 
-        this.$set(this.$data, 'requestLoading', true);
+        this.$set(this.$data, 'updateRequestLoading', true);
         const { error } = await this.$api(uri, {
           method,
           headers: {
@@ -90,7 +108,7 @@
           },
           body: JSON.stringify(body)
         });
-        this.$set(this.$data, 'requestLoading', false);
+        this.$set(this.$data, 'updateRequestLoading', false);
 
         if (error) {
           console.error(error);
@@ -101,6 +119,34 @@
         this.$set(this.$data, 'name', '');
         this.hideForm();
         this.$emit(this.editing ? 'updated' : 'created');
+      },
+      showDeleteDialog() {
+        this.$set(this.$data.deleteAction, 'visible', true);
+      },
+      hideDeleteDialog() {
+        this.$set(this.$data.deleteAction, 'visible', false);
+      },
+      async attemptDelete() {
+        const { siteId, pageId } = this.$route.params;
+
+        this.$set(this.$data.deleteAction, 'loading', true);
+        const { error } = await this.$api(`/sites/${siteId}/pages/${pageId}/layouts/${this.editingLayout.id}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        this.$set(this.$data.deleteAction, 'loading', false);
+
+        if (error) {
+          console.error(error);
+          return this.$store.commit('alert/set', { message: error, type: 'error' });
+        }
+
+        this.$store.commit('alert/set', { message: 'Page layout successfully deleted!', type: 'success' });
+        this.$set(this.$data, 'name', '');
+        this.hideForm();
+        this.$emit('deleted');
       }
     }
   };

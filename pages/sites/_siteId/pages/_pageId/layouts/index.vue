@@ -27,6 +27,7 @@
       @hide="hideLayoutForm"
       @created="layoutUpdateCreated"
       @updated="layoutUpdateCreated"
+      @deleted="layoutDeleted"
     />
 
     <page-layout-editor
@@ -83,7 +84,9 @@
     },
     watch: {
       selectedLayout() {
-        this.updateLayout();
+        if (this.$route.query.layoutId) {
+          this.updateLayout();
+        }
       }
     },
     methods: {
@@ -135,6 +138,11 @@
       editLayout() {
         this.$set(this.$data, 'editingLayout', this.layout);
         this.showLayoutForm();
+      },
+      layoutDeleted() {
+        const query = { ...this.$route.query };
+        delete query.layoutId;
+        this.$router.push({ query });
       },
     }
   };

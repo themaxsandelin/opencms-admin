@@ -7,7 +7,7 @@
       <v-card-text>{{ text }}</v-card-text>
       <v-card-actions>
         <v-btn text @click="abort">{{ cancelLabel }}</v-btn>
-        <v-btn :color="type === 'warning' ? 'error' : 'primary'" @click="confirm">{{ confirmLabel}}</v-btn>
+        <v-btn :color="type === 'warning' ? 'error' : 'primary'" :loading="loading" @click="confirm">{{ confirmLabel}}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -41,6 +41,10 @@
       confirmLabel: {
         type: String,
         default: 'Confirm'
+      },
+      loading: {
+        type: Boolean,
+        default: false
       }
     },
     methods: {
