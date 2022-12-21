@@ -74,6 +74,10 @@ export default [
             {
               value: 'category',
               text: 'Specific category'
+            },
+            {
+              value: 'search-query',
+              text: 'Search term (query)'
             }
           ]
         }
@@ -331,6 +335,37 @@ export default [
           ]
         }
       }
+    ]
+  },
+  {
+    name: 'Search field',
+    description: 'Show a search field for searching questions.',
+    key: 'search-field',
+    fields: [
+      {
+        key: 'title',
+        type: 'localized-text',
+        props: {
+          label: 'Title',
+          placeholder: 'Set the title to be shown above the search field'
+        }
+      },
+      {
+        key: 'placeholder',
+        type: 'localized-text',
+        props: {
+          label: 'Placeholder',
+          placeholder: 'Set the search field placeholder'
+        }
+      },
+      {
+        key: 'searchPage',
+        type: 'reference',
+        props: {
+          label: 'Search page',
+          type: 'page'
+        }
+      },
     ]
   }
 ];
