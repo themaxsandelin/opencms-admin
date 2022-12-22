@@ -158,6 +158,22 @@ export default [
     key: 'form',
     fields: [
       {
+        key: 'title',
+        type: 'localized-text',
+        props: {
+          label: 'Title',
+          placeholder: 'Set a title for the form on the page'
+        }
+      },
+      {
+        key: 'description',
+        type: 'localized-text',
+        props: {
+          label: 'Description',
+          placeholder: 'Set a description for the form'
+        }
+      },
+      {
         key: 'form',
         type: 'reference',
         props: {
