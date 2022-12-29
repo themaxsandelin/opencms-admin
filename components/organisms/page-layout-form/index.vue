@@ -101,7 +101,7 @@
         }
 
         this.$set(this.$data, 'updateRequestLoading', true);
-        const { error } = await this.$api(uri, {
+        const { data, error } = await this.$api(uri, {
           method,
           headers: {
             'Content-Type': 'application/json'
@@ -115,10 +115,12 @@
           return this.$store.commit('alert/set', { message: error, type: 'error' });
         }
 
+        const emitLayoutId = this.editing ? this.editingLayout.id : data.id;
+
         this.$store.commit('alert/set', { message: `Page layout successfully ${this.editing ? 'updated' : 'created'}!`, type: 'success' });
         this.$set(this.$data, 'name', '');
         this.hideForm();
-        this.$emit(this.editing ? 'updated' : 'created');
+        this.$emit(this.editing ? 'updated' : 'created', emitLayoutId);
       },
       showDeleteDialog() {
         this.$set(this.$data.deleteAction, 'visible', true);

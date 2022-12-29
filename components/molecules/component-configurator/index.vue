@@ -31,6 +31,9 @@
   // Components config
   import components from '@/config/components';
 
+  // Utils
+  import { convertStringToLocalizedValue } from '@/utils/fields';
+
   // Field components
   const fieldComponents = {
     'select': () => import('@/components/molecules/select-field'),
@@ -72,12 +75,7 @@
           let value = this.component && this.component.fieldData && Object.prototype.hasOwnProperty.call(this.component.fieldData, field.key) ? this.component.fieldData[field.key] : undefined;
           if (field.type === 'localized-text') {
             if (value && typeof value !== 'object') {
-              value = {
-                type: 'localized-input',
-                values: {
-                  previous: value
-                }
-              };
+              value = convertStringToLocalizedValue(value);
             }
           }
           return {

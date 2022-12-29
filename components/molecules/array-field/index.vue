@@ -34,6 +34,9 @@
 </template>
 
 <script>
+  // Utils
+  import { convertStringToLocalizedValue } from '@/utils/fields';
+
   // Field components
   const fieldComponents = {
     'select': () => import('@/components/molecules/select-field'),
@@ -75,12 +78,7 @@
               let value = item.fieldData && Object.prototype.hasOwnProperty.call(item.fieldData, field.key) ? item.fieldData[field.key] : undefined;
               if (field.type === 'localized-text') {
                 if (value &&  typeof value !== 'object') {
-                  value = {
-                    type: 'localized-input',
-                    values: {
-                      previous: value
-                    }
-                  };
+                  value = convertStringToLocalizedValue(value);
                 }
               }
               return {

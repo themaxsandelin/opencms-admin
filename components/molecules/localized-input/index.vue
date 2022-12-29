@@ -6,6 +6,9 @@
 </template>
 
 <script>
+  // Utils
+  import { getLocalizedInputDefaultValue } from '@/utils/fields';
+
   export default {
     name: 'LocalizedInput',
     props: {
@@ -23,10 +26,8 @@
       }
     },
     data() {
-      const defaultValue = {
-        type: 'localized-input',
-        values: {}
-      };
+      const defaultValue = getLocalizedInputDefaultValue();
+
       const { localeCode, localValue } = this.parseValue(this.value, defaultValue);
 
       return {
