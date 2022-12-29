@@ -1,8 +1,10 @@
 <template>
   <div class="form-field">
     <div class="form-field__header">
-      <p>{{ field.name }}</p>
-
+      <span>
+        {{ field.name }}
+        <v-chip v-if="field.config.alwaysRequired" x-small> Mandatory </v-chip>
+      </span>
       <div class="form-field__header-actions">
         <v-btn :disabled="first" icon small @click="move('up')">
           <v-icon>mdi-arrow-up</v-icon>
@@ -25,48 +27,48 @@
 </template>
 
 <script>
-  // Components
-  import FormFieldInput from '../form-field-input';
-  import FormFieldTextarea from '../form-field-textarea';
-  import FormFieldFile from '../form-field-file';
-  import FormFieldHidden from '../form-field-hidden';
+// Components
+import FormFieldInput from '../form-field-input';
+import FormFieldTextarea from '../form-field-textarea';
+import FormFieldFile from '../form-field-file';
+import FormFieldHidden from '../form-field-hidden';
 
-  export default {
-    name: 'FormField',
-    components: {
-      FormFieldInput,
-      FormFieldTextarea,
-      FormFieldFile,
-      FormFieldHidden
+export default {
+  name: 'FormField',
+  components: {
+    FormFieldInput,
+    FormFieldTextarea,
+    FormFieldFile,
+    FormFieldHidden
+  },
+  props: {
+    field: {
+      type: Object,
+      required: true
     },
-    props: {
-      field: {
-        type: Object,
-        required: true
-      },
-      first: {
-        type: Boolean,
-        default: false
-      },
-      last: {
-        type: Boolean,
-        default: false
-      }
+    first: {
+      type: Boolean,
+      default: false
     },
-    methods: {
-      openConfigurator() {
-        this.$emit('configure');
-      },
-      move(direction) {
-        this.$emit('move', direction);
-      },
-      remove() {
-        this.$emit('remove');
-      },
+    last: {
+      type: Boolean,
+      default: false
     }
-  };
+  },
+  methods: {
+    openConfigurator() {
+      this.$emit('configure');
+    },
+    move(direction) {
+      this.$emit('move', direction);
+    },
+    remove() {
+      this.$emit('remove');
+    }
+  }
+};
 </script>
 
 <style lang="scss" scoped>
-  @import "./style";
+@import './style';
 </style>
