@@ -33,6 +33,14 @@ export default [
     key: 'question-category-lineup',
     fields: [
       {
+        key: 'title',
+        type: 'localized-text',
+        props: {
+          label: 'Title',
+          placeholder: 'Set a title for the question category lineup'
+        }
+      },
+      {
         key: 'detailPage',
         type: 'reference',
         props: {
