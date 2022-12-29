@@ -94,9 +94,12 @@
           this.$set(this.$data, 'editingLayout', null);
         }
       },
-      layoutUpdateCreated() {
+      layoutUpdateCreated(id) {
         this.updatePage();
         this.updateLayouts();
+        if (this.$route.query.layoutId !== id) {
+          this.layoutSelectionChange(id);
+        }
       },
       layoutSelectionChange(layoutId) {
         this.$router.push({ query: { layoutId } });
@@ -147,6 +150,7 @@
         const query = { ...this.$route.query };
         delete query.layoutId;
         this.$router.push({ query });
+        this.$set(this.$data, 'layout', null);
       }
     }
   };
