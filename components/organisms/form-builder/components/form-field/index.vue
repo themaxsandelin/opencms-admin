@@ -3,7 +3,7 @@
     <div class="form-field__header">
       <span>
         {{ field.name }}
-        <v-chip v-if="field.config.alwaysRequired" x-small> Mandatory </v-chip>
+        <v-chip v-if="field.config && field.config.alwaysRequired" x-small> Mandatory </v-chip>
       </span>
       <div class="form-field__header-actions">
         <v-btn :disabled="first" icon small @click="move('up')">
