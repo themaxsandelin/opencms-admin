@@ -28,45 +28,45 @@
 
 <script>
 // Components
-import FormFieldInput from '../form-field-input';
-import FormFieldTextarea from '../form-field-textarea';
-import FormFieldFile from '../form-field-file';
-import FormFieldHidden from '../form-field-hidden';
+  import FormFieldInput from '../form-field-input';
+  import FormFieldTextarea from '../form-field-textarea';
+  import FormFieldFile from '../form-field-file';
+  import FormFieldHidden from '../form-field-hidden';
 
-export default {
-  name: 'FormField',
-  components: {
-    FormFieldInput,
-    FormFieldTextarea,
-    FormFieldFile,
-    FormFieldHidden
-  },
-  props: {
-    field: {
-      type: Object,
-      required: true
+  export default {
+    name: 'FormField',
+    components: {
+      FormFieldInput,
+      FormFieldTextarea,
+      FormFieldFile,
+      FormFieldHidden
     },
-    first: {
-      type: Boolean,
-      default: false
+    props: {
+      field: {
+        type: Object,
+        required: true
+      },
+      first: {
+        type: Boolean,
+        default: false
+      },
+      last: {
+        type: Boolean,
+        default: false
+      }
     },
-    last: {
-      type: Boolean,
-      default: false
+    methods: {
+      openConfigurator() {
+        this.$emit('configure');
+      },
+      move(direction) {
+        this.$emit('move', direction);
+      },
+      remove() {
+        this.$emit('remove');
+      }
     }
-  },
-  methods: {
-    openConfigurator() {
-      this.$emit('configure');
-    },
-    move(direction) {
-      this.$emit('move', direction);
-    },
-    remove() {
-      this.$emit('remove');
-    }
-  }
-};
+  };
 </script>
 
 <style lang="scss" scoped>

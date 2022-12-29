@@ -15,5 +15,6 @@ module.exports = {
     'no-console': 'off',
     'semi': ['error', 'always'],
     'max-len': ["error", { "code": 180, "ignoreComments": true }],
+    "vue/script-indent": ["error", 2, { "baseIndent": 1 }]
   },
 };

@@ -38,36 +38,36 @@
 </template>
 
 <script>
-export default {
-  name: 'VersionSelector',
-  props: {
-    selectedVersion: {
-      type: Object,
-      default: null
+  export default {
+    name: 'VersionSelector',
+    props: {
+      selectedVersion: {
+        type: Object,
+        default: null
+      },
+      versions: {
+        type: Array,
+        required: true
+      }
     },
-    versions: {
-      type: Array,
-      required: true
-    }
-  },
-  data() {
-    return {
-      selectedIndex: undefined
-    };
-  },
-  computed: {
-    unpublishedChanges() {
-      return this.versions && this.versions.length > 0 && this.versions[0].publications.length === 0;
-    }
-  },
-  watch: {
-    selectedIndex(index) {
-      if (typeof this.versions[index] !== 'undefined') {
-        this.$emit('selection', this.versions[index].id);
+    data() {
+      return {
+        selectedIndex: undefined
+      };
+    },
+    computed: {
+      unpublishedChanges() {
+        return this.versions && this.versions.length > 0 && this.versions[0].publications.length === 0;
+      }
+    },
+    watch: {
+      selectedIndex(index) {
+        if (typeof this.versions[index] !== 'undefined') {
+          this.$emit('selection', this.versions[index].id);
+        }
       }
     }
-  }
-};
+  };
 </script>
 
 <style lang="scss" scoped>

@@ -2,13 +2,7 @@
   <v-navigation-drawer permanent fixed app :clipped="true">
     <v-subheader>Pages</v-subheader>
     <v-list>
-      <v-list-item
-        v-for="(site, i) in sites"
-        :key="i"
-        :value="$route.path.includes(`/sites/${site.id}`)"
-        :link="true"
-        :to="`/sites/${site.id}/pages`"
-      >
+      <v-list-item v-for="(site, i) in sites" :key="i" :value="$route.path.includes(`/sites/${site.id}`)" :link="true" :to="`/sites/${site.id}/pages`">
         <v-list-item-icon>
           <v-icon size="20" v-text="`mdi-file-document-multiple`"></v-icon>
         </v-list-item-icon>
@@ -81,28 +75,28 @@
 </template>
 
 <script>
-export default {
-  name: 'NavigationDrawer',
-  data() {
-    return {
-      sites: []
+  export default {
+    name: 'NavigationDrawer',
+    data() {
+      return {
+        sites: []
+      };
+    },
+    async fetch() {
+      const { data, error } = await this.$api('/sites');
+      if (error) {
+        console.error(error);
+        return this.$store.commit('alert/set', {
+          message: 'Failed to load sites.',
+          type: 'error'
+        });
+      }
+      this.$set(this.$data, 'sites', data);
+    },
+    methods: {
+      clickSite() {}
     }
-  },
-  async fetch() {
-    const { data, error } = await this.$api('/sites')
-    if (error) {
-      console.error(error)
-      return this.$store.commit('alert/set', {
-        message: 'Failed to load sites.',
-        type: 'error'
-      })
-    }
-    this.$set(this.$data, 'sites', data)
-  },
-  methods: {
-    clickSite() {}
-  }
-}
+  };
 </script>
 
 <style lang="scss" scoped>
