@@ -6,7 +6,7 @@
 </template>
 
 <script>
-// Components
+  // Components
   import PageTabs from '@/components/molecules/page-tabs';
 
   export default {

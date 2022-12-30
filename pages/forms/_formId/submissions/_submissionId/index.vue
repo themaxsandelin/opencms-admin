@@ -52,7 +52,7 @@
 </template>
 
 <script>
-// Components
+  // Components
   import FormTabs from '@/components/molecules/form-tabs';
   import FileGrid from '@/components/organisms/file-grid';
 

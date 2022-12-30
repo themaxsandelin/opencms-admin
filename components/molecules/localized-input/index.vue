@@ -53,9 +53,7 @@
             text: `${locale.name} (${locale.code})`,
             value: locale.code
           }))
-          .sort((a, b) => {
-            return a.text.localeCompare(b.text);
-          });
+          .sort((a, b) => a.text.localeCompare(b.text));
       }
     },
     watch: {

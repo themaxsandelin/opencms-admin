@@ -29,7 +29,7 @@
 </template>
 
 <script>
-// Components
+  // Components
   import PageTabs from '@/components/molecules/page-tabs';
   import PageLayoutForm from '@/components/organisms/page-layout-form';
   import PageLayoutEditor from '@/components/organisms/page-layout-editor';

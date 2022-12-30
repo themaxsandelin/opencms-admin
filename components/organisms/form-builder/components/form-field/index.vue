@@ -27,7 +27,7 @@
 </template>
 
 <script>
-// Components
+  // Components
   import FormFieldInput from '../form-field-input';
   import FormFieldTextarea from '../form-field-textarea';
   import FormFieldFile from '../form-field-file';

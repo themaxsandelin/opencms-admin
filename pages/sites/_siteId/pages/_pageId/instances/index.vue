@@ -49,7 +49,7 @@
 </template>
 
 <script>
-// Components
+  // Components
   import PageTabs from '@/components/molecules/page-tabs';
   import InstanceForm from '@/components/organisms/instance-form';
 
