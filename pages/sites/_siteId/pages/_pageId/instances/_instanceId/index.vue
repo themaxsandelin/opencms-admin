@@ -1,10 +1,9 @@
 <template>
   <div>
+    <h1>{{ instance.title || '&nbsp;' }}</h1>
     <page-tabs />
 
     <v-subheader>Page instance</v-subheader>
-    <h1>{{ instance.title }}</h1>
-
     <v-divider />
 
     <h2>Data</h2>
@@ -28,12 +27,7 @@
           <h4>{{ environment.name }}</h4>
         </v-col>
         <v-col cols="12" lg="9" md="9" sm="9">
-          <v-select
-            :items="layoutList"
-            label="Select a layout.."
-            :value="layoutEnvironments[environment.id]"
-            @change="layoutChange($event, environment.id)"
-          />
+          <v-select :items="layoutList" label="Select a layout.." :value="layoutEnvironments[environment.id]" @change="layoutChange($event, environment.id)" />
         </v-col>
       </v-row>
     </v-layout>
@@ -98,21 +92,18 @@
     },
     computed: {
       layoutList() {
-        return this.layouts.map(layout => ({
+        return this.layouts.map((layout) => ({
           text: layout.name,
           value: layout.id
-        }))
+        }));
       },
       instanceData() {
         return this.instance.config && this.instance.config.data ? this.instance.config.data : {};
       },
       changesMade() {
         return (
-          (Object.keys(this.instanceChanges.environments).length > 0) ||
-          (
-            this.instanceChanges.data.source !== this.instanceData.source &&
-            this.instanceChanges.data.type !== this.instanceData.type
-          )
+          Object.keys(this.instanceChanges.environments).length > 0 ||
+          (this.instanceChanges.data.source !== this.instanceData.source && this.instanceChanges.data.type !== this.instanceData.type)
         );
       }
     },
@@ -122,7 +113,10 @@
         const { data, error } = await this.$api(`/sites/${siteId}/pages/${pageId}/instances/${instanceId}`);
         if (error) {
           console.error(error);
-          return this.$store.commit('alert/set', { type: 'error', message: error });
+          return this.$store.commit('alert/set', {
+            type: 'error',
+            message: error
+          });
         }
         this.$set(this.$data, 'instance', data);
         if (data.config && data.config.data) {
@@ -134,7 +128,10 @@
         const { data, error } = await this.$api(`/sites/${siteId}/pages/${pageId}/instances/${instanceId}/layouts`);
         if (error) {
           console.error(error);
-          return this.$store.commit('alert/set', { type: 'error', message: error });
+          return this.$store.commit('alert/set', {
+            type: 'error',
+            message: error
+          });
         }
         const layoutEnvironments = {};
         data.forEach((instanceLayout) => {
@@ -146,7 +143,10 @@
         const { data, error } = await this.$api('/publishing-environments');
         if (error) {
           console.error(error);
-          return this.$store.commit('alert/set', { type: 'error', message: error });
+          return this.$store.commit('alert/set', {
+            type: 'error',
+            message: error
+          });
         }
         this.$set(this.$data, 'publishingEnvironments', data);
       },
@@ -155,13 +155,16 @@
         const { data, error } = await this.$api(`/sites/${siteId}/pages/${pageId}/layouts`);
         if (error) {
           console.error(error);
-          return this.$store.commit('alert/set', { type: 'error', message: error });
+          return this.$store.commit('alert/set', {
+            type: 'error',
+            message: error
+          });
         }
         this.$set(this.$data, 'layouts', data);
       },
       layoutChange(layoutId, environmentKey) {
-        const changes = {...this.instanceChanges};
-        const selection = {...this.layoutEnvironments};
+        const changes = { ...this.instanceChanges };
+        const selection = { ...this.layoutEnvironments };
         changes.environments[environmentKey] = layoutId;
 
         this.$set(this.$data, 'instanceChanges', changes);
@@ -201,10 +204,16 @@
 
           this.updateInstance();
           this.updateInstanceLayouts();
-          this.$store.commit('alert/set', { type: 'success', message: 'Instance layout updated!' });
+          this.$store.commit('alert/set', {
+            type: 'success',
+            message: 'Instance layout updated!'
+          });
         } catch (error) {
           console.error(error);
-          return this.$store.commit('alert/set', { type: 'error', message: error });
+          return this.$store.commit('alert/set', {
+            type: 'error',
+            message: error
+          });
         }
       }
     }

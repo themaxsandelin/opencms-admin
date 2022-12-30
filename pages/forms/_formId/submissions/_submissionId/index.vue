@@ -4,51 +4,16 @@
     <form-tabs />
 
     <template v-if="submission">
-      <div class="submission-row">
-        <h3>Meta data</h3>
-        <v-card outlined>
-          <v-simple-table>
-            <template v-slot:default>
-              <tbody>
-                <tr>
-                  <td>Site</td>
-                  <td>{{ submission.site.name }}</td>
-                </tr>
-                <tr>
-                  <td>Locale</td>
-                  <td>{{ submission.localeCode }}</td>
-                </tr>
-                <tr>
-                  <td>Environment</td>
-                  <td>{{ submission.environment.name }}</td>
-                </tr>
-              </tbody>
-            </template>
-          </v-simple-table>
-        </v-card>
-      </div>
-
-      <div v-if="dynamicData.length" class="submission-row">
-        <h3>Dynamic data</h3>
-        <v-card outlined>
-          <v-simple-table>
-            <template v-slot:default>
-              <tbody>
-                <tr v-for="(item, i) in dynamicData" :key="i">
-                  <td>{{ item.key }}</td>
-                  <td>{{ item.value }}</td>
-                </tr>
-              </tbody>
-            </template>
-          </v-simple-table>
-        </v-card>
+      <div v-if="dynamicPath.length" class="submission-row">
+        <h3>Path</h3>
+        <span v-for="(item, i) in dynamicPath" :key="i"> / {{ item.value }} </span>
       </div>
 
       <div class="submission-row">
         <h3>Form data</h3>
         <v-card outlined>
           <v-simple-table>
-            <template v-slot:default>
+            <template #default>
               <tbody>
                 <tr v-for="(item, i) in formData" :key="i">
                   <td>{{ item.key }}</td>
@@ -66,6 +31,22 @@
           <file-grid :files="files" />
         </div>
       </template>
+
+      <div v-if="dynamicData.length" class="submission-row">
+        <h3>Dynamic data</h3>
+        <v-card outlined>
+          <v-simple-table>
+            <template #default>
+              <tbody>
+                <tr v-for="(item, i) in dynamicData" :key="i">
+                  <td>{{ item.key }}</td>
+                  <td>{{ item.value }}</td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+        </v-card>
+      </div>
     </template>
   </div>
 </template>
@@ -100,10 +81,12 @@
     computed: {
       formData() {
         const keys = Object.keys(this.submission.data);
-        return keys.filter(key => key !== 'dynamic').map(key => ({
-          key,
-          value: this.submission.data[key]
-        }));
+        return keys
+          .filter((key) => key !== 'dynamic')
+          .map((key) => ({
+            key,
+            value: this.submission.data[key]
+          }));
       },
       dynamicData() {
         const dataKeys = Object.keys(this.submission.data);
@@ -111,18 +94,33 @@
           return [];
         }
         const keys = Object.keys(this.submission.data.dynamic);
-        return keys.map(key => ({
-          key,
-          value: this.submission.data.dynamic[key]
-        }));
+        return keys
+          .filter((key) => !key.startsWith('page'))
+          .map((key) => ({
+            key,
+            value: this.submission.data.dynamic[key]
+          }));
+      },
+      dynamicPath() {
+        const dataKeys = Object.keys(this.submission.data);
+        if (!dataKeys.includes('dynamic')) {
+          return [];
+        }
+        const keys = Object.keys(this.submission.data.dynamic);
+        return keys
+          .filter((key) => key.startsWith('page'))
+          .map((key) => ({
+            key,
+            value: this.submission.data.dynamic[key]
+          }));
       },
       files() {
         const { submissionId, formId } = this.$route.params;
-        return this.submission.files.map(file => ({
+        return this.submission.files.map((file) => ({
           ...file,
           url: `/api/forms/${formId}/submissions/${submissionId}/files/${file.id}/file`
         }));
-      },
+      }
     },
     methods: {
       async updateForm() {

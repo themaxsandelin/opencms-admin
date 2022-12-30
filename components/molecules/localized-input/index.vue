@@ -35,7 +35,7 @@
         inputValue: localeCode ? localValue.values[localeCode] : '',
         localeCode,
         defaultValue,
-        localValue,
+        localValue
       };
     },
     async fetch() {
@@ -48,10 +48,12 @@
     },
     computed: {
       localeList() {
-        return this.locales.map(locale => ({
-          text: `${locale.code} - ${locale.name}`,
-          value: locale.code
-        }));
+        return this.locales
+          .map((locale) => ({
+            text: `${locale.name} (${locale.code})`,
+            value: locale.code
+          }))
+          .sort((a, b) => a.text.localeCompare(b.text));
       }
     },
     watch: {
@@ -74,7 +76,7 @@
       },
       parseValue(value, defaultValue) {
         let previousValue;
-        const localValue = Object.keys(value).length ? {...value} : defaultValue;
+        const localValue = Object.keys(value).length ? { ...value } : defaultValue;
         if (localValue.values.previous) {
           previousValue = localValue.values.previous;
           delete localValue.values.previous;
@@ -94,7 +96,7 @@
         };
       },
       inputChange(value) {
-        const localValue = {...this.localValue};
+        const localValue = { ...this.localValue };
         if (value) {
           localValue.values[this.localeCode] = value;
         } else if (!value && Object.prototype.hasOwnProperty.call(localValue.values, this.localeCode)) {
@@ -108,5 +110,5 @@
 </script>
 
 <style lang="scss" scoped>
-  @import "./style";
+  @import './style';
 </style>

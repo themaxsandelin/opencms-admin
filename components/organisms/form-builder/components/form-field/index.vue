@@ -1,8 +1,10 @@
 <template>
   <div class="form-field">
     <div class="form-field__header">
-      <p>{{ field.name }}</p>
-
+      <span>
+        {{ field.name }}
+        <v-chip v-if="field.config && field.config.alwaysRequired" x-small> Mandatory </v-chip>
+      </span>
       <div class="form-field__header-actions">
         <v-btn :disabled="first" icon small @click="move('up')">
           <v-icon>mdi-arrow-up</v-icon>
@@ -62,11 +64,11 @@
       },
       remove() {
         this.$emit('remove');
-      },
+      }
     }
   };
 </script>
 
 <style lang="scss" scoped>
-  @import "./style";
+  @import './style';
 </style>

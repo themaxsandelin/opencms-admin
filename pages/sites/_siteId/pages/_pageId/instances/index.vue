@@ -1,8 +1,7 @@
 <template>
   <div>
-    <page-tabs />
-
     <h1>Instances</h1>
+    <page-tabs />
 
     <v-btn color="primary" dark @click="showInstanceForm">Create new instance</v-btn>
 
@@ -18,13 +17,7 @@
 
     <v-card class="mt-6" outlined>
       <v-card-title class="pt-0 pb-1">
-        <v-text-field
-          v-model="search"
-          append-icon="mdi-magnify"
-          label="Search"
-          single-line
-          hide-details
-        ></v-text-field>
+        <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
       </v-card-title>
 
       <v-data-table
@@ -35,19 +28,19 @@
         :search="search"
         @click:row="instanceRowClick"
       >
-        <template v-slot:item.updatedAt="{ item }">
+        <template #item.updatedAt="{ item }">
           <span>{{ new Date(item.updatedAt).toLocaleString() }}</span>
         </template>
-        <template v-slot:item.updatedBy="{ item }">
+        <template #item.updatedBy="{ item }">
           <span>{{ item.updatedBy.firstName }} {{ item.updatedBy.lastName }}</span>
         </template>
-        <template v-slot:item.createdAt="{ item }">
+        <template #item.createdAt="{ item }">
           <span>{{ new Date(item.createdAt).toLocaleString() }}</span>
         </template>
-        <template v-slot:item.createdBy="{ item }">
+        <template #item.createdBy="{ item }">
           <span>{{ item.createdBy.firstName }} {{ item.createdBy.lastName }}</span>
         </template>
-        <template v-slot:item.actions="{ item }">
+        <template #item.actions="{ item }">
           <v-btn small outlined @click="editInstance($event, item)">...</v-btn>
         </template>
       </v-data-table>

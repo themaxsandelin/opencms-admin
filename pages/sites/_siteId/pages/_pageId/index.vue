@@ -1,8 +1,7 @@
 <template>
   <div>
+    <h1>{{ page.name || '&nbsp;' }}</h1>
     <page-tabs />
-
-    <h1>{{ page.name }}</h1>
   </div>
 </template>
 
@@ -30,10 +29,13 @@
         const { data, error } = await this.$api(`/sites/${this.$route.params.siteId}/pages/${this.$route.params.pageId}`);
         if (error) {
           console.error(error);
-          return this.$store.commit('alert/set', { message: 'Failed to load sites.', type: 'error' });
+          return this.$store.commit('alert/set', {
+            message: 'Failed to load pages.',
+            type: 'error'
+          });
         }
         this.$set(this.$data, 'page', data);
       }
     }
-  }
+  };
 </script>

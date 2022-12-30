@@ -27,15 +27,15 @@
     },
     computed: {
       localeOptions() {
-        return this.options.map(locale => ({
-          text: `${locale.code} - ${locale.name}`,
+        return this.options.map((locale) => ({
+          text: `${locale.name} (${locale.code})`,
           value: locale.code
         }));
       }
     },
     methods: {
       localeSelection(code) {
-        const locale = this.options.find(option => option.code === code);
+        const locale = this.options.find((option) => option.code === code);
         this.$emit('selection', locale);
       }
     }
