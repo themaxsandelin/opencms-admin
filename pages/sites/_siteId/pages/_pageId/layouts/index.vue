@@ -157,13 +157,13 @@
 </script>
 
 <style lang="scss" scoped>
-.layout-actions {
-  width: 100%;
-  display: flex;
-  flex-wrap: wrap;
+  .layout-actions {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
 
-  button:not(:first-child) {
-    margin-left: 16px;
+    button:not(:first-child) {
+      margin-left: 16px;
+    }
   }
-}
 </style>
