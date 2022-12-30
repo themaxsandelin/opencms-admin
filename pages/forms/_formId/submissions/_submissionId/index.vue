@@ -148,12 +148,12 @@
 </script>
 
 <style lang="scss" scoped>
-.submission-row {
-  width: 100%;
-  margin: 24px 0 0;
+  .submission-row {
+    width: 100%;
+    margin: 24px 0 0;
 
-  h3 {
-    margin: 0 0 12px;
+    h3 {
+      margin: 0 0 12px;
+    }
   }
-}
 </style>
