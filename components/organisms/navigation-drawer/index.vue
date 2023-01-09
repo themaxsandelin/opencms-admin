@@ -36,28 +36,33 @@
 
     <v-divider></v-divider>
     <v-subheader>Configuration</v-subheader>
-    <v-list-item :link="true" to="/sites" :exact="true">
-      <v-list-item-icon>
-        <v-icon>mdi-web</v-icon>
-      </v-list-item-icon>
-      <v-list-item-title>Sites</v-list-item-title>
-    </v-list-item>
-
     <v-list>
+      <v-list-item :link="true" to="/sites" :exact="true">
+        <v-list-item-icon>
+          <v-icon>mdi-web</v-icon>
+        </v-list-item-icon>
+        <v-list-item-title>Sites</v-list-item-title>
+      </v-list-item>
+
       <v-list-item :link="true" to="/environments" :exact="true">
         <v-list-item-icon>
           <v-icon>mdi-cube-scan</v-icon>
         </v-list-item-icon>
         <v-list-item-title>Publishing environments</v-list-item-title>
       </v-list-item>
-    </v-list>
 
-    <v-list>
       <v-list-item :link="true" to="/locales">
         <v-list-item-icon>
-          <v-icon>mdi-flag-variant-outline</v-icon>
+          <v-icon>mdi-earth</v-icon>
         </v-list-item-icon>
         <v-list-item-title>Locales</v-list-item-title>
+      </v-list-item>
+
+      <v-list-item :link="true" to="/translations">
+        <v-list-item-icon>
+          <v-icon>mdi-translate</v-icon>
+        </v-list-item-icon>
+        <v-list-item-title>Translations</v-list-item-title>
       </v-list-item>
     </v-list>
 
