@@ -14,7 +14,13 @@
       </button>
     </div>
 
-    <button v-if="last >= 5" :class="['table-pagination__number-button', { 'table-pagination__number-button--selected': current === last }]" @click="$emit('page', last)">{{ last }}</button>
+    <button
+      v-if="last >= 5"
+      :class="['table-pagination__number-button', { 'table-pagination__number-button--selected': current === last }]"
+      @click="$emit('page', last)"
+    >
+      {{ last }}
+    </button>
     <button v-if="last > 1" class="table-pagination__button" :disabled="current === last" @click="$emit('page', current + 1)">Next</button>
   </div>
 </template>
