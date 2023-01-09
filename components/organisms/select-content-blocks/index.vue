@@ -77,11 +77,6 @@
       emitClose() {
         this.$emit('close');
       },
-      handleKeydown(e) {
-        if (e.key === 'Escape') {
-          this.emitClose();
-        }
-      },
       searchTimeoutCallback() {
         this.$fetch();
       },

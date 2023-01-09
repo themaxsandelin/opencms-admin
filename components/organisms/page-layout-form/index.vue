@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :value="visible" max-width="720px" @click:outside="hideForm">
+  <v-dialog :value="visible" max-width="720px" @click:outside="hideForm" @keydown.esc="hideForm">
     <v-card>
       <v-card-title>
         <span class="text-h5">{{ editing ? 'Update' : 'Create new'}} page layout</span>

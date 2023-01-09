@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :value="visible" max-width="720px" @click:outside="hide">
+  <v-dialog :value="visible" max-width="720px" @click:outside="hide" @keydown.esc="hide">
     <v-card>
       <v-card-title>
         <span class="text-h5">Select a {{ type }}</span>

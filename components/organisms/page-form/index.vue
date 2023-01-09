@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :value="visible" max-width="720px" @click:outside="hideDialog">
+  <v-dialog :value="visible" max-width="720px" @click:outside="hideDialog" @keydown.esc="hideDialog">
     <v-card>
       <v-card-title>
         <span class="text-h5">{{ page ? 'Update page' : 'Create new page' }}</span>
@@ -54,124 +54,124 @@
 </template>
 
 <script>
-// Components
-import SelectPage from '@/components/organisms/select-page';
+  // Components
+  import SelectPage from '@/components/organisms/select-page';
 
-export default {
-  name: 'PageForm',
-  components: {
-    SelectPage
-  },
-  props: {
-    visible: {
-      type: Boolean,
-      default: false
+  export default {
+    name: 'PageForm',
+    components: {
+      SelectPage
     },
-    page: {
-      type: Object,
-      default: null
-    }
-  },
-  data() {
-    return {
-      name: '',
-      isFrontPage: false,
-      selectedPages: [],
-      showingSelectPageDialog: false,
-      actionLoading: false,
-      deletionLoading: false,
-      validation: {
-        required: value => !!value || 'This field is required.'
+    props: {
+      visible: {
+        type: Boolean,
+        default: false
+      },
+      page: {
+        type: Object,
+        default: null
       }
-    };
-  },
-  computed: {
-    parentPage() {
-      return this.selectedPages.length ? this.selectedPages[0] : null;
-    }
-  },
-  watch: {
-    page() {
-      if (this.page) {
-        const { parent } = this.page;
-        this.$set(this.$data, 'name', this.page.name);
-        this.$set(this.$data, 'isFrontPage', this.page.isFrontPage);
-        this.$set(this.$data, 'selectedPages', [parent]);
-      } else {
-        this.$set(this.$data, 'name', '');
-        this.$set(this.$data, 'isFrontPage', false);
-        this.$set(this.$data, 'selectedPages', []);
-      }
-    }
-  },
-  methods: {
-    showSelectPageDialog() {
-      this.showingSelectPageDialog = true;
     },
-    hideSelectPageDialog() {
-      this.showingSelectPageDialog = false;
-    },
-    hideDialog() {
-      this.$emit('hide');
-    },
-    parentPageSelected(page) {
-      this.selectedPages = [page];
-    },
-    parentPageUnSelected() {
-      this.selectedPages = [];
-    },
-    async attemptCreatePage() {
-      if (!this.name) {
-        this.$store.commit('alert/set', { message: `You have to give the page a name.`, type: 'error' });
-        return;
-      }
-
-      try {
-        this.$set(this.$data, 'actionLoading', true);
-
-        const { siteId } = this.$route.params;
-        let method = 'POST';
-        let uri = `/sites/${siteId}/pages`;
-        const body = {
-          name: this.name,
-          isFrontPage: this.isFrontPage
-        };
-        if (this.parentPage) {
-          body.parentId = this.parentPage.id;
+    data() {
+      return {
+        name: '',
+        isFrontPage: false,
+        selectedPages: [],
+        showingSelectPageDialog: false,
+        actionLoading: false,
+        deletionLoading: false,
+        validation: {
+          required: value => !!value || 'This field is required.'
         }
+      };
+    },
+    computed: {
+      parentPage() {
+        return this.selectedPages.length ? this.selectedPages[0] : null;
+      }
+    },
+    watch: {
+      page() {
         if (this.page) {
-          method = 'PATCH';
-          uri += `/${this.page.id}`;
-        }
-        const { error } = await this.$api(uri, {
-          method,
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(body)
-        });
-
-        this.$set(this.$data, 'actionLoading', false);
-
-        if (error) {
-          console.error(error);
-          return this.$store.commit('alert/set', { message: error, type: 'error' });
-        }
-
-        this.$store.commit('alert/set', { message: `Page successfully ${this.page ? 'updated' : 'created'}!`, type: 'success' });
-        this.$set(this.$data, 'name', '');
-        this.$set(this.$data, 'isFrontPage', false);
-        this.parentPageUnSelected();
-        this.hideDialog();
-        if (this.page) {
-          this.$emit('updated');
+          const { parent } = this.page;
+          this.$set(this.$data, 'name', this.page.name);
+          this.$set(this.$data, 'isFrontPage', this.page.isFrontPage);
+          this.$set(this.$data, 'selectedPages', [parent]);
         } else {
-          this.$emit('created');
+          this.$set(this.$data, 'name', '');
+          this.$set(this.$data, 'isFrontPage', false);
+          this.$set(this.$data, 'selectedPages', []);
         }
-      } catch (error) {
-        this.$store.commit('alert/set', { message: error.message, type: 'error' });
+      }
+    },
+    methods: {
+      showSelectPageDialog() {
+        this.showingSelectPageDialog = true;
+      },
+      hideSelectPageDialog() {
+        this.showingSelectPageDialog = false;
+      },
+      hideDialog() {
+        this.$emit('hide');
+      },
+      parentPageSelected(page) {
+        this.selectedPages = [page];
+      },
+      parentPageUnSelected() {
+        this.selectedPages = [];
+      },
+      async attemptCreatePage() {
+        if (!this.name) {
+          this.$store.commit('alert/set', { message: `You have to give the page a name.`, type: 'error' });
+          return;
+        }
+
+        try {
+          this.$set(this.$data, 'actionLoading', true);
+
+          const { siteId } = this.$route.params;
+          let method = 'POST';
+          let uri = `/sites/${siteId}/pages`;
+          const body = {
+            name: this.name,
+            isFrontPage: this.isFrontPage
+          };
+          if (this.parentPage) {
+            body.parentId = this.parentPage.id;
+          }
+          if (this.page) {
+            method = 'PATCH';
+            uri += `/${this.page.id}`;
+          }
+          const { error } = await this.$api(uri, {
+            method,
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+          });
+
+          this.$set(this.$data, 'actionLoading', false);
+
+          if (error) {
+            console.error(error);
+            return this.$store.commit('alert/set', { message: error, type: 'error' });
+          }
+
+          this.$store.commit('alert/set', { message: `Page successfully ${this.page ? 'updated' : 'created'}!`, type: 'success' });
+          this.$set(this.$data, 'name', '');
+          this.$set(this.$data, 'isFrontPage', false);
+          this.parentPageUnSelected();
+          this.hideDialog();
+          if (this.page) {
+            this.$emit('updated');
+          } else {
+            this.$emit('created');
+          }
+        } catch (error) {
+          this.$store.commit('alert/set', { message: error.message, type: 'error' });
+        }
       }
     }
-  }
-}
+  };
 </script>

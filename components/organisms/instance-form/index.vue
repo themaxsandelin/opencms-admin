@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :value="visible" max-width="720px" @click:outside="hideDialog">
+  <v-dialog :value="visible" max-width="720px" @click:outside="hideDialog" @keydown.esc="hideDialog">
     <v-card>
       <v-card-title>
         <span class="text-h5">{{ editingInstance ? 'Update': 'Create new' }} page instance</span>

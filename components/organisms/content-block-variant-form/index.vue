@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :value="visible" max-width="720px" @click:outside="hideForm">
+  <v-dialog :value="visible" max-width="720px" @click:outside="hideForm" @keydown.esc="hideForm">
     <v-card>
       <v-card-title>
         <span class="text-h5">{{ editing ? 'Update' : 'Create new'}} content block variant</span>
@@ -112,11 +112,11 @@
         }
       },
       toggleAllSelected({ value, items }) {
-          if (value) {
-            this.selectedSites = [...items];
-          } else {
-            this.selectedSites = [];
-          }
+        if (value) {
+          this.selectedSites = [...items];
+        } else {
+          this.selectedSites = [];
+        }
       },
       async attemptSubmit() {
         if (!this.name) {

@@ -4,7 +4,7 @@
 
     <v-btn color="primary" dark @click="showLocaleForm">Add new</v-btn>
 
-    <locale-form :visible="localeFormVisible" @created="newLocaleCreated" />
+    <locale-form :visible="localeFormVisible" @hide="hideLocaleForm" @created="newLocaleCreated" />
 
     <v-card class="mt-6" outlined>
       <v-card-title class="pt-0 pb-1">
