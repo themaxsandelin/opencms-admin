@@ -12,20 +12,7 @@
       <v-data-table :loading="$fetchState.pending" loading-text="Loading pages... Please wait" :headers="headers" :items="pages" :search="search">
         <template #item.name="{ item }">
           <router-link :to="pageLink(item)">
-            <span v-if="item.parent">
-              <span v-if="item.parent.parent">
-                <span v-if="item.parent.parent.parent">
-                  <span v-if="item.parent.parent.parent.parent">
-                    <span v-if="item.parent.parent.parent.parent.parent"> {{ item.parent.parent.parent.parent.parent.name }} / </span>
-                    {{ item.parent.parent.parent.parent.name }} /
-                  </span>
-                  {{ item.parent.parent.parent.name }} /
-                </span>
-                {{ item.parent.parent.name }} /
-              </span>
-              {{ item.parent.name }} /
-            </span>
-            {{ item.name }}
+            {{ breadcrumb(item) }}
           </router-link>
         </template>
 
@@ -103,6 +90,15 @@
       this.$set(this.$data, 'pages', data);
     },
     methods: {
+      breadcrumb(page) {
+        const getParent = (page) => {
+          if (!page.parent) {
+            return page.name;
+          }
+          return getParent(page.parent) + ' / ' + page.name;
+        };
+        return getParent(page);
+      },
       showPageForm() {
         this.pageFormVisible = true;
       },
