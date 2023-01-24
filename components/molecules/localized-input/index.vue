@@ -1,16 +1,25 @@
 <template>
   <div class="localized-input">
     <v-autocomplete :items="localeList" :value="localeCode" label="Language" placeholder="Select the langauge.." @change="languageSelection" />
+    <div style="right: 0px; position: absolute; width: 100%; text-align: right">
+      <span v-for="locale in localeList" :key="locale.value">
+        <locale-icon v-if="localValue.values[locale.value]" :locale="locale.value" :title="locale.text" />
+      </span>
+    </div>
     <v-text-field v-model="inputValue" :label="label" :placeholder="placeholder" :disabled="!localeCode" @input="inputChange" />
   </div>
 </template>
 
 <script>
-  // Utils
+// Utils
   import { getLocalizedInputDefaultValue } from '@/utils/fields';
+  import LocaleIcon from '@/components/molecules/locale-icon';
 
   export default {
     name: 'LocalizedInput',
+    components: {
+      LocaleIcon
+    },
     props: {
       value: {
         type: Object,
@@ -110,5 +119,5 @@
 </script>
 
 <style lang="scss" scoped>
-  @import './style';
+@import './style';
 </style>
