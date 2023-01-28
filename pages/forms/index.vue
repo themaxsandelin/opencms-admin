@@ -7,34 +7,31 @@
 
     <v-card class="mt-6" outlined>
       <v-card-title class="pt-0 pb-1">
-        <v-text-field
-          v-model="search"
-          append-icon="mdi-magnify"
-          label="Search"
-          single-line
-          hide-details
-        ></v-text-field>
+        <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
       </v-card-title>
 
-      <v-data-table
-        :loading="$fetchState.pending"
-        loading-text="Loading forms... Please wait"
-        :headers="headers"
-        :items="forms"
-        :search="search"
-        @click:row="formRowClick"
-      >
-        <template v-slot:item.updatedAt="{ item }">
-          <span>{{ new Date(item.updatedAt).toLocaleString() }}</span>
+      <v-data-table :loading="$fetchState.pending" loading-text="Loading forms... Please wait" :headers="headers" :items="forms" :search="search" @click:row="formRowClick">
+        <template #item.name="{ item }">
+          <router-link :to="formLink(item)">
+            <span> {{ item.name }} </span>
+          </router-link>
         </template>
-        <template v-slot:item.updatedBy="{ item }">
-          <span>{{ item.updatedBy.firstName }} {{ item.updatedBy.lastName }}</span>
+        <template #item.view="{ item }">
+          <router-link :to="formSubmissionLink(item)">
+            <v-icon>mdi-comment-eye</v-icon>
+            <span> View Submissions </span>
+          </router-link>
         </template>
-        <template v-slot:item.createdAt="{ item }">
-          <span>{{ new Date(item.createdAt).toLocaleString() }}</span>
+        <template #item.edit="{ item }">
+          <router-link :to="formEditLink(item)">
+            <v-icon>mdi-pencil</v-icon>
+            <span>Edit Fields </span>
+          </router-link>
         </template>
-        <template v-slot:item.createdBy="{ item }">
-          <span>{{ item.createdBy.firstName }} {{ item.createdBy.lastName }}</span>
+        <template #item.updatedAt="{ item }">
+          <router-link :to="formLink(item)">
+            <span> {{ new Date(item.updatedAt).toLocaleString() }} by {{ item.updatedBy.firstName }} {{ item.updatedBy.lastName }} </span>
+          </router-link>
         </template>
       </v-data-table>
     </v-card>
@@ -54,20 +51,16 @@
             align: 'start'
           },
           {
-            text: 'Last updated',
+            text: 'View Submissions',
+            value: 'view'
+          },
+          {
+            text: 'Edit Fields',
+            value: 'edit'
+          },
+          {
+            text: 'Updated',
             value: 'updatedAt'
-          },
-          {
-            text: 'Updated by',
-            value: 'updatedBy'
-          },
-          {
-            text: 'Created',
-            value: 'createdAt'
-          },
-          {
-            text: 'Created by',
-            value: 'createdBy'
           }
         ],
         forms: []
@@ -84,7 +77,16 @@
     },
     methods: {
       formRowClick(form) {
-        this.$router.push({ path: `${this.$route.path}/${form.id}` });
+        this.$router.push({ path: this.formLink(form) });
+      },
+      formLink(form) {
+        return `forms/${form.id}`;
+      },
+      formEditLink(form) {
+        return `forms/${form.id}/configure`;
+      },
+      formSubmissionLink(form) {
+        return `forms/${form.id}/submissions`;
       }
     }
   };
