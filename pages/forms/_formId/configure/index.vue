@@ -17,7 +17,7 @@
 </template>
 
 <script>
-  // Components
+// Components
   import FormEditor from '@/components/organisms/form-editor';
   import FormTabs from '@/components/molecules/form-tabs';
 
@@ -53,7 +53,7 @@
         this.$set(this.$data, 'selectedVersion', this.versions.length ? this.versions[0] : null);
       },
       versionSelection(versionId) {
-        const version = this.versions.find(version => version.id === versionId);
+        const version = this.versions.find((version) => version.id === versionId);
         if (version) {
           this.$set(this.$data, 'selectedVersion', version);
         }
@@ -165,13 +165,13 @@
             } else {
               succeeded.push({
                 environment
-              })
+              });
             }
           })
         );
 
         if (failed.length) {
-          const [ attempt ] = failed;
+          const [attempt] = failed;
           console.error('Publishing error', attempt.error);
           return this.$store.commit('alert/set', { type: 'error', message: attempt.error });
         }

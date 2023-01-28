@@ -28,20 +28,34 @@
         :search="search"
         @click:row="instanceRowClick"
       >
-        <template #item.updatedAt="{ item }">
-          <span>{{ new Date(item.updatedAt).toLocaleString() }}</span>
+        <template #item.title="{ item }">
+          <router-link :to="instanceLink(item)">
+            <span>
+              {{ item.title }}
+            </span>
+          </router-link>
+        </template>
+        <template #item.slug="{ item }">
+          <router-link :to="instanceLink(item)">
+            <span>
+              {{ item.slug }}
+            </span>
+          </router-link>
+        </template>
+        <template #item.path="{ item }">
+          <router-link :to="instanceLink(item)">
+            <span>
+              {{ item.path }}
+            </span>
+          </router-link>
+        </template>
+        <template #item.localeCode="{ item }">
+          <router-link :to="instanceLink(item)">
+            <span> <locale-icon :locale="item.localeCode" :title="item.title" /> {{ item.localeCode }} </span>
+          </router-link>
         </template>
         <template #item.updatedBy="{ item }">
-          <span>{{ item.updatedBy.firstName }} {{ item.updatedBy.lastName }}</span>
-        </template>
-        <template #item.createdAt="{ item }">
-          <span>{{ new Date(item.createdAt).toLocaleString() }}</span>
-        </template>
-        <template #item.createdBy="{ item }">
-          <span>{{ item.createdBy.firstName }} {{ item.createdBy.lastName }}</span>
-        </template>
-        <template #item.actions="{ item }">
-          <v-btn small outlined @click="editInstance($event, item)">...</v-btn>
+          <span>{{ new Date(item.updatedAt).toLocaleString() }} by {{ item.updatedBy.firstName }} {{ item.updatedBy.lastName }}</span>
         </template>
       </v-data-table>
     </v-card>
@@ -49,15 +63,17 @@
 </template>
 
 <script>
-  // Components
+// Components
   import PageTabs from '@/components/molecules/page-tabs';
   import InstanceForm from '@/components/organisms/instance-form';
+  import LocaleIcon from '@/components/molecules/locale-icon';
 
   export default {
     name: 'PageInstances',
     components: {
       PageTabs,
-      InstanceForm
+      InstanceForm,
+      LocaleIcon
     },
     data() {
       return {
@@ -82,22 +98,6 @@
             value: 'localeCode'
           },
           {
-            text: 'Updated',
-            value: 'updatedAt'
-          },
-          {
-            text: 'Updated by',
-            value: 'updatedBy'
-          },
-          {
-            text: 'Created',
-            value: 'createdAt'
-          },
-          {
-            text: 'Created by',
-            value: 'createdBy'
-          },
-          {
             text: '',
             value: 'actions'
           }
@@ -118,6 +118,9 @@
     methods: {
       instanceRowClick(instance) {
         this.$router.push(`${this.$route.path}/${instance.id}`);
+      },
+      instanceLink(instance) {
+        return `${this.$route.path}/${instance.id}`;
       },
       showInstanceForm() {
         this.instanceFormVisible = true;

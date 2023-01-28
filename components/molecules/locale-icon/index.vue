@@ -28,7 +28,8 @@
 </script>
 <style scoped="true">
 img {
-  width: 1.2em;
+  width: 1.5em;
+  vertical-align: middle;
   margin: 0 0.1em;
   border: 1px solid #ccc;
 }

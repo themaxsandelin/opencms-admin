@@ -18,13 +18,11 @@
         </template>
         <template #item.view="{ item }">
           <router-link :to="formSubmissionLink(item)">
-            <v-icon>mdi-comment-eye</v-icon>
             <span> View Submissions </span>
           </router-link>
         </template>
         <template #item.edit="{ item }">
           <router-link :to="formEditLink(item)">
-            <v-icon>mdi-pencil</v-icon>
             <span>Edit Fields </span>
           </router-link>
         </template>

@@ -9,7 +9,7 @@
         <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
       </v-card-title>
 
-      <v-data-table :loading="$fetchState.pending" loading-text="Loading pages... Please wait" :headers="headers" :items="pages" :search="search">
+      <v-data-table :loading="$fetchState.pending" loading-text="Loading pages... Please wait" :headers="headers" :items="pages" :search="search" @click:row="pageRowClick">
         <template #item.name="{ item }">
           <router-link :to="pageLink(item)">
             {{ breadcrumb(item) }}
@@ -17,6 +17,9 @@
         </template>
 
         <template #item.instances="{ item }">
+          <router-link :to="instanceLink(item, { id: '' })">
+            <v-icon>mdi-view-list</v-icon>
+          </router-link>
           <router-link v-for="instance in item.instances" :key="instance.id" :to="instanceLink(item, instance)">
             <locale-icon :locale="instance.localeCode" :title="instance.title" />
           </router-link>
@@ -124,6 +127,9 @@
       },
       layoutLink(page, layout) {
         return `pages/${page.id}/layouts?layoutId=${layout.id}`;
+      },
+      pageRowClick(page) {
+        this.$router.push({ path: this.pageLink(page) });
       }
     }
   };

@@ -3,7 +3,6 @@
     <v-app-bar fixed app :clipped-left="true">
       <v-layout justify-space-between align-center>
         <h3>Open CMS</h3>
-
         <user-menu v-if="user" :user="user" />
       </v-layout>
     </v-app-bar>
@@ -13,18 +12,14 @@
         <Nuxt />
       </v-container>
     </v-main>
-    <template v-if="alert.message">
-      <div class="app-alert">
-        <v-alert :type="alert.type" border="left" dismissible @input="alertInput">
-          {{ alert.message }}
-        </v-alert>
-      </div>
-    </template>
+    <v-snackbar v-model="showAlert" min-width="80%" :timeout="2000" :color="alert.type" dismissible @input="alertInput">
+      {{ alert.message }}
+    </v-snackbar>
   </v-app>
 </template>
 
 <script>
-  // Components
+// Components
   import NavigationDrawer from '../components/organisms/navigation-drawer/index.vue';
   import UserMenu from '../components/molecules/user-menu';
 
@@ -36,7 +31,8 @@
     },
     data() {
       return {
-        user: null
+        user: null,
+        showAlert: false
       };
     },
     async fetch() {
@@ -51,6 +47,16 @@
     computed: {
       alert() {
         return this.$store.state.alert;
+      },
+      alertMessage() {
+        return this.$store.state.alert.message;
+      }
+    },
+    watch: {
+      alertMessage(newMessage) {
+        if (newMessage !== '') {
+          this.showAlert = true;
+        }
       }
     },
     methods: {
@@ -58,16 +64,16 @@
         this.$store.commit('alert/reset');
       }
     }
-  }
+  };
 </script>
 
 <style lang="scss">
-  .app-alert {
-    width: 100%;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    z-index: 999;
-    padding: 0 16px;
-  }
+.app-alert {
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 999;
+  padding: 0 16px;
+}
 </style>
