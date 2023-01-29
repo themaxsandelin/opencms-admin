@@ -5,7 +5,6 @@
 
     <v-subheader>Page instance</v-subheader>
     <v-divider />
-
     <h2>Data</h2>
     <v-layout column>
       <v-row>
@@ -37,7 +36,7 @@
 </template>
 
 <script>
-  // Components
+// Components
   import PageTabs from '@/components/molecules/page-tabs';
 
   export default {
@@ -61,11 +60,17 @@
         dataOptions: {
           sources: [
             {
+              text: ''
+            },
+            {
               text: 'Route parameter',
               value: 'route-parameter'
             }
           ],
           types: [
+            {
+              text: ''
+            },
             {
               text: 'Question category (Content Type)',
               value: 'content-block_question-category'
@@ -103,7 +108,8 @@
       changesMade() {
         return (
           Object.keys(this.instanceChanges.environments).length > 0 ||
-          (this.instanceChanges.data.source !== this.instanceData.source && this.instanceChanges.data.type !== this.instanceData.type)
+          this.instanceChanges.data.source !== this.instanceData.source ||
+          this.instanceChanges.data.type !== this.instanceData.type
         );
       }
     },
@@ -120,7 +126,7 @@
         }
         this.$set(this.$data, 'instance', data);
         if (data.config && data.config.data) {
-          this.$set(this.$data.instanceChanges, 'data', data.config.data);
+          this.instanceChanges.data = Object.assign({}, data.config.data);
         }
       },
       async updateInstanceLayouts() {

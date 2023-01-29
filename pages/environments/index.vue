@@ -8,13 +8,7 @@
 
     <v-card class="mt-6" outlined>
       <v-card-title class="pt-0 pb-1">
-        <v-text-field
-          v-model="search"
-          append-icon="mdi-magnify"
-          label="Search"
-          single-line
-          hide-details
-        ></v-text-field>
+        <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
       </v-card-title>
 
       <v-data-table
@@ -25,17 +19,11 @@
         :search="search"
         @click:row="environmentRowClick"
       >
-        <template v-slot:item.updatedAt="{ item }">
-          <span>{{ new Date(item.updatedAt).toLocaleString() }}</span>
+        <template #item.updatedAt="{ item }">
+          <timestamp-at :timestamp="item.updatedAt" :user="item.updatedBy" />
         </template>
-        <template v-slot:item.updatedBy="{ item }">
-          <span>{{ item.updatedBy.firstName }} {{ item.updatedBy.lastName }}</span>
-        </template>
-        <template v-slot:item.createdAt="{ item }">
-          <span>{{ new Date(item.createdAt).toLocaleString() }}</span>
-        </template>
-        <template v-slot:item.createdBy="{ item }">
-          <span>{{ item.createdBy.firstName }} {{ item.createdBy.lastName }}</span>
+        <template #item.createdAt="{ item }">
+          <timestamp-at :timestamp="item.createdAt" :user="item.createdBy" />
         </template>
       </v-data-table>
     </v-card>
@@ -43,7 +31,7 @@
 </template>
 
 <script>
-  // Components
+// Components
   import EnvironmentForm from '@/components/organisms/environment-form';
 
   export default {
@@ -70,16 +58,8 @@
             value: 'updatedAt'
           },
           {
-            text: 'Updated by',
-            value: 'updatedBy'
-          },
-          {
             text: 'Created',
             value: 'updatedAt'
-          },
-          {
-            text: 'Created by',
-            value: 'updatedBy'
           }
         ],
         environmentFormVisible: false

@@ -8,34 +8,18 @@
 
     <v-card class="mt-6" outlined>
       <v-card-title class="pt-0 pb-1">
-        <v-text-field
-          v-model="search"
-          append-icon="mdi-magnify"
-          label="Search"
-          single-line
-          hide-details
-        ></v-text-field>
+        <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
       </v-card-title>
 
-      <v-data-table
-        :loading="$fetchState.pending"
-        loading-text="Loading locales... Please wait"
-        :headers="headers"
-        :items="locales"
-        :search="search"
-        @click:row="localeRowClick"
-      >
-        <template v-slot:item.updatedAt="{ item }">
-          <span>{{ new Date(item.updatedAt).toLocaleString() }}</span>
+      <v-data-table :loading="$fetchState.pending" loading-text="Loading locales... Please wait" :headers="headers" :items="locales" :search="search" @click:row="localeRowClick">
+        <template #item.code="{ item }"> <locale-icon :locale="item.code" /> {{ item.code }} </template>
+
+        <template #item.updatedAt="{ item }">
+          <timestamp-at :timestamp="item.updatedAt" :user="item.updatedBy" />
         </template>
-        <template v-slot:item.updatedBy="{ item }">
-          <span>{{ item.updatedBy.firstName }} {{ item.updatedBy.lastName }}</span>
-        </template>
-        <template v-slot:item.createdAt="{ item }">
-          <span>{{ new Date(item.createdAt).toLocaleString() }}</span>
-        </template>
-        <template v-slot:item.createdBy="{ item }">
-          <span>{{ item.createdBy.firstName }} {{ item.createdBy.lastName }}</span>
+
+        <template #item.createdAt="{ item }">
+          <timestamp-at :timestamp="item.createdAt" :user="item.createdBy" />
         </template>
       </v-data-table>
     </v-card>
@@ -43,13 +27,13 @@
 </template>
 
 <script>
-  // Components
+// Components
   import LocaleForm from '../../components/organisms/locale-form';
 
   export default {
     name: 'LocalesPage',
     components: {
-      LocaleForm,
+      LocaleForm
     },
     data() {
       return {
@@ -70,19 +54,12 @@
             text: 'Last updated',
             value: 'updatedAt'
           },
-          {
-            text: 'Updated by',
-            value: 'updatedBy'
-          },
+
           {
             text: 'Created',
             value: 'createdAt'
-          },
-          {
-            text: 'Created by',
-            value: 'createdBy'
           }
-        ],
+        ]
       };
     },
     async fetch() {
@@ -106,6 +83,6 @@
         this.$fetch();
       },
       localeRowClick() {}
-    },
+    }
   };
 </script>

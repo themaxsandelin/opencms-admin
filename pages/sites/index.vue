@@ -6,37 +6,25 @@
 
     <site-form :visible="siteFormVisible" @hide="hideSiteForm" @created="siteCreatedCallback" />
 
-
     <v-card class="mt-6" outlined>
       <v-card-title class="pt-0 pb-1">
-        <v-text-field
-          v-model="search"
-          append-icon="mdi-magnify"
-          label="Search"
-          single-line
-          hide-details
-        ></v-text-field>
+        <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
       </v-card-title>
 
-      <v-data-table
-        :loading="$fetchState.pending"
-        loading-text="Loading sites... Please wait"
-        :headers="headers"
-        :items="sites"
-        :search="search"
-        @click:row="siteRowClick"
-      >
-        <template v-slot:item.updatedAt="{ item }">
-          <span>{{ new Date(item.updatedAt).toLocaleString() }}</span>
+      <v-data-table :loading="$fetchState.pending" loading-text="Loading sites... Please wait" :headers="headers" :items="sites" :search="search" @click:row="siteRowClick">
+        <template #item.name="{ item }">
+          <span @click.stop>
+            <router-link :to="`/sites/${item.id}/pages`">
+              {{ item.name }}
+            </router-link>
+          </span>
         </template>
-        <template v-slot:item.updatedBy="{ item }">
-          <span>{{ item.updatedBy.firstName }} {{ item.updatedBy.lastName }}</span>
+        <template #item.updatedAt="{ item }">
+          <timestamp-at :timestamp="item.updatedAt" :user="item.updatedBy" />
         </template>
-        <template v-slot:item.createdAt="{ item }">
-          <span>{{ new Date(item.createdAt).toLocaleString() }}</span>
-        </template>
-        <template v-slot:item.createdBy="{ item }">
-          <span>{{ item.createdBy.firstName }} {{ item.createdBy.lastName }}</span>
+
+        <template #item.createdAt="{ item }">
+          <timestamp-at :timestamp="item.createdAt" :user="item.createdBy" />
         </template>
       </v-data-table>
     </v-card>
@@ -44,7 +32,7 @@
 </template>
 
 <script>
-  // Components
+// Components
   import SiteForm from '@/components/organisms/site-form';
 
   export default {
@@ -70,18 +58,11 @@
             text: 'Updated',
             value: 'updatedAt'
           },
-          {
-            text: 'Updated by',
-            value: 'updatedBy'
-          },
+
           {
             text: 'Created',
             value: 'createdAt'
-          },
-          {
-            text: 'Created by',
-            value: 'createdBy'
-          },
+          }
         ],
         siteFormVisible: false
       };

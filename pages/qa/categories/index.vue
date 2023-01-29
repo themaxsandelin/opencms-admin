@@ -1,26 +1,13 @@
 <template>
   <div>
     <h1>Categories</h1>
-    <v-btn color="primary" dark @click="showCategoryForm">
-      Create new
-    </v-btn>
+    <v-btn color="primary" dark @click="showCategoryForm"> Create new </v-btn>
 
-    <question-category-form
-      :category="editingCategory"
-      :visible="categoryFormVisible"
-      @hide="hideCategoryForm"
-      @created="questionCategoryCreated"
-    />
+    <question-category-form :category="editingCategory" :visible="categoryFormVisible" @hide="hideCategoryForm" @created="questionCategoryCreated" />
 
     <v-card class="mt-6" outlined>
       <v-card-title class="pt-0 pb-1">
-        <v-text-field
-          v-model="search"
-          append-icon="mdi-magnify"
-          label="Search"
-          single-line
-          hide-details
-        ></v-text-field>
+        <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
       </v-card-title>
 
       <v-data-table
@@ -31,19 +18,17 @@
         :search="search"
         @click:row="categoryRowClick"
       >
-        <template v-slot:item.updatedAt="{ item }">
-          <span>{{ new Date(item.updatedAt).toLocaleString() }}</span>
+        <template #item.name="{ item }">
+          <span @click.stop>
+            <router-link :to="`/qa/categories/${item.id}`">
+              {{ item.name }}
+            </router-link>
+          </span>
         </template>
-        <template v-slot:item.updatedBy="{ item }">
-          <span>{{ item.updatedBy.firstName }} {{ item.updatedBy.lastName }}</span>
+        <template #item.updatedAt="{ item }">
+          <timestamp-at :timestamp="item.updatedAt" :user="item.updatedBy" />
         </template>
-        <template v-slot:item.createdAt="{ item }">
-          <span>{{ new Date(item.createdAt).toLocaleString() }}</span>
-        </template>
-        <template v-slot:item.createdBy="{ item }">
-          <span>{{ item.createdBy.firstName }} {{ item.createdBy.lastName }}</span>
-        </template>
-        <template v-slot:item.actions="{ item }">
+        <template #item.actions="{ item }">
           <v-btn small outlined @click="editCategory($event, item)">...</v-btn>
         </template>
       </v-data-table>
@@ -52,7 +37,7 @@
 </template>
 
 <script>
-  // Components
+// Components
   import QuestionCategoryForm from '@/components/organisms/question-category-form';
 
   export default {
@@ -76,20 +61,9 @@
             value: 'updatedAt'
           },
           {
-            text: 'Updated by',
-            value: 'updatedBy'
-          },
-          {
-            text: 'Created',
-            value: 'createdAt'
-          },
-          {
-            text: 'Created by',
-            value: 'createdBy'
-          },
-          {
             text: '',
-            value: 'actions'
+            value: 'actions',
+            align: 'end'
           }
         ],
         editingCategory: null

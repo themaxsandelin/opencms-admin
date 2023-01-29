@@ -68,12 +68,8 @@
 </script>
 
 <style lang="scss">
-.app-alert {
-  width: 100%;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  z-index: 999;
-  padding: 0 16px;
+.v-data-table a {
+  text-decoration: none;
+  color: inherit;
 }
 </style>

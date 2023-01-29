@@ -12,24 +12,28 @@
 
       <v-data-table :loading="$fetchState.pending" loading-text="Loading forms... Please wait" :headers="headers" :items="forms" :search="search" @click:row="formRowClick">
         <template #item.name="{ item }">
-          <router-link :to="formLink(item)">
-            <span> {{ item.name }} </span>
-          </router-link>
+          <span @click.stop>
+            <router-link :to="formLink(item)">
+              {{ item.name }}
+            </router-link>
+          </span>
         </template>
         <template #item.view="{ item }">
-          <router-link :to="formSubmissionLink(item)">
-            <span> View Submissions </span>
-          </router-link>
+          <span @click.stop>
+            <router-link :to="formSubmissionLink(item)"> View Submissions </router-link>
+          </span>
         </template>
         <template #item.edit="{ item }">
-          <router-link :to="formEditLink(item)">
-            <span>Edit Fields </span>
-          </router-link>
+          <span @click.stop>
+            <router-link :to="formEditLink(item)"> Edit Fields </router-link>
+          </span>
         </template>
         <template #item.updatedAt="{ item }">
-          <router-link :to="formLink(item)">
-            <span> {{ new Date(item.updatedAt).toLocaleString() }} by {{ item.updatedBy.firstName }} {{ item.updatedBy.lastName }} </span>
-          </router-link>
+          <span @click.stop>
+            <router-link :to="formLink(item)">
+              <timestamp-at :timestamp="item.updatedAt" :user="item.updatedBy" />
+            </router-link>
+          </span>
         </template>
       </v-data-table>
     </v-card>

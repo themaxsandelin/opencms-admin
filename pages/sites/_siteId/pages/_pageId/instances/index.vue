@@ -29,33 +29,39 @@
         @click:row="instanceRowClick"
       >
         <template #item.title="{ item }">
-          <router-link :to="instanceLink(item)">
-            <span>
+          <span @click.stop>
+            <router-link :to="instanceLink(item)">
               {{ item.title }}
-            </span>
-          </router-link>
+            </router-link>
+          </span>
         </template>
         <template #item.slug="{ item }">
-          <router-link :to="instanceLink(item)">
-            <span>
+          <span @click.stop>
+            <router-link :to="instanceLink(item)">
               {{ item.slug }}
-            </span>
-          </router-link>
+            </router-link>
+          </span>
         </template>
         <template #item.path="{ item }">
-          <router-link :to="instanceLink(item)">
-            <span>
+          <span @click.stop>
+            <router-link :to="instanceLink(item)">
               {{ item.path }}
-            </span>
-          </router-link>
+            </router-link>
+          </span>
         </template>
         <template #item.localeCode="{ item }">
-          <router-link :to="instanceLink(item)">
-            <span> <locale-icon :locale="item.localeCode" :title="item.title" /> {{ item.localeCode }} </span>
-          </router-link>
+          <span @click.stop>
+            <router-link :to="instanceLink(item)">
+              <locale-icon :locale="item.localeCode" :title="item.title" />
+              {{ item.localeCode }}
+            </router-link>
+          </span>
         </template>
         <template #item.updatedBy="{ item }">
-          <span>{{ new Date(item.updatedAt).toLocaleString() }} by {{ item.updatedBy.firstName }} {{ item.updatedBy.lastName }}</span>
+          <timestamp-at :timestamp="item.updatedAt" :user="item.updatedBy" />
+        </template>
+        <template #item.actions="{ item }">
+          <v-btn small outlined @click="editInstance($event, item)">...</v-btn>
         </template>
       </v-data-table>
     </v-card>
@@ -98,8 +104,14 @@
             value: 'localeCode'
           },
           {
+            text: 'Updated',
+            value: 'updatedBy',
+            align: 'end'
+          },
+          {
             text: '',
-            value: 'actions'
+            value: 'actions',
+            align: 'end'
           }
         ],
         instanceFormVisible: false,
