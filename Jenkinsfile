@@ -375,7 +375,7 @@ def getK8sContext(targetEnv) {
     if (targetEnv.equalsIgnoreCase("development")) {
         return "dev-web";
     } else if (targetEnv.equalsIgnoreCase("test")) {
-        return "config-test-new";
+        return "cluster.local";
     } else if (targetEnv.equalsIgnoreCase("production-02")) {
         return "PRODUCTION-02";
     }
