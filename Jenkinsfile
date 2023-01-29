@@ -289,7 +289,7 @@ pipeline {
                             // Supress output to hide sensitive info
                             sh script: "set +x && echo \"${KUBECONFIG}\" >> ~/kubeconfig  ", returnStdout: false
                             sh script: "set +x && echo \"${FILE}\" >> ~/file  ", returnStdout: false
-                            
+
                             sh script: """
                                 cd deploy
                                 KUBECONFIG=~/kubeconfig ansible-playbook deploy.yml -e env=${ENVIRONMENT.toLowerCase()} -e version=${VERSION} -t admin-cms --vault-password-file=~/file
@@ -375,7 +375,7 @@ def getK8sContext(targetEnv) {
     if (targetEnv.equalsIgnoreCase("development")) {
         return "dev-web";
     } else if (targetEnv.equalsIgnoreCase("test")) {
-        return "cluster.local";
+        return "config-test-new";
     } else if (targetEnv.equalsIgnoreCase("production-02")) {
         return "PRODUCTION-02";
     }
