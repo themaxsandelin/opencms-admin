@@ -20,19 +20,29 @@
       >
         <template #item.name="{ item }">
           <span @click.stop>
-            <router-link :to="questionLink(item)">
+            <router-link :to="questionLink(item, '')">
               {{ item.name }}
             </router-link>
           </span>
         </template>
 
+        <template #item.variants="{ item }">
+          <div v-for="variant in item.variants" :key="variant.id">
+            <router-link :to="questionLink(item, variant.id)"> {{ variant.name }}: </router-link>
+            <span v-for="version in variant.versions" :key="version.id">
+              <router-link :to="questionLink(item, variant.id, version.localeCode)">
+                <locale-icon :locale="version.localeCode" :title="version.localeCode" />
+              </router-link>
+            </span>
+            <router-link :to="questionLink(item, variant.id)">
+              <v-icon small>mdi-plus-box</v-icon>
+            </router-link>
+          </div>
+        </template>
         <template #item.updatedAt="{ item }">
           <timestamp-at :timestamp="item.updatedAt" :user="item.updatedBy" />
         </template>
 
-        <template #item.createdAt="{ item }">
-          <timestamp-at :timestamp="item.createdAt" :user="item.createdBy" />
-        </template>
         <template #item.actions="{ item }">
           <v-btn small outlined @click="editQuestion($event, item)">...</v-btn>
         </template>
@@ -62,15 +72,13 @@
             align: 'start'
           },
           {
+            text: 'Variants',
+            value: 'variants'
+          },
+          {
             text: 'Last updated',
             value: 'updatedAt'
           },
-
-          {
-            text: 'Created',
-            value: 'createdAt'
-          },
-
           {
             text: '',
             value: 'actions',
@@ -106,8 +114,8 @@
       questionRowClick(question) {
         this.$router.push(this.questionLink(question));
       },
-      questionLink(question) {
-        return `${this.$route.path}/${question.id}`;
+      questionLink(question, variant, languageCode) {
+        return `${this.$route.path}/${question.id}${variant ? '?variant=' + variant : ''}${languageCode ? '&localeCode=' + languageCode : ''}`;
       },
       editQuestion(event, question) {
         event.stopPropagation();
