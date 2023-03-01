@@ -27,7 +27,6 @@
       timestampAt() {
         const hours = Math.floor((new Date() - new Date(this.timestamp)) / 3600000);
         const days = Math.floor(hours / 24);
-        console.log(days);
         if (days <= 1) {
           return new Intl.RelativeTimeFormat().format(-hours, 'hour');
         }
