@@ -27,7 +27,7 @@
         </template>
 
         <template #item.variants="{ item }">
-          <div v-for="variant in item.variants" :key="variant.id">
+          <div v-for="variant in item.variants" :key="variant.id" class="variants">
             <router-link :to="questionLink(item, variant.id)"> {{ variant.name }}: </router-link>
             <span v-for="version in variant.versions" :key="version.id">
               <router-link :to="questionLink(item, variant.id, version.localeCode)">
@@ -97,6 +97,18 @@
 
       this.$set(this.$data, 'questions', data);
     },
+    watch: {
+      search(a) {
+        this.$router.push({ hash: `#term=${a}` });
+      }
+    },
+    mounted() {
+      const hash = this.$route.hash;
+      if (hash) {
+        const params = new URLSearchParams(hash.replace('#', '?'));
+        this.search = params.get('term');
+      }
+    },
     methods: {
       createNew() {
         this.$set(this.$data, 'editingQuestion', null);
@@ -125,3 +137,12 @@
     }
   };
 </script>
+<style scoped>
+.variants {
+  display: flex;
+}
+.variants > a:first-child {
+  flex-grow: 1;
+  align-self: end;
+}
+</style>
