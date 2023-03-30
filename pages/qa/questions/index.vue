@@ -1,26 +1,13 @@
 <template>
   <div>
     <h1>Questions</h1>
-    <v-btn color="primary" dark @click="createNew">
-      Create new
-    </v-btn>
+    <v-btn color="primary" dark @click="createNew"> Create new </v-btn>
 
-    <question-form
-      :question="editingQuestion"
-      :visible="questionFormVisible"
-      @hide="hideQuestionForm"
-      @created="questionCreated"
-    />
+    <question-form :question="editingQuestion" :visible="questionFormVisible" @hide="hideQuestionForm" @created="questionCreated" />
 
     <v-card class="mt-6" outlined>
       <v-card-title class="pt-0 pb-1">
-        <v-text-field
-          v-model="search"
-          append-icon="mdi-magnify"
-          label="Search"
-          single-line
-          hide-details
-        ></v-text-field>
+        <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
       </v-card-title>
 
       <v-data-table
@@ -31,19 +18,32 @@
         :search="search"
         @click:row="questionRowClick"
       >
-        <template v-slot:item.updatedAt="{ item }">
-          <span>{{ new Date(item.updatedAt).toLocaleString() }}</span>
+        <template #item.name="{ item }">
+          <span @click.stop>
+            <router-link :to="questionLink(item, '')">
+              {{ item.name }}
+            </router-link>
+          </span>
         </template>
-        <template v-slot:item.updatedBy="{ item }">
-          <span>{{ item.updatedBy.firstName }} {{ item.updatedBy.lastName }}</span>
+
+        <template #item.variants="{ item }">
+          <div v-for="variant in item.variants" :key="variant.id" class="variants">
+            <router-link :to="questionLink(item, variant.id)"> {{ variant.name }}: </router-link>
+            <span v-for="version in variant.versions" :key="version.id">
+              <router-link :to="questionLink(item, variant.id, version.localeCode)">
+                <locale-icon :locale="version.localeCode" :title="version.localeCode" />
+              </router-link>
+            </span>
+            <router-link :to="questionLink(item, variant.id)">
+              <v-icon small>mdi-plus-box</v-icon>
+            </router-link>
+          </div>
         </template>
-        <template v-slot:item.createdAt="{ item }">
-          <span>{{ new Date(item.createdAt).toLocaleString() }}</span>
+        <template #item.updatedAt="{ item }">
+          <timestamp-at :timestamp="item.updatedAt" :user="item.updatedBy" />
         </template>
-        <template v-slot:item.createdBy="{ item }">
-          <span>{{ item.createdBy.firstName }} {{ item.createdBy.lastName }}</span>
-        </template>
-        <template v-slot:item.actions="{ item }">
+
+        <template #item.actions="{ item }">
           <v-btn small outlined @click="editQuestion($event, item)">...</v-btn>
         </template>
       </v-data-table>
@@ -52,7 +52,7 @@
 </template>
 
 <script>
-  // Components
+// Components
   import QuestionForm from '@/components/organisms/question-form';
 
   export default {
@@ -72,20 +72,12 @@
             align: 'start'
           },
           {
+            text: 'Variants',
+            value: 'variants'
+          },
+          {
             text: 'Last updated',
             value: 'updatedAt'
-          },
-          {
-            text: 'Updated by',
-            value: 'updatedBy'
-          },
-          {
-            text: 'Created',
-            value: 'createdAt'
-          },
-          {
-            text: 'Created by',
-            value: 'createdBy'
           },
           {
             text: '',
@@ -105,6 +97,18 @@
 
       this.$set(this.$data, 'questions', data);
     },
+    watch: {
+      search(a) {
+        this.$router.push({ hash: `#term=${a}` });
+      }
+    },
+    mounted() {
+      const hash = this.$route.hash;
+      if (hash) {
+        const params = new URLSearchParams(hash.replace('#', '?'));
+        this.search = params.get('term');
+      }
+    },
     methods: {
       createNew() {
         this.$set(this.$data, 'editingQuestion', null);
@@ -120,7 +124,10 @@
         this.$fetch();
       },
       questionRowClick(question) {
-        this.$router.push(`${this.$route.path}/${question.id}`);
+        this.$router.push(this.questionLink(question));
+      },
+      questionLink(question, variant, languageCode) {
+        return `${this.$route.path}/${question.id}${variant ? '?variant=' + variant : ''}${languageCode ? '&localeCode=' + languageCode : ''}`;
       },
       editQuestion(event, question) {
         event.stopPropagation();
@@ -130,3 +137,12 @@
     }
   };
 </script>
+<style scoped>
+.variants {
+  display: flex;
+}
+.variants > a:first-child {
+  flex-grow: 1;
+  align-self: end;
+}
+</style>

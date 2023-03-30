@@ -3,14 +3,14 @@
     <h1>{{ form.name }}</h1>
     <form-tabs />
 
-    <v-data-table
-      :loading="$fetchState.pending"
-      loading-text="Loading submissions... Please wait"
-      :headers="headers"
-      :items="submissions"
-      @click:row="submissionRowClick"
-    >
-      <template v-slot:item.createdAt="{ item }">
+    <v-data-table :loading="$fetchState.pending" loading-text="Loading submissions... Please wait" :headers="headers" :items="submissions" @click:row="submissionRowClick">
+      <template #item.data="{ item }">
+        <span>{{ item.data.name || item.data.email }}</span>
+      </template>
+      <template #item.localeCode="{ item }">
+        <span><locale-icon :locale="item.localeCode" /> {{ item.localeCode }}</span>
+      </template>
+      <template #item.createdAt="{ item }">
         <span>{{ new Date(item.createdAt).toLocaleString() }}</span>
       </template>
     </v-data-table>
@@ -18,13 +18,15 @@
 </template>
 
 <script>
-  // Components
+// Components
   import FormTabs from '@/components/molecules/form-tabs';
+  import LocaleIcon from '@/components/molecules/locale-icon';
 
   export default {
     name: 'FormSubmissions',
     components: {
       FormTabs,
+      LocaleIcon
     },
     data() {
       return {
@@ -36,6 +38,10 @@
           {
             text: 'Site',
             value: 'site.name'
+          },
+          {
+            text: 'Data',
+            value: 'data'
           },
           {
             text: 'Locale',

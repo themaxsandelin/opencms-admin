@@ -9,26 +9,33 @@
         <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
       </v-card-title>
 
-      <v-data-table :loading="$fetchState.pending" loading-text="Loading pages... Please wait" :headers="headers" :items="pages" :search="search">
+      <v-data-table :loading="$fetchState.pending" loading-text="Loading pages... Please wait" :headers="headers" :items="pages" :search="search" @click:row="pageRowClick">
         <template #item.name="{ item }">
-          <router-link :to="pageLink(item)">
-            {{ breadcrumb(item) }}
-          </router-link>
+          <span @click.stop>
+            <router-link :to="pageLink(item)">
+              {{ breadcrumb(item) }}
+            </router-link>
+          </span>
         </template>
 
         <template #item.instances="{ item }">
-          <router-link v-for="instance in item.instances" :key="instance.id" :to="instanceLink(item, instance)">
-            <locale-icon :locale="instance.localeCode" :title="instance.title" />
-          </router-link>
+          <span @click.stop>
+            <router-link :to="instanceLink(item, { id: '' })">
+              <v-icon>mdi-view-list</v-icon>
+            </router-link>
+            <router-link v-for="instance in item.instances" :key="instance.id" :to="instanceLink(item, instance)">
+              <locale-icon :locale="instance.localeCode" :title="instance.title" />
+            </router-link>
+          </span>
         </template>
         <template #item.layouts="{ item }">
-          <span v-for="layout in item.layouts" :key="layout.id">
+          <span v-for="layout in item.layouts" :key="layout.id" @click.stop>
             <router-link :to="layoutLink(item, layout)">{{ layout.name }}</router-link>
             &nbsp;
           </span>
         </template>
         <template #item.updatedAt="{ item }">
-          <router-link :to="pageLink(item)">{{ new Date(item.updatedAt).toLocaleString() }} by {{ item.updatedBy.firstName }} {{ item.updatedBy.lastName }}</router-link>
+          <timestamp-at :timestamp="item.updatedAt" :user="item.updatedBy" />
         </template>
         <template #item.actions="{ item }">
           <v-btn small outlined @click="editPage($event, item)">...</v-btn>
@@ -124,6 +131,9 @@
       },
       layoutLink(page, layout) {
         return `pages/${page.id}/layouts?layoutId=${layout.id}`;
+      },
+      pageRowClick(page) {
+        this.$router.push({ path: this.pageLink(page) });
       }
     }
   };

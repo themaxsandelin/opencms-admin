@@ -2,7 +2,7 @@
   <div class="localized-input">
     <v-autocomplete :items="localeList" :value="localeCode" label="Language" placeholder="Select the langauge.." @change="languageSelection" />
     <div style="right: 0px; position: absolute; width: 100%; text-align: right">
-      <span v-for="locale in localeList" :key="locale.value">
+      <span v-for="locale in localeList" :key="locale.value" @click="languageSelection(locale.value)">
         <locale-icon v-if="localValue.values[locale.value]" :locale="locale.value" :title="locale.text" />
       </span>
     </div>

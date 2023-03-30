@@ -26,9 +26,7 @@
       </v-row>
       <v-row>
         <v-col cols="12" lg="12" md="12" sm="12">
-          <v-btn color="primary" @click="save">
-            Save changes
-          </v-btn>
+          <v-btn color="primary" @click="save"> Save changes </v-btn>
         </v-col>
       </v-row>
     </v-layout>
@@ -47,12 +45,12 @@
 </template>
 
 <script>
-  // Components
+// Components
   import VersionSelector from '@/components/molecules/version-selector';
 
   // Async components
   const components = {
-    'question': () => import('@/components/organisms/question-editor'),
+    question: () => import('@/components/organisms/question-editor'),
     'question-category': () => import('@/components/organisms/question-category-editor')
   };
 
@@ -106,20 +104,19 @@
         return components[this.type];
       },
       localeList() {
-        return this.locales.map(locale => ({
+        return this.locales.map((locale) => ({
           text: `${locale.code} - ${locale.name}`,
           value: locale.code
         }));
       },
       environmentList() {
-        return this.publishingEnvironments.map(environment => ({
+        return this.publishingEnvironments.map((environment) => ({
           text: environment.name,
-          value: environment.id,
-          disabled: this.selectedEnvironments.includes(environment.id)
-        }))
+          value: environment.id
+        }));
       },
       selectedEnvironments() {
-        return this.selectedVersion.publications ? this.selectedVersion.publications.map(publication => publication.environment.id) : [];
+        return this.selectedVersion.publications ? this.selectedVersion.publications.map((publication) => publication.environment.id) : [];
       }
     },
     methods: {
@@ -141,15 +138,16 @@
         };
       },
       selectLatestVersion() {
-        this.$set(this.$data, 'selectedVersion', this.versions.length ? this.versions[0] : this.getBaseVersionData());
+        this.versionSelection(this.versions.length ? this.versions[0].id : this.getBaseVersionData().id);
       },
       publishChange(data) {
         this.$set(this.$data, 'publishToEnvironments', data);
       },
       versionSelection(versionId) {
-        const version = this.versions.find(version => version.id === versionId);
+        const version = this.versions.find((version) => version.id === versionId);
         if (version) {
           this.$set(this.$data, 'selectedVersion', version);
+          this.$set(this.$data, 'publishToEnvironments', this.selectedEnvironments);
         }
       },
       async updateLocales() {
@@ -187,38 +185,50 @@
         }
       },
       async publish() {
-        if (!this.publishToEnvironments.length) {
-          return;
-        }
-
         const failed = [];
-        const succeeded = [];
         await Promise.all(
-          this.publishToEnvironments.map(async (environment) => {
-            const { error } = await this.$api(`/content-blocks/${this.block.id}/variants/${this.variant.id}/versions/${this.selectedVersion.id}/publish`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                environment
-              })
-            });
-            if (error) {
-              failed.push({
-                environment,
-                error
+          this.publishToEnvironments
+            .filter((environment) => !this.selectedEnvironments.includes(environment))
+            .map(async (environment) => {
+              const { error } = await this.$api(`/content-blocks/${this.block.id}/variants/${this.variant.id}/versions/${this.selectedVersion.id}/publish`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  environment
+                })
               });
-            } else {
-              succeeded.push({
-                environment
-              })
-            }
-          })
+              if (error) {
+                failed.push({
+                  environment,
+                  error
+                });
+              }
+            }),
+          this.selectedEnvironments
+            .filter((environment) => !this.publishToEnvironments.includes(environment))
+            .map(async (environment) => {
+              const { error } = await this.$api(`/content-blocks/${this.block.id}/variants/${this.variant.id}/versions/${this.selectedVersion.id}/unpublish`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  environment
+                })
+              });
+              if (error) {
+                failed.push({
+                  environment,
+                  error
+                });
+              }
+            })
         );
 
         if (failed.length) {
-          const [ attempt ] = failed;
+          const [attempt] = failed;
           console.error('Publishing error', attempt.error);
           return this.$store.commit('alert/set', { type: 'error', message: attempt.error });
         }
